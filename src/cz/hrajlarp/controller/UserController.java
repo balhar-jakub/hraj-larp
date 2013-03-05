@@ -1,6 +1,6 @@
-package cz.hrajlarp.spring.controllers;
+package cz.hrajlarp.controller;
 
-import cz.hrajlarp.spring.model.User;
+import cz.hrajlarp.model.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;

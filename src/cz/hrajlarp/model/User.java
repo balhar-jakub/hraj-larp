@@ -1,4 +1,4 @@
-package cz.hrajlarp.spring.model;
+package cz.hrajlarp.model;
 
 /**
  * Created by IntelliJ IDEA.
