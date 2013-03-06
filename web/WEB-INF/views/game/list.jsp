@@ -14,7 +14,7 @@
 <body>
 <table align="center" border="1">
     <tr>
-        <td>Nr:</td><td>Name:</td><td>Email</td><td>Modify?</td>
+        <td>Nr:</td><td>Name:</td><td>Autor</td><td>Modify?</td>
     </tr>
     <c:forEach var="game" items="${games}" varStatus="status">
         <tr>
