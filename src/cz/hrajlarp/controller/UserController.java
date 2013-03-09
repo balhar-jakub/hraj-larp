@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class UserController {
 
-    @Autowired
-    MyDAO myDAO;
+//    @Autowired
+//    MyDAO myDAO;
 
     @RequestMapping(value="/user/add")
     public String add(Model model){
@@ -26,9 +26,9 @@ public class UserController {
         return "user/add";
     }
 
-    @RequestMapping(value="/user/list")
-    public String getAll(Model model){
-        myDAO.getAllObjects();
-        return "user/add";
-    }
+//    @RequestMapping(value="/user/list")
+//    public String getAll(Model model){
+//        myDAO.getAllObjects();
+//        return "user/add";
+//    }
 }

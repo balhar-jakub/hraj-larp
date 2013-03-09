@@ -3,7 +3,10 @@ package cz.hrajlarp.model;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.swing.text.DateFormatter;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by IntelliJ IDEA.
