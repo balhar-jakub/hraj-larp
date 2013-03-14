@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
@@ -26,7 +27,12 @@ public class CalendarController {
     @Autowired
     GameDAO gameDAO;
 
-    @RequestMapping(value = "/calendar")
+    /**
+     * Controller for view of calendar
+     * @param model model
+     * @return String of .JSP file name mapped for view of calendar
+     */
+    @RequestMapping(value = "/calendar", method= RequestMethod.GET)
     public String calendar(Model model) {
         System.out.println("CalendarController: Passing through..." + "/calendar");
 
@@ -36,22 +42,12 @@ public class CalendarController {
         model.addAttribute("futureGames", futureGames);
         model.addAttribute("formerGames", formerGames);
 
-
-        if(futureGames != null && !futureGames.isEmpty())
-            for(Game g: futureGames)
-                System.out.println("future: " + g.getName() + " " + g.getDateAsYMD());
-
-        if(formerGames != null && !formerGames.isEmpty())
-            for(Game g: formerGames)
-                System.out.println("former: " + g.getName() + " " + g.getDateAsYMD());
-
-        if(formerGames != null && !formerGames.isEmpty())
-            model.addAttribute("testGame", formerGames.get(0));
+        /* TODO what should be displayed if some of the lists (or both) is empty */
 
         return "calendar";
     }
 
-     /* methods used if futere and former games are in separated .JSP files */
+     /* methods used if future and former games were in separated .JSP files */
      /*
     @RequestMapping(value = "/calendar/future")
     public String futureGames(Model model) {

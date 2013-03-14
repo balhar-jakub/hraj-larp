@@ -12,13 +12,13 @@ import java.util.Date;
  */
 public class DateUtils {
 
-    public static String getDateAsYMD(Date date){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
+    public static String getDateAsDMY(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         return sdf.format(date);
     }
 
-    public static String getDateAsMD(Date date){
-        SimpleDateFormat sdf = new SimpleDateFormat("MM.dd");
+    public static String getDateAsDM(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM");
         return sdf.format(date);
     }
 

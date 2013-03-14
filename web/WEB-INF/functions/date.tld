@@ -10,9 +10,9 @@
     <uri>http://example.com/functions</uri>
 
     <function>
-        <name>dateAsYMD</name>
+        <name>dateAsDMY</name>
         <function-class>cz.hrajlarp.utils.DateUtils</function-class>
-        <function-signature>java.lang.String getDateAsYMD(java.util.Date)</function-signature>
+        <function-signature>java.lang.String getDateAsDMY(java.util.Date)</function-signature>
     </function>
 
     <function>
@@ -22,9 +22,9 @@
     </function>
 
     <function>
-        <name>dateAsDM</name>
+        <name>dateAsMD</name>
         <function-class>cz.hrajlarp.utils.DateUtils</function-class>
-        <function-signature>java.lang.String getDateAsMD(java.util.Date)</function-signature>
+        <function-signature>java.lang.String getDateAsDM(java.util.Date)</function-signature>
     </function>
 
     <function>

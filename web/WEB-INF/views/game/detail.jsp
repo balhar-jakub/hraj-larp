@@ -12,11 +12,11 @@
 <head>
     <meta charset="utf-8">
 
-    <title>${requestScope.game.name} na HRAJ LARP | ${requestScope.game.dateAsYMD}</title>
+    <title>${requestScope.game.name} na HRAJ LARP | ${requestScope.game.dateAsDMY}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
-    <meta property="og:title" content="${requestScope.game.name} na HRAJ LARP | ${requestScope.game.dateAsYMD}"/>
+    <meta property="og:title" content="${requestScope.game.name} na HRAJ LARP | ${requestScope.game.dateAsDMY}"/>
     <meta property="og:type" content="website"/>
     <meta property="og:url" content="http://hrajlarp.cz/game/detail?id=${requestScope.game.id}"/>         <!-- TODO change URL -->
     <meta property="og:description" content="Pojďte si zahrát larp ${requestScope.game.name} na festivalu komorních larpů HRAJ LARP!"/>
@@ -41,7 +41,7 @@
 <div class="band white clearfix">
 
   <div class="text">
-    <h1>${requestScope.game.name} | ${requestScope.game.dateAsYMD}</h1>
+    <h1>${requestScope.game.name} | ${requestScope.game.dateAsDMY}</h1>
   </div>
 
   <div class="page-termin">

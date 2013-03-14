@@ -1,7 +1,5 @@
 package cz.hrajlarp.model;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -13,19 +11,23 @@ import java.util.Date;
  */
 public class Game extends GameEntity{
 
-    private String dateAsYMD;
-    private String dateAsDM;
-    private String dateAsDayName;
-    private String dateTime;
+    private String dateAsDMY;   // date in format dd.MM.yyyy
+    private String dateAsDM;    // date in format dd.MM
+    private String dateAsDayName;   // day name
+    private String dateTime;    // time as HH:mm
 
     public Game(GameEntity gameEntity){
         init(gameEntity);
-        dateAsYMD = getDateAsYMD(getDate());
-        dateAsDM = getDateAsMD(getDate());
+        dateAsDMY = getDateAsDMY(getDate());
+        dateAsDM = getDateAsDM(getDate());
         dateAsDayName = getDateAsDayName(getDate());
         dateTime = getDateTime(getDate());
     }
 
+    /**
+     * Initialization of super class attributes
+     * @param gameEntity holds data to set in super class setters
+     */
     private void init(GameEntity gameEntity){
         super.setId(gameEntity.getId());
         super.setName(gameEntity.getName());
@@ -45,8 +47,8 @@ public class Game extends GameEntity{
         super.setLarpDb(gameEntity.getLarpDb());
     }
 
-    public String getDateAsYMD(){
-        return dateAsYMD;
+    public String getDateAsDMY(){
+        return dateAsDMY;
     }
 
     public String getDateAsDM(){
@@ -61,18 +63,18 @@ public class Game extends GameEntity{
         return dateTime;
     }
 
-    public static String getDateAsYMD(Date date){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
+    public static String getDateAsDMY(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         return sdf.format(date);
     }
 
-    public static String getDateAsMD(Date date){
-        SimpleDateFormat sdf = new SimpleDateFormat("MM.dd");
+    public static String getDateAsDM(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM");
         return sdf.format(date);
     }
 
     public static String getDateAsDayName(Date date){
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE");    // day name
         return sdf.format(date);
     }
 

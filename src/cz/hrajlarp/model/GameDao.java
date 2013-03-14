@@ -25,6 +25,11 @@ public class GameDAO {
         this.sessionFactory = sessionFactory;
     }
 
+    /**
+     * Methods gets Game fro database by given id number
+     * @param gameId id number of the game
+     * @return game with given id
+     */
     @Transactional(readOnly=true)
     public Game getGameById(int gameId){
 
@@ -35,9 +40,7 @@ public class GameDAO {
             session = sessionFactory.openSession();
             Query query = session.createQuery("from GameEntity where id= :id ");
             query.setParameter("id", gameId);
-            System.out.println("executing: " + query.getQueryString());
             List list = query.list();
-            System.out.println(list);
             return (list != null && !list.isEmpty())?new Game((GameEntity)list.get(0)):null;
         }
         catch (Exception e) {
@@ -52,20 +55,34 @@ public class GameDAO {
     }
 
 
+    /**
+     * @return List of all games (former and future too)
+     */
     public List<Game> getALLGames(){
         return listGames(false, false);
     }
 
+    /**
+     * @return List of all games in future from current date
+     */
     public List<Game> getFutureGames(){
         return listGames(true, true);
     }
 
+    /**
+     * @return List of all games in past by current date
+     */
     public List<Game> getFormerGames(){
         return listGames(true, false);
     }
 
 
-
+    /**
+     * Method gets all games in database which fits given criteria
+     * @param criteria true if some criteria is considered
+     * @param future true if listed only future games, false if former games
+     * @return list of all games based on given criteria
+     */
     @Transactional(readOnly=true)
     private List<Game> listGames(boolean criteria, boolean future){
 
@@ -109,21 +126,19 @@ public class GameDAO {
         return null;
     }
 
-
-
-
-    private List<Game> getGameList(List list){
+    /**
+     * Change type of elements in given List to Game if possible
+     * @param list List of GameEntity items
+     * @return list of Game items created from by given list
+     */
+    private List<Game> getGameList(List<GameEntity> list){
         List<Game> gameList = new LinkedList<Game>();
-        for (Object o: list)
+        for (GameEntity gen: list)
             try{
-                gameList.add(new Game((GameEntity) o));
+                gameList.add(new Game(gen));
             }catch(ClassCastException e){
                 e.printStackTrace();
             }
         return gameList;
     }
-
-
-//    public boolean addGame(GameEntity game){
-//    }
 }
