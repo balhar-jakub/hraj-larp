@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.sql.Timestamp;
 
+
+
 /**
  * Created by IntelliJ IDEA.
  * User: Jakub Balhar

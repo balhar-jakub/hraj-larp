@@ -19,8 +19,8 @@ create table game (
   web text,
   larp_db text,
 
-  FOREIGN KEY (added_by) references hraj_user(id),
-  PRIMARY KEY (id)
+  FOREIGN KEY added_by references hraj_user(id),
+  PRIMARY KEY id
 );
 
 ALTER TABLE game
