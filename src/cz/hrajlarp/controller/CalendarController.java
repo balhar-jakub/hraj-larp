@@ -1,6 +1,9 @@
 package cz.hrajlarp.controller;
 
-import cz.hrajlarp.model.*;
+import cz.hrajlarp.model.Game;
+import cz.hrajlarp.model.GameDAO;
+import cz.hrajlarp.model.GameEntity;
+import cz.hrajlarp.model.UserDAO;
 import cz.hrajlarp.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,8 +16,8 @@ import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
- * User: Jakub Balhar
- * Date: 6.3.13
+ * User: Matheo
+ * Date: 14.3.13
  * Time: 22:09
  */
 @Controller
@@ -23,63 +26,52 @@ public class CalendarController {
     @Autowired
     GameDAO gameDAO;
 
-    @Autowired
-    UserDAO userDAO;
+    @RequestMapping(value = "/calendar")
+    public String calendar(Model model) {
+        System.out.println("CalendarController: Passing through..." + "/calendar");
 
-    @RequestMapping(value = "/game/add")
-    public String home() {
-        System.out.println("HomeController: Passing through...");
-        return "game/add";
+        List <Game> futureGames = gameDAO.getFutureGames();
+        List <Game> formerGames = gameDAO.getFormerGames();
+
+        model.addAttribute("futureGames", futureGames);
+        model.addAttribute("formerGames", formerGames);
+
+
+        if(futureGames != null && !futureGames.isEmpty())
+            for(Game g: futureGames)
+                System.out.println("future: " + g.getName() + " " + g.getDateAsYMD());
+
+        if(formerGames != null && !formerGames.isEmpty())
+            for(Game g: formerGames)
+                System.out.println("former: " + g.getName() + " " + g.getDateAsYMD());
+
+        if(formerGames != null && !formerGames.isEmpty())
+            model.addAttribute("testGame", formerGames.get(0));
+
+        return "calendar";
     }
 
-    @RequestMapping(value = "/game/list")
-    public String list(Model model){
-        List<Game> games = new ArrayList<Game>();
-        games.add(new Game());
-        games.add(new Game());
-        games.add(new Game());
+     /* methods used if futere and former games are in separated .JSP files */
+     /*
+    @RequestMapping(value = "/calendar/future")
+    public String futureGames(Model model) {
+        System.out.println("CalendarController: Passing through..." + "/calendar/future");
+
+        List<Game> games = gameDAO.getFutureGames();
         model.addAttribute("games", games);
-        return "game/list";
-    }
 
-    @RequestMapping(value = "/game/detail")
-    public String detail(@RequestParam("id") String gameId, Model model) {
-        System.out.println("GameController: Passing through..." + "/game/detail" );
-
-        if(gameId != null && !gameId.isEmpty()){
-            try{
-                int id = Integer.parseInt(gameId);
-                //TODO test if ID is valid
-
-                model.addAttribute("gameId", gameId);
-
-                GameEntity game = gameDAO.getGameById(id);
-                model.addAttribute("game", game);
-
-                if(game != null && game.getDate() != null){
-                    model.addAttribute("dateYMD", DateUtils.getDateAsYMD(game.getDate()));
-                    model.addAttribute("dateMD", DateUtils.getDateAsMD(game.getDate()));
-                    model.addAttribute("day", DateUtils.getDateAsDayName(game.getDate()));
-                    model.addAttribute("time", DateUtils.getTime(game.getDate()));
-                }
-//                if(game != null && game.getAddedBy()!= null){
-//                    HrajUserEntity author = userDAO.getUserById(game.getAddedBy());
-//                    model.addAttribute("author", author);
-//                }
-
-                return "game/detail";
-            }catch(Exception e){
-                //TODO exception not specified
-                model.addAttribute("error", "Hra #" + gameId + " nebyla nalezena");
-            }
-        }
-        return "game/detail";
+        return "calendar/futureEvents";
     }
 
 
-    @RequestMapping(value = "/games/future")
-    public String futureGames() {
-        System.out.println("HomeController: Passing through..." + "/games/future");
-        return "game/add";
+    @RequestMapping(value = "/calendar/former")
+    public String formerGames(Model model) {
+        System.out.println("CalendarController: Passing through..." + "/calendar/former");
+
+        List<Game> games = gameDAO.getFormerGames();
+        model.addAttribute("games", games);
+
+        return "calendar/formerEvents";
     }
+    */
 }

@@ -4,6 +4,7 @@ import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.swing.text.DateFormatter;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,7 +17,7 @@ import java.util.Date;
  */
 @javax.persistence.Table(name = "game", schema = "public", catalog = "")
 @Entity
-public class GameEntity {
+public class GameEntity implements Serializable {
     private Integer id;
 
     @javax.persistence.Column(name = "id")

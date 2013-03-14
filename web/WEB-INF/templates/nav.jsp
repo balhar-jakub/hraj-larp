@@ -7,6 +7,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+    <!-- navigation begin -->
     <nav>
         <ul>
             <div class="band white clearfix">
@@ -23,7 +24,7 @@
 
 
                     <%-- place panel with login informations here --%>
-    				<c:import url="/assets/templates/loginPanel.jsp" />
+    				<c:import url="/WEB-INF/templates/loginPanel.jsp" />
 
                 </div>
             </div>
@@ -51,3 +52,4 @@
             </div>
         </ul>
     </nav>
+    <!-- navigation end -->

@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,25 +23,6 @@ public class GameController {
     @Autowired
     GameDAO gameDAO;
 
-    @Autowired
-    UserDAO userDAO;
-
-    @RequestMapping(value = "/game/add")
-    public String home() {
-        System.out.println("HomeController: Passing through...");
-        return "game/add";
-    }
-
-    @RequestMapping(value = "/game/list")
-    public String list(Model model){
-        List<Game> games = new ArrayList<Game>();
-        games.add(new Game());
-        games.add(new Game());
-        games.add(new Game());
-        model.addAttribute("games", games);
-        return "game/list";
-    }
-
     @RequestMapping(value = "/game/detail")
     public String detail(@RequestParam("id") String gameId, Model model) {
         System.out.println("GameController: Passing through..." + "/game/detail" );
@@ -48,18 +30,16 @@ public class GameController {
         if(gameId != null && !gameId.isEmpty()){
             try{
                 int id = Integer.parseInt(gameId);
-                //TODO test if ID is valid
+                if(id <= 0)
+                    throw new Exception();
 
-                model.addAttribute("gameId", gameId);
-
-                GameEntity game = gameDAO.getGameById(id);
+                Game game = gameDAO.getGameById(id);
                 model.addAttribute("game", game);
-
-                HrajUserEntity user = userDAO.getUserById(game.getAddedBy());
-
                 return "game/detail";
+
             }catch(Exception e){
-                //TODO exception not specified
+
+                /* TODO error message is too brief and not stzled in .JSP file*/
                 model.addAttribute("error", "Hra #" + gameId + " nebyla nalezena");
             }
         }
