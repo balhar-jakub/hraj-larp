@@ -40,10 +40,6 @@
         </property>
     </bean>
 
-    <bean id="myDAO" class="cz.hrajlarp.model.MyDAO" >
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-
     <bean id="gameDAO" class="cz.hrajlarp.model.GameDAO" >
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
