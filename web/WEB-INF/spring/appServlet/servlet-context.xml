@@ -19,11 +19,15 @@
     <!-- Enables the Spring MVC @Controller programming model -->
     <mvc:annotation-driven />
 
+    <!-- Mapping of static files -->
+    <mvc:resources mapping="/img/**" location="/assets/img/" />
+    <mvc:resources mapping="/style/**" location="/assets/style/" />
+
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
-        <property name="url" value="jdbc:postgresql://194.8.253.136/pasekhraj?characterEncoding=UTF-8" />
-        <property name="username" value="pasek" />
-        <property name="password" value="pasekDb" />
+        <property name="url" value="jdbc:postgresql://194.8.253.136/hrajlarp" />
+        <property name="username" value="hrajlarp" />
+        <property name="password" value="5e5icha" />
         <property name="initialSize" value="2" />
         <property name="maxActive" value="5" />
     </bean>
@@ -44,14 +48,19 @@
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
+    <bean id="userDAO" class="cz.hrajlarp.model.UserDAO" >
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
     <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
+
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
+    <!-- resolver for uploading images -->
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="maxUploadSize" value="20971520" /> <!-- 20MB -->
         <property name="maxInMemorySize" value="1048576" />  <!-- 1MB -->
     </bean>
-
 </beans>

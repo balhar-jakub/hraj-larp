@@ -1,8 +1,6 @@
 package cz.hrajlarp.controller;
 
-import cz.hrajlarp.model.GameDAO;
-import cz.hrajlarp.model.GameEntity;
-import cz.hrajlarp.model.ValidGame;
+import cz.hrajlarp.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -69,6 +67,34 @@ public class GameController{
         gdao.addGame(game);
         System.out.println("Formular odeslan");
         return "/game/added";
+    }
+
+    /**
+     * Method for view of game detail
+     * @param gameId id of the game to view
+     * @param model model
+     * @return  String of .JSP file for game detail view
+     */
+    @RequestMapping(value="/game/detail", method= RequestMethod.GET)
+    public String detail(@RequestParam("id") String gameId, Model model) {
+        System.out.println("GameController: Passing through..." + "/game/detail" );
+
+        if(gameId != null && !gameId.isEmpty()){
+            try{
+                int id = Integer.parseInt(gameId);
+                if(id <= 0)
+                    throw new Exception();
+
+                Game game = gameDAO.getGameById(id);
+                model.addAttribute("game", game);
+
+            }catch(Exception e){
+
+                /* TODO error message is too brief and not styled in .JSP file*/
+                model.addAttribute("error", "Hra #" + gameId + " nebyla nalezena");
+            }
+        }
+        return "game/detail";
     }
 
     /**
