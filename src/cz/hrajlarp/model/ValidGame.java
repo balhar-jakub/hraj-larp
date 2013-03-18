@@ -106,7 +106,6 @@ public class ValidGame {
             System.out.println("Error in timestamp converting ValidGame.java.");
         }
 
-        game.setId(4);
         game.setAboutGame(aboutGame);
         game.setAddedBy(1);
         game.setAnotation(anotation);

@@ -8,13 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Matheo
- * Date: 9.3.13
- * Time: 19:40
- * To change this template use File | Settings | File Templates.
- */
 public class UserDAO {
 
     private SessionFactory sessionFactory;
@@ -32,7 +25,7 @@ public class UserDAO {
         Session session = null;
         try {
             session = sessionFactory.openSession();
-            Query query = session.createQuery("from UserEntity where id= :id ");
+            Query query = session.createQuery("from HrajUserEntity where id= :id ");
             query.setParameter("id", userId);
             System.out.println("executing: " + query.getQueryString());
             List list = query.list();
@@ -48,5 +41,33 @@ public class UserDAO {
             }
         }
         return null;
+    }
+
+    /**
+     * Adds new user into DB.
+     */
+    @Transactional
+    public void addUser(HrajUserEntity user){
+        Session session = sessionFactory.openSession();
+
+        session.beginTransaction();
+        session.save(user);
+        session.getTransaction().commit();
+
+        session.close();
+    }
+
+    /**
+     * Updates user data in DB.
+     */
+    @Transactional
+    public void editUser(HrajUserEntity user){
+        Session session = sessionFactory.openSession();
+
+        session.beginTransaction();
+        session.update(user);
+        session.getTransaction().commit();
+
+        session.close();
     }
 }

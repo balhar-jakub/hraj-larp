@@ -1,8 +1,6 @@
 package cz.hrajlarp.model;
 
-import javax.persistence.Basic;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 /**
@@ -16,6 +14,8 @@ import java.sql.Timestamp;
 public class GameEntity {
     private Integer id;
 
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_key_gen")
+    @SequenceGenerator(name = "id_key_gen", sequenceName = "hraj_game_id_seq")
     @javax.persistence.Column(name = "id")
     @Id
     public Integer getId() {

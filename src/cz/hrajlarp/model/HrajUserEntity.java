@@ -1,8 +1,6 @@
 package cz.hrajlarp.model;
 
-import javax.persistence.Basic;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,6 +13,8 @@ import javax.persistence.Id;
 public class HrajUserEntity {
     private Integer id;
 
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_key_gen")
+    @SequenceGenerator(name = "id_key_gen", sequenceName = "hraj_user_id_seq")
     @javax.persistence.Column(name = "id")
     @Id
     public Integer getId() {
@@ -154,5 +154,23 @@ public class HrajUserEntity {
         result = 31 * result + (gender != null ? gender.hashCode() : 0);
         result = 31 * result + (mailInformation != null ? mailInformation.hashCode() : 0);
         return result;
+    }
+
+    private String genderForm;
+    public void setGenderForm(String genderForm) {
+        this.genderForm = genderForm;
+    }
+
+    public String getGenderForm(){
+        return genderForm;
+    }
+
+    private String passwordAgain;
+    public void setPasswordAgain(String passwordAgain) {
+        this.passwordAgain = passwordAgain;
+    }
+
+    public String getPasswordAgain(){
+        return passwordAgain;
     }
 }
