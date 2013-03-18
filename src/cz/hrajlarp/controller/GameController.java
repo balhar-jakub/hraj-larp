@@ -1,6 +1,9 @@
 package cz.hrajlarp.controller;
 
-import cz.hrajlarp.model.*;
+import cz.hrajlarp.model.Game;
+import cz.hrajlarp.model.GameDAO;
+import cz.hrajlarp.model.GameEntity;
+import cz.hrajlarp.model.ValidGame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,7 +29,7 @@ import java.io.File;
 public class GameController{
 
     @Autowired
-    private GameDAO gdao;
+    private GameDAO gameDAO;
 
     /**
      * Basic view of add game form
@@ -64,7 +67,7 @@ public class GameController{
         if (r.hasErrors()) return "game/add";
 
         GameEntity game = myGame.getGameEntity();
-        gdao.addGame(game);
+        gameDAO.addGame(game);
         System.out.println("Formular odeslan");
         return "/game/added";
     }
@@ -111,7 +114,7 @@ public class GameController{
         try {
             int intId = Integer.parseInt(id);
             if (intId < 0) return "game/error";
-            GameEntity game = gdao.findGame(intId);
+            GameEntity game = gameDAO.findGame(intId);
             if (game != null) {
                 model.addAttribute("game", game);
                 model.addAttribute("date", game.getDate().toString().substring(0, 10));
@@ -148,7 +151,7 @@ public class GameController{
         if (r.hasErrors()) return "game/add";
 
         GameEntity game = myGame.getGameEntity();
-        gdao.editGame(game);
+        gameDAO.editGame(game);
         System.out.println("Formular odeslan");
         return "/game/added";
     }
