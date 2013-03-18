@@ -1,8 +1,6 @@
 package cz.hrajlarp.controller;
 
-import cz.hrajlarp.model.MyDAO;
 import cz.hrajlarp.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class UserController {
 
-    @Autowired
-    MyDAO myDAO;
+//    @Autowired
+//    MyDAO myDAO;
 
     @RequestMapping(value="/user/add")
     public String add(Model model){
@@ -26,9 +24,9 @@ public class UserController {
         return "user/add";
     }
 
-    @RequestMapping(value="/user/list")
-    public String getAll(Model model){
-        myDAO.getAllObjects();
-        return "user/add";
-    }
+//    @RequestMapping(value="/user/list")
+//    public String getAll(Model model){
+//        myDAO.getAllObjects();
+//        return "user/add";
+//    }
 }

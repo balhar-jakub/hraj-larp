@@ -3,7 +3,10 @@ package cz.hrajlarp.model;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.sql.Timestamp;
+
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,7 +16,7 @@ import java.sql.Timestamp;
  */
 @javax.persistence.Table(name = "game", schema = "public", catalog = "")
 @Entity
-public class GameEntity {
+public class GameEntity implements Serializable {
     private Integer id;
 
     @javax.persistence.Column(name = "id")
