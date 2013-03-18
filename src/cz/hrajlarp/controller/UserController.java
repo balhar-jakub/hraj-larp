@@ -1,6 +1,8 @@
 package cz.hrajlarp.controller;
 
 import cz.hrajlarp.model.User;
+import cz.hrajlarp.model.UserDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class UserController {
 
-//    @Autowired
-//    MyDAO myDAO;
+    @Autowired
+    UserDAO userDAO;
 
     @RequestMapping(value="/user/add")
     public String add(Model model){

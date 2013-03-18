@@ -30,6 +30,9 @@
 
     <link href="/style/style.css" type="text/css" rel="stylesheet">
     <link href="/style/font.css" type="text/css" rel="stylesheet">
+
+    <script src="/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="/js/content/calendar.js"></script>
 </head>
 
 <body>
@@ -44,15 +47,15 @@
     </div>
 
     <ul class="nav nav-tabs">
-        <li class="active"><a href="#tab1" data-toggle="tab">Nadcházející termíny</a></li>
-        <li><a href="#tab2" data-toggle="tab">Minulé termíny</a></li>
+        <li class="active"><a class="tabAnchor" id="tab" href="#tab1" data-toggle="tab">Nadcházející termíny</a></li>
+        <li><a class="tabAnchor" href="#tab2" data-toggle="tab">Minulé termíny</a></li>
     </ul>
 
     <div class="tab-content">
         <div class="tab-pane active" id="tab1">
             <div class="text page-kalendar">
-                <c:if test="${not empty requestScope.formerGames}">
-                    <c:forEach items="${requestScope.formerGames}" var="game">
+                <c:if test="${not empty requestScope.futureGames}">
+                    <c:forEach items="${requestScope.futureGames}" var="game">
                         <div class="clearfix den"><h2 class="datum"><span>${game.dateAsDM}</span>${game.dateAsDayName}</h2></div>
                             <div class="termin clearfix">
                                 <h3><a href="/game/detail?id=${game.id}" tabindex="-1">${game.name}</a></h3>
