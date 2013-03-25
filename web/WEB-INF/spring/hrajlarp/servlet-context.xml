@@ -23,6 +23,7 @@
     <mvc:resources mapping="/img/**" location="/assets/img/" />
     <mvc:resources mapping="/style/**" location="/assets/style/" />
     <mvc:resources mapping="/js/**" location="/assets/js/" />
+    <mvc:resources mapping="/html/**" location="/assets/html/" />
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
