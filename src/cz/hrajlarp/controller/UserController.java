@@ -1,18 +1,20 @@
 package cz.hrajlarp.controller;
 
-import cz.hrajlarp.model.GameDAO;
+import cz.hrajlarp.model.GameEntity;
 import cz.hrajlarp.model.HrajUserEntity;
+import cz.hrajlarp.model.UserAttendedGameDAO;
 import cz.hrajlarp.model.UserDAO;
 import cz.hrajlarp.utils.HashString;
 import cz.hrajlarp.utils.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class UserController {
 
     private UserDAO userDAO;
+    @Autowired
+    private UserAttendedGameDAO userAttendedGameDAO;
 
     @Autowired
     public void setUserDAO(UserDAO userDAO) {
@@ -104,6 +108,18 @@ public class UserController {
 
         userDAO.editUser(user);
         return "user/success";
+    }
+
+    @RequestMapping(value="/user/attended")
+    public String userAttended(Model model, @ModelAttribute("id") int id){
+        id = 1;
+        HrajUserEntity user = userDAO.getUserById(id);
+        List<GameEntity> attendedFormer = userAttendedGameDAO.getAttendedFormer(user);
+        List<GameEntity> attendedFuture = userAttendedGameDAO.getAttendedFuture(user);
+
+        model.addAttribute("futureGames", attendedFuture);
+        model.addAttribute("formerGames", attendedFormer);
+        return "/user/attended";
     }
 
 }

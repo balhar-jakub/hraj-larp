@@ -3,11 +3,14 @@ package cz.hrajlarp.model;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.metadata.ClassMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -140,5 +143,55 @@ public class UserAttendedGameDAO {
             }
         }
         return null;
+    }
+
+    public List<Game> filterAvailableGames(List<Game> games, HrajUserEntity loggedUser) {
+
+        System.out.println("filterAvailableGames method");
+
+        if(games == null || games.isEmpty()) return games;
+
+        Session session = null;
+        try {
+            session = sessionFactory.openSession();
+            Transaction transaction = session.beginTransaction();
+            List<Game> availableGames = new ArrayList<Game>();
+            for (Game game: games){
+                Query query = session.createQuery("select distinct uag.userAttended from UserAttendedGameEntity uag where uag.gameId in (:gameId)");
+                query.setParameter("gameId", game.getId());
+                System.out.println("executing: " + query.getQueryString());
+                List users = query.list();
+                System.out.println(Arrays.toString(users.toArray()));
+
+                game.setSignedRolesCounts(users); // fills game info: counts of signed users
+
+                if(game.isAvailableToUser(loggedUser)){
+                    System.out.println("game is available: " + game.getName());
+                    availableGames.add(game);
+                }
+                else
+                    System.out.println("game is NOT available: " + game.getName() + ", gender:" + loggedUser.getGender());
+            }
+
+            transaction.commit();
+            return availableGames;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally{
+            if (session != null && session.isOpen()) {
+                session.close();
+            }
+        }
+        return games;
+    }
+
+    public List<GameEntity> getAttendedFormer(HrajUserEntity user) {
+        return null;  //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public List<GameEntity> getAttendedFuture(HrajUserEntity user) {
+        return null;  //To change body of created methods use File | Settings | File Templates.
     }
 }

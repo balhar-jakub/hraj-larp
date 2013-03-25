@@ -1,9 +1,6 @@
 package cz.hrajlarp.controller;
 
 import cz.hrajlarp.model.*;
-import cz.hrajlarp.model.GameDAO;
-import cz.hrajlarp.model.GameEntity;
-import cz.hrajlarp.model.ValidGame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -88,7 +85,7 @@ public class GameController{
      * @param model model
      * @return  String of .JSP file for game detail view
      */
-    @RequestMapping(value="/game/detail", method= RequestMethod.GET)
+    @RequestMapping(value="/game/detail")
     public String detail(@RequestParam("id") String gameId, Model model) {
         System.out.println("GameController: Passing through..." + "/game/detail" );
 
@@ -180,7 +177,7 @@ public class GameController{
 
 
     @RequestMapping(value = "/game/logInGame", method= RequestMethod.POST, produces="text/plain;charset=UTF-8")
-    public void logInGame(
+    public String logInGame(
             @ModelAttribute("gameId") int gameId,
             @ModelAttribute("substitute") int substitute
     ){
@@ -196,12 +193,15 @@ public class GameController{
                     if (substitute == 0) uage.setSubstitute(false);
                     else uage.setSubstitute(true);
                     userAttendedGameDAO.addUserAttendedGame(uage);
+                    return "forward:/game/detail";
                 }
             }
         }
         else {
+            return "errors";
             //TODO error page: you have to log in first
         }
+        return "errors";
     }
 
     @RequestMapping(value = "/game/logOutGame", method= RequestMethod.POST, produces="text/plain;charset=UTF-8")

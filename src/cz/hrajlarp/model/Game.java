@@ -167,4 +167,12 @@ public class Game extends GameEntity{
     public boolean getFull(){
         return menFreeRoles == 0 && womenFreeRoles == 0 && bothFreeRoles == 0;
     }
+
+    public boolean isAvailableToUser(HrajUserEntity loggedUser) {
+        return false;  //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public boolean attendedGame(HrajUserEntity loggedUser) {
+        return false;
+    }
 }
