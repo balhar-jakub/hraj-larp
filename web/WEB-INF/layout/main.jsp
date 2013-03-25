@@ -17,7 +17,7 @@
     <meta property="og:title" content="<template:get name='title' />"/>
     <meta property="og:type" content="website"/>
     <meta property="og:url" content="<template:get name='url' />"/>
-    <meta property="og:description" content="<template:get name='title' />"/>
+    <meta property="og:description" content="<template:get name='description' />"/>
     <meta property="og:image" content="<template:get name='image' />"/>
 
     <link href="/style/bootstrap.min.css" rel="stylesheet">
@@ -89,7 +89,7 @@
 </div>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="js/libs/jquery-1.7.1.min.js"><\/script>')</script>
+<script>window.jQuery || document.write('<script src="/js/libs/jquery-1.7.1.min.js"><\/script>')</script>
 <script>
     function equalHeight(group) {
         var tallest = 0;
@@ -112,7 +112,7 @@
         equalHeight($(".eh1"));
     });
 </script>
-<script src="js/bootstrap.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
 <script>
     var _gaq = [
         ['_setAccount', 'UA-35090741-1'],

@@ -27,7 +27,7 @@ public class CalendarController {
      * @param model model
      * @return String of .JSP file name mapped for view of calendar
      */
-    @RequestMapping(value = {"/calendar","/"}, method= RequestMethod.GET)
+    @RequestMapping(value = {"/kalendar","/"}, method= RequestMethod.GET)
     public String calendar(Model model) {
         System.out.println("CalendarController: Passing through..." + "/calendar");
 
