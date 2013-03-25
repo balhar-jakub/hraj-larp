@@ -2,17 +2,12 @@ package cz.hrajlarp.controller;
 
 import cz.hrajlarp.model.Game;
 import cz.hrajlarp.model.GameDAO;
-import cz.hrajlarp.model.GameEntity;
-import cz.hrajlarp.model.UserDAO;
-import cz.hrajlarp.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,7 +27,7 @@ public class CalendarController {
      * @param model model
      * @return String of .JSP file name mapped for view of calendar
      */
-    @RequestMapping(value = "/calendar", method= RequestMethod.GET)
+    @RequestMapping(value = {"/calendar","/"}, method= RequestMethod.GET)
     public String calendar(Model model) {
         System.out.println("CalendarController: Passing through..." + "/calendar");
 
