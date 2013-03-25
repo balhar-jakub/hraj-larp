@@ -1,5 +1,6 @@
 package cz.hrajlarp.controller;
 
+import cz.hrajlarp.model.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

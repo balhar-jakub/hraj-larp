@@ -1,18 +1,12 @@
 package cz.hrajlarp.controller;
 
-import cz.hrajlarp.model.Game;
-import cz.hrajlarp.model.GameDAO;
-import cz.hrajlarp.model.GameEntity;
-import cz.hrajlarp.model.UserDAO;
-import cz.hrajlarp.utils.DateUtils;
+import cz.hrajlarp.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,8 +18,28 @@ import java.util.List;
 @Controller
 public class CalendarController {
 
+    private GameDAO gameDAO;
+
     @Autowired
-    GameDAO gameDAO;
+    public void setGameDAO(GameDAO gameDAO) {
+        this.gameDAO = gameDAO;
+    }
+
+
+    private UserDAO userDAO;
+
+    @Autowired
+    public void setUserDAO(UserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
+
+
+    private UserAttendedGameDAO userAttendedGameDAO;
+
+    @Autowired
+    public void setUserAttendedGameDAO(UserAttendedGameDAO userAttendedGameDAO) {
+        this.userAttendedGameDAO = userAttendedGameDAO;
+    }
 
     /**
      * Controller for view of calendar
@@ -41,6 +55,11 @@ public class CalendarController {
 
         model.addAttribute("futureGames", futureGames);
         model.addAttribute("formerGames", formerGames);
+
+        HrajUserEntity testUser = userDAO.getUserById(2);
+
+        List<Game> availableGames = userAttendedGameDAO.filterAvailableGames(futureGames, testUser); /* TODO gender must be set by logged user from cookie or session */
+        model.addAttribute("availableGames", availableGames);
 
         /* TODO what should be displayed if some of the lists (or both) is empty */
 

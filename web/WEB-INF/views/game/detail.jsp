@@ -69,6 +69,7 @@
             <input type="hidden" name="gameId" value="${requestScope.game.id}">
             <input type="hidden" name="replace" value="1">
             <input type="submit" value="Přihlásit se jako náhradník.">
+            ${requestScope.substitute}
           </form>
         </span>
       </div>
@@ -92,9 +93,15 @@
             </tr>
             <tr>
               <td>z toho volných</td>
-              <td>${requestScope.game.menRole}</td>
-              <td>${requestScope.game.womenRole}</td>
-              <td>${requestScope.game.bothRole}</td>
+              <td>${requestScope.game.menFreeRoles}</td>
+              <td>${requestScope.game.womenFreeRoles}</td>
+              <td>${requestScope.game.bothFreeRoles}</td>
+            </tr>
+            <tr>
+              <td>Zatím přihlášeno</td>
+              <td>${requestScope.game.menAssignedRoles}</td>
+              <td>${requestScope.game.womenAssignedRoles}</td>
+              <td></td>
             </tr>
           </tbody>
         </table>
