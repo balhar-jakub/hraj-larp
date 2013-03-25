@@ -1,77 +1,116 @@
 package cz.hrajlarp.model;
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Date;
+import javax.persistence.Basic;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import java.sql.Timestamp;
 
-@javax.persistence.Table(name = "user_attended_game", schema = "public", catalog = "")
+/**
+ * Created by IntelliJ IDEA.
+ * User: Prasek
+ * Date: 24.3.13
+ * Time: 14:10
+ * To change this template use File | Settings | File Templates.
+ */
+@javax.persistence.IdClass(cz.hrajlarp.model.UserAttendedGameEntityPK.class)
+@javax.persistence.Table(name = "user_attended_game", schema = "public")
 @Entity
-@AssociationOverrides({
-        @AssociationOverride(name="pk.hrajUser",
-                joinColumns = @JoinColumn(name="user_id")),
-        @AssociationOverride(name="pk.game",
-                joinColumns = @JoinColumn(name="game_id"))
-})
-public class UserAttendedGameEntity implements Serializable {
-    private UserAttendedGameId pk = new UserAttendedGameId();
-    private Date added;
+public class UserAttendedGameEntity {
+    private int userId;
 
-    public UserAttendedGameEntity(){
+    @javax.persistence.Column(name = "user_id")
+    @Id
+    public int getUserId() {
+        return userId;
     }
 
-    @EmbeddedId
-    public UserAttendedGameId getPk() {
-        return pk;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    public void setPk(UserAttendedGameId pk) {
-        this.pk = pk;
+    private int gameId;
+
+    @javax.persistence.Column(name = "game_id")
+    @Id
+    public int getGameId() {
+        return gameId;
     }
 
-    @Transient
-    public GameEntity getGameEntity(){
-        return getPk().getGame();
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
     }
 
-    public void setGameEntity(GameEntity gameEntity){
-        getPk().setGame(gameEntity);
-    }
+    private Timestamp added;
 
-    @Transient
-    public HrajUserEntity getHrajUserEntity(){
-        return getPk().getHrajUser();
-    }
-
-    public void setHrajUserEntity(HrajUserEntity hrajUser){
-        getPk().setHrajUser(hrajUser);
-    }
-
-    @Temporal(TemporalType.DATE)
-    @Column(name="added", nullable = false, length = 10)
-    public Date getAdded(){
+    @javax.persistence.Column(name = "added")
+    @Basic
+    public Timestamp getAdded() {
         return added;
     }
 
-    public void setAdded(Date added) {
+    public void setAdded(Timestamp added) {
         this.added = added;
     }
 
+    @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         UserAttendedGameEntity that = (UserAttendedGameEntity) o;
 
-        if (getPk() != null ? !getPk().equals(that.getPk())
-                : that.getPk() != null)
-            return false;
+        if (gameId != that.gameId) return false;
+        if (userId != that.userId) return false;
+        if (added != null ? !added.equals(that.added) : that.added != null) return false;
 
         return true;
     }
 
+    @Override
     public int hashCode() {
-        return (getPk() != null ? getPk().hashCode() : 0);
+        int result = userId;
+        result = 31 * result + gameId;
+        result = 31 * result + (added != null ? added.hashCode() : 0);
+        return result;
+    }
+
+    private GameEntity attendedGame;
+
+    @ManyToOne
+    public
+    @javax.persistence.JoinColumn(name = "game_id", referencedColumnName = "id", nullable = false, insertable=false, updatable=false)
+    GameEntity getAttendedGame() {
+        return attendedGame;
+    }
+
+    public void setAttendedGame(GameEntity attendedGame) {
+        this.attendedGame = attendedGame;
+    }
+
+    private HrajUserEntity userAttended;
+
+    @ManyToOne
+    public
+    @javax.persistence.JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, insertable=false, updatable=false)
+    HrajUserEntity getUserAttended() {
+        return userAttended;
+    }
+
+    public void setUserAttended(HrajUserEntity userAttended) {
+        this.userAttended = userAttended;
+    }
+
+
+    private boolean substitute;
+
+    @javax.persistence.Column(name = "substitute")
+    @Basic
+    public boolean isSubstitute() {
+        return substitute;
+    }
+
+    public void setSubstitute(boolean substitute) {
+        this.substitute = substitute;
     }
 }

@@ -1,7 +1,7 @@
 package cz.hrajlarp.model;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,19 +9,21 @@ import java.util.Set;
  * Date: 6.3.13
  * Time: 23:12
  */
-@javax.persistence.Table(name = "hraj_user", schema = "public", catalog = "")
+@Table(name = "hraj_user", schema = "public", catalog = "")
 @Entity
 public class HrajUserEntity {
     private Integer id;
 
-    private Set<GameEntity> playedGames;
-
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_key_gen")
-    @SequenceGenerator(name = "id_key_gen", sequenceName = "hraj_user_id_seq", allocationSize = 1)
-    @javax.persistence.Column(name = "id")
+    @SequenceGenerator(name = "id_key_gen", sequenceName = "hraj_user_id_seq")
+    @Column(name = "id")
     @Id
     public Integer getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setId(Integer id) {
@@ -30,7 +32,7 @@ public class HrajUserEntity {
 
     private String name;
 
-    @javax.persistence.Column(name = "name")
+    @Column(name = "name")
     @Basic
     public String getName() {
         return name;
@@ -42,7 +44,7 @@ public class HrajUserEntity {
 
     private String lastName;
 
-    @javax.persistence.Column(name = "last_name")
+    @Column(name = "last_name")
     @Basic
     public String getLastName() {
         return lastName;
@@ -54,7 +56,7 @@ public class HrajUserEntity {
 
     private String userName;
 
-    @javax.persistence.Column(name = "user_name")
+    @Column(name = "user_name")
     @Basic
     public String getUserName() {
         return userName;
@@ -66,7 +68,7 @@ public class HrajUserEntity {
 
     private String password;
 
-    @javax.persistence.Column(name = "password")
+    @Column(name = "password")
     @Basic
     public String getPassword() {
         return password;
@@ -78,7 +80,7 @@ public class HrajUserEntity {
 
     private String email;
 
-    @javax.persistence.Column(name = "email")
+    @Column(name = "email")
     @Basic
     public String getEmail() {
         return email;
@@ -90,7 +92,7 @@ public class HrajUserEntity {
 
     private String phone;
 
-    @javax.persistence.Column(name = "phone")
+    @Column(name = "phone")
     @Basic
     public String getPhone() {
         return phone;
@@ -102,10 +104,14 @@ public class HrajUserEntity {
 
     private Integer gender;
 
-    @javax.persistence.Column(name = "gender")
+    @Column(name = "gender")
     @Basic
     public Integer getGender() {
         return gender;
+    }
+
+    public void setGender(int gender) {
+        this.gender = gender;
     }
 
     public void setGender(Integer gender) {
@@ -114,41 +120,14 @@ public class HrajUserEntity {
 
     private Boolean mailInformation;
 
-    @javax.persistence.Column(name = "mail_information")
+    @Column(name = "mail_information")
     @Basic
-    public Boolean getMailInformation() {
+    public Boolean isMailInformation() {
         return mailInformation;
     }
 
     public void setMailInformation(Boolean mailInformation) {
         this.mailInformation = mailInformation;
-    }
-
-    private String genderForm;
-    public void setGenderForm(String genderForm) {
-        this.genderForm = genderForm;
-    }
-
-    public String getGenderForm(){
-        return genderForm;
-    }
-
-    private String passwordAgain;
-    public void setPasswordAgain(String passwordAgain) {
-        this.passwordAgain = passwordAgain;
-    }
-
-    public String getPasswordAgain(){
-        return passwordAgain;
-    }
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.game")
-    public Set<GameEntity> getPlayedGames() {
-        return playedGames;
-    }
-
-    public void setPlayedGames(Set<GameEntity> playedGames) {
-        this.playedGames = playedGames;
     }
 
     @Override
@@ -184,5 +163,35 @@ public class HrajUserEntity {
         result = 31 * result + (gender != null ? gender.hashCode() : 0);
         result = 31 * result + (mailInformation != null ? mailInformation.hashCode() : 0);
         return result;
+    }
+
+    private String genderForm;
+    public void setGenderForm(String genderForm) {
+        this.genderForm = genderForm;
+    }
+
+    public String getGenderForm(){
+        return genderForm;
+    }
+
+    private String passwordAgain;
+    public void setPasswordAgain(String passwordAgain) {
+        this.passwordAgain = passwordAgain;
+    }
+
+    public String getPasswordAgain(){
+        return passwordAgain;
+    }
+
+    private Map<Object, UserAttendedGameEntity> userEntities;
+
+    @MapKey(name = "userId")
+    @OneToMany(mappedBy = "userAttended")
+    public Map<Object, UserAttendedGameEntity> getUserEntities() {
+        return userEntities;
+    }
+
+    public void setUserEntities(Map<Object, UserAttendedGameEntity> userEntities) {
+        this.userEntities = userEntities;
     }
 }

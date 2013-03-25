@@ -1,9 +1,6 @@
 package cz.hrajlarp.controller;
 
-import cz.hrajlarp.model.Game;
-import cz.hrajlarp.model.GameDAO;
-import cz.hrajlarp.model.GameEntity;
-import cz.hrajlarp.model.ValidGame;
+import cz.hrajlarp.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +15,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -28,8 +26,19 @@ import java.io.File;
 @Controller
 public class GameController{
 
-    @Autowired
     private GameDAO gameDAO;
+
+    @Autowired
+    public void setGameDAO(GameDAO gameDAO) {
+        this.gameDAO = gameDAO;
+    }
+
+    private UserAttendedGameDAO userAttendedGameDAO;
+
+    @Autowired
+    public void setUserAttendedGameDAO(UserAttendedGameDAO userAttendedGameDAO) {
+        this.userAttendedGameDAO = userAttendedGameDAO;
+    }
 
     /**
      * Basic view of add game form
@@ -89,8 +98,13 @@ public class GameController{
                     throw new Exception();
 
                 Game game = gameDAO.getGameById(id);
+
+                List<HrajUserEntity> assignedUsers = userAttendedGameDAO.getUsersByGameId(game.getId());
+                game.setSignedRolesCounts(assignedUsers);
+
                 model.addAttribute("game", game);
 
+                model.addAttribute("substitute", userAttendedGameDAO.isSubstitute(game.getId(), 1)); //TODO get user ID from cookie or session!
             }catch(Exception e){
 
                 /* TODO error message is too brief and not styled in .JSP file*/
@@ -128,7 +142,6 @@ public class GameController{
         catch (NumberFormatException e) {
             return "game/error";
         }
-
     }
 
     /**
@@ -147,6 +160,9 @@ public class GameController{
 
         //TODO image editation
         myGame.setImage("img.jpg");  //dump fix untill image editation will be done
+        if (myGame.getMenRole() == null) myGame.setMenRole("0");
+        if (myGame.getWomenRole() == null) myGame.setWomenRole("0");
+        if (myGame.getBothRole() == null) myGame.setBothRole("0");
         myGame.validate(r);
         if (r.hasErrors()) return "game/add";
 

@@ -1,10 +1,12 @@
 package cz.hrajlarp.controller;
 
+import cz.hrajlarp.model.GameDAO;
 import cz.hrajlarp.model.HrajUserEntity;
 import cz.hrajlarp.model.UserDAO;
 import cz.hrajlarp.utils.HashString;
 import cz.hrajlarp.utils.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,8 +23,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class UserController {
 
-    @Autowired
     private UserDAO userDAO;
+
+    @Autowired
+    public void setUserDAO(UserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
 
     /**
      * Redirects to new user registration page.
@@ -68,7 +74,7 @@ public class UserController {
         else {
 
             if(user.getGender()!=null){
-                if(user.getGender().intValue()==0)
+                if(user.getGender()==0)
                     user.setGenderForm("M");
                 else user.setGenderForm("F");
             }
