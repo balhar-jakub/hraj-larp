@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -148,6 +149,7 @@ public class GameDAO {
         return gameList;
     }
 
+
     @Transactional(readOnly=true)
     public void getAllObjects(){
         final Session session = sessionFactory.openSession();
@@ -193,6 +195,7 @@ public class GameDAO {
         session.getTransaction().commit();
         session.close();
     }
+
 
     /**
      * This method selects game from database

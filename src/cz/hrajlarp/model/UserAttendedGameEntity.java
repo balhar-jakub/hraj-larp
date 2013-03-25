@@ -19,6 +19,18 @@ import java.sql.Timestamp;
 public class UserAttendedGameEntity {
     private int userId;
 
+    private boolean substitute;
+
+    @javax.persistence.Column(name = "substitute")
+    @Basic
+    public boolean isSubstitute() {
+        return substitute;
+    }
+
+    public void setSubstitute(boolean substitute) {
+        this.substitute = substitute;
+    }
+
     @javax.persistence.Column(name = "user_id")
     @Id
     public int getUserId() {
@@ -99,18 +111,5 @@ public class UserAttendedGameEntity {
 
     public void setUserAttended(HrajUserEntity userAttended) {
         this.userAttended = userAttended;
-    }
-
-
-    private boolean substitute;
-
-    @javax.persistence.Column(name = "substitute")
-    @Basic
-    public boolean isSubstitute() {
-        return substitute;
-    }
-
-    public void setSubstitute(boolean substitute) {
-        this.substitute = substitute;
     }
 }

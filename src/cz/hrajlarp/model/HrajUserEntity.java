@@ -114,11 +114,11 @@ public class HrajUserEntity {
 
     @Column(name = "mail_information")
     @Basic
-    public Boolean isMailInformation() {
+    public boolean isMailInformation() {
         return mailInformation;
     }
 
-    public void setMailInformation(Boolean mailInformation) {
+    public void setMailInformation(boolean mailInformation) {
         this.mailInformation = mailInformation;
     }
 

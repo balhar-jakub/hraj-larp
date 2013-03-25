@@ -1,6 +1,9 @@
 package cz.hrajlarp.controller;
 
 import cz.hrajlarp.model.*;
+import cz.hrajlarp.model.GameDAO;
+import cz.hrajlarp.model.GameEntity;
+import cz.hrajlarp.model.ValidGame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.List;
 
+
 /**
  * Created by IntelliJ IDEA.
  * User: Jakub Balhar
@@ -26,19 +30,14 @@ import java.util.List;
 @Controller
 public class GameController{
 
+    @Autowired
     private GameDAO gameDAO;
-
     @Autowired
-    public void setGameDAO(GameDAO gameDAO) {
-        this.gameDAO = gameDAO;
-    }
-
+    private UserDAO userDAO;
+    @Autowired
     private UserAttendedGameDAO userAttendedGameDAO;
-
     @Autowired
-    public void setUserAttendedGameDAO(UserAttendedGameDAO userAttendedGameDAO) {
-        this.userAttendedGameDAO = userAttendedGameDAO;
-    }
+    private Rights rights;
 
     /**
      * Basic view of add game form
@@ -73,10 +72,12 @@ public class GameController{
         String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
         myGame.setImage(image);
         myGame.validate(r);
+
         if (r.hasErrors()) return "game/add";
 
         GameEntity game = myGame.getGameEntity();
         gameDAO.addGame(game);
+
         System.out.println("Formular odeslan");
         return "/game/added";
     }
@@ -102,9 +103,15 @@ public class GameController{
                 List<HrajUserEntity> assignedUsers = userAttendedGameDAO.getUsersByGameId(game.getId());
                 game.setSignedRolesCounts(assignedUsers);
 
+                UserAttendedGameEntity uage = new UserAttendedGameEntity();
+                uage.setGameId(game.getId());
+                uage.setUserId(1);  //TODO get user id from session
+                game.setFull(1);  //TODO set gender from user
                 model.addAttribute("game", game);
+                boolean logged = userAttendedGameDAO.isLogged(uage);
+                model.addAttribute("loggedInGame", logged);
+                if (logged) model.addAttribute("substitute", userAttendedGameDAO.isSubstitute(uage));
 
-                model.addAttribute("substitute", userAttendedGameDAO.isSubstitute(game.getId(), 1)); //TODO get user ID from cookie or session!
             }catch(Exception e){
 
                 /* TODO error message is too brief and not styled in .JSP file*/
@@ -129,6 +136,7 @@ public class GameController{
             int intId = Integer.parseInt(id);
             if (intId < 0) return "game/error";
             GameEntity game = gameDAO.getGameById(intId);
+
             if (game != null) {
                 model.addAttribute("game", game);
                 model.addAttribute("date", game.getDate().toString().substring(0, 10));
@@ -142,6 +150,7 @@ public class GameController{
         catch (NumberFormatException e) {
             return "game/error";
         }
+
     }
 
     /**
@@ -160,16 +169,61 @@ public class GameController{
 
         //TODO image editation
         myGame.setImage("img.jpg");  //dump fix untill image editation will be done
-        if (myGame.getMenRole() == null) myGame.setMenRole("0");
-        if (myGame.getWomenRole() == null) myGame.setWomenRole("0");
-        if (myGame.getBothRole() == null) myGame.setBothRole("0");
         myGame.validate(r);
         if (r.hasErrors()) return "game/add";
 
         GameEntity game = myGame.getGameEntity();
         gameDAO.editGame(game);
         System.out.println("Formular odeslan");
-        return "/game/added";
+        return "/game/add";
+    }
+
+
+    @RequestMapping(value = "/game/logInGame", method= RequestMethod.POST, produces="text/plain;charset=UTF-8")
+    public void logInGame(
+            @ModelAttribute("gameId") int gameId,
+            @ModelAttribute("substitute") int substitute
+    ){
+        if (rights.isLogged()){
+            int userId = 1;
+            //TODO get userID from session
+
+            if (gameId > 0 && (substitute == 0 || substitute == 1)){
+                if (gameDAO.getGameById(gameId) != null){
+                    UserAttendedGameEntity uage = new UserAttendedGameEntity();
+                    uage.setGameId(gameId);
+                    uage.setUserId(userId);
+                    if (substitute == 0) uage.setSubstitute(false);
+                    else uage.setSubstitute(true);
+                    userAttendedGameDAO.addUserAttendedGame(uage);
+                }
+            }
+        }
+        else {
+            //TODO error page: you have to log in first
+        }
+    }
+
+    @RequestMapping(value = "/game/logOutGame", method= RequestMethod.POST, produces="text/plain;charset=UTF-8")
+    public void logOutGame(
+            @ModelAttribute("gameId") int gameId
+    ){
+        if (rights.isLogged()){
+            int userId = 1;
+            //TODO get userID from session
+
+            if (gameId > 0){
+                if (gameDAO.getGameById(gameId) != null){
+                    UserAttendedGameEntity uage = new UserAttendedGameEntity();
+                    uage.setGameId(gameId);
+                    uage.setUserId(userId);
+                    userAttendedGameDAO.deleteUserAttendedGame(uage);
+                }
+            }
+        }
+        else {
+            //TODO error page: you have to log in first
+        }
     }
 
     /**
