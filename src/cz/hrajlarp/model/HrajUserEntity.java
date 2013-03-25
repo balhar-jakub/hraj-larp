@@ -1,6 +1,7 @@
 package cz.hrajlarp.model;
 
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,8 +14,10 @@ import javax.persistence.*;
 public class HrajUserEntity {
     private Integer id;
 
+    private Set<GameEntity> playedGames;
+
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_key_gen")
-    @SequenceGenerator(name = "id_key_gen", sequenceName = "hraj_user_id_seq")
+    @SequenceGenerator(name = "id_key_gen", sequenceName = "hraj_user_id_seq", allocationSize = 1)
     @javax.persistence.Column(name = "id")
     @Id
     public Integer getId() {
@@ -121,6 +124,33 @@ public class HrajUserEntity {
         this.mailInformation = mailInformation;
     }
 
+    private String genderForm;
+    public void setGenderForm(String genderForm) {
+        this.genderForm = genderForm;
+    }
+
+    public String getGenderForm(){
+        return genderForm;
+    }
+
+    private String passwordAgain;
+    public void setPasswordAgain(String passwordAgain) {
+        this.passwordAgain = passwordAgain;
+    }
+
+    public String getPasswordAgain(){
+        return passwordAgain;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.game")
+    public Set<GameEntity> getPlayedGames() {
+        return playedGames;
+    }
+
+    public void setPlayedGames(Set<GameEntity> playedGames) {
+        this.playedGames = playedGames;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -154,23 +184,5 @@ public class HrajUserEntity {
         result = 31 * result + (gender != null ? gender.hashCode() : 0);
         result = 31 * result + (mailInformation != null ? mailInformation.hashCode() : 0);
         return result;
-    }
-
-    private String genderForm;
-    public void setGenderForm(String genderForm) {
-        this.genderForm = genderForm;
-    }
-
-    public String getGenderForm(){
-        return genderForm;
-    }
-
-    private String passwordAgain;
-    public void setPasswordAgain(String passwordAgain) {
-        this.passwordAgain = passwordAgain;
-    }
-
-    public String getPasswordAgain(){
-        return passwordAgain;
     }
 }

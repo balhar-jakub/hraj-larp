@@ -64,7 +64,7 @@ public class GameController{
         String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
         myGame.setImage(image);
         myGame.validate(r);
-        if (r.hasErrors()) return "game/added";
+        if (r.hasErrors()) return "game/add";
 
         GameEntity game = myGame.getGameEntity();
         gameDAO.addGame(game);

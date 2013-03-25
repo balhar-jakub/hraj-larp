@@ -61,7 +61,6 @@ public class UserController {
     @RequestMapping(value="/user/edit", method= RequestMethod.GET)
     public String edit(Model model, @ModelAttribute("id") String id){
         model.addAttribute("userForm", new HrajUserEntity());
-        id="2";//just testing value
         int userId = Integer.parseInt(id);
         HrajUserEntity user = userDAO.getUserById(userId);
         if (user==null)

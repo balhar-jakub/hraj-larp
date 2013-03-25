@@ -1,7 +1,9 @@
 package cz.hrajlarp.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -11,11 +13,11 @@ import java.sql.Timestamp;
  */
 @javax.persistence.Table(name = "game", schema = "public", catalog = "")
 @Entity
-public class GameEntity {
+public class GameEntity implements Serializable {
     private Integer id;
 
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_key_gen")
-    @SequenceGenerator(name = "id_key_gen", sequenceName = "hraj_game_id_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "id_key_gen")
+    @SequenceGenerator(name = "id_key_gen", sequenceName = "hraj_game_id_seq", allocationSize = 1)
     @javax.persistence.Column(name = "id")
     @Id
     public Integer getId() {
@@ -206,6 +208,8 @@ public class GameEntity {
         this.larpDb = larpDb;
     }
 
+    private Set<HrajUserEntity> players;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -252,5 +256,14 @@ public class GameEntity {
         result = 31 * result + (web != null ? web.hashCode() : 0);
         result = 31 * result + (larpDb != null ? larpDb.hashCode() : 0);
         return result;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.hrajUser", cascade = CascadeType.ALL)
+    public Set<HrajUserEntity> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(Set<HrajUserEntity> players) {
+        this.players = players;
     }
 }
