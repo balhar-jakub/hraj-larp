@@ -100,6 +100,7 @@ public class ValidGame {
 
         try {
             SimpleDateFormat datetimeFormatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            if (time.isEmpty()) time = "12:00";
             Date changedDate = datetimeFormatter1.parse(date+" "+time);
             game.setDate(new Timestamp(changedDate.getTime()));
         } catch (ParseException e) {
@@ -114,8 +115,11 @@ public class ValidGame {
         game.setInfo(info);
         game.setLarpDb(larpDb);
         if (!bothRole.isEmpty()) game.setBothRole(Integer.parseInt(bothRole));
+        else game.setBothRole(0);
         if (!menRole.isEmpty())game.setMenRole(Integer.parseInt(menRole));
+        else game.setMenRole(0);
         if (!womenRole.isEmpty())game.setWomenRole(Integer.parseInt(womenRole));
+        else game.setWomenRole(0);
         game.setName(name);
         game.setPlace(place);
         game.setShortText(shortText);

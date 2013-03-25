@@ -65,10 +65,41 @@
       <div class="siderow center">
         <span class="info">
           <!-- If user is logged and date is correct button Přihlaš tady bude. -->
-          <form method="post" action="http://hrajlarp.cz/attend/">
+      <c:choose>
+        <c:when test="${requestScope.loggedInGame}">
+        <c:choose>
+          <c:when test="${requestScope.substitute}">
+             <span>
+                 Jste přihlášen jako náhradník
+             </span>
+          </c:when>
+          <c:otherwise>
+             <span>
+                 Jste přihlášen jako řádný účastník
+             </span>
+          </c:otherwise>
+        </c:choose>
+          <form method="post" action="logOutGame">
+              <input type="hidden" name="gameId" value="${requestScope.game.id}">
+              <input type="submit" value="Odhlásit ze hry.">
+          </form>
+        </c:when>
+        <c:otherwise>
+          <form method="post" action="logInGame">
             <input type="hidden" name="gameId" value="${requestScope.game.id}">
             <input type="hidden" name="replace" value="1">
-            <input type="submit" value="Přihlásit se jako náhradník.">
+            <c:choose>
+            <c:when test="${requestScope.game.full}">
+                <input type="submit" value="Přihlásit se jako náhradník.">
+                <input type="hidden" name="substitute" value="1">
+            </c:when>
+            <c:otherwise>
+                <input type="submit" value="Přihlásit se na hru.">
+                <input type="hidden" name="substitute" value="0">
+            </c:otherwise>
+            </c:choose>
+        </c:otherwise>
+      </c:choose>
           </form>
         </span>
       </div>
@@ -92,9 +123,15 @@
             </tr>
             <tr>
               <td>z toho volných</td>
-              <td>${requestScope.game.menRole}</td>
-              <td>${requestScope.game.womenRole}</td>
-              <td>${requestScope.game.bothRole}</td>
+              <td>${requestScope.game.menFreeRoles}</td>
+              <td>${requestScope.game.womenFreeRoles}</td>
+              <td>${requestScope.game.bothFreeRoles}</td>
+            </tr>
+            <tr>
+              <td>Zatím přihlášeno</td>
+              <td>${requestScope.game.menAssignedRoles}</td>
+              <td>${requestScope.game.womenAssignedRoles}</td>
+              <td></td>
             </tr>
           </tbody>
         </table>

@@ -2,6 +2,7 @@ package cz.hrajlarp.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,17 +10,21 @@ import java.sql.Timestamp;
  * Date: 6.3.13
  * Time: 23:12
  */
-@javax.persistence.Table(name = "game", schema = "public", catalog = "")
+@Table(name = "game", schema = "public", catalog = "")
 @Entity
 public class GameEntity {
     private Integer id;
 
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_key_gen")
     @SequenceGenerator(name = "id_key_gen", sequenceName = "hraj_game_id_seq")
-    @javax.persistence.Column(name = "id")
+    @Column(name = "id")
     @Id
     public Integer getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setId(Integer id) {
@@ -28,7 +33,7 @@ public class GameEntity {
 
     private String name;
 
-    @javax.persistence.Column(name = "name")
+    @Column(name = "name")
     @Basic
     public String getName() {
         return name;
@@ -40,7 +45,7 @@ public class GameEntity {
 
     private Timestamp date;
 
-    @javax.persistence.Column(name = "date")
+    @Column(name = "date")
     @Basic
     public Timestamp getDate() {
         return date;
@@ -52,7 +57,7 @@ public class GameEntity {
 
     private String anotation;
 
-    @javax.persistence.Column(name = "anotation")
+    @Column(name = "anotation")
     @Basic
     public String getAnotation() {
         return anotation;
@@ -64,7 +69,7 @@ public class GameEntity {
 
     private String author;
 
-    @javax.persistence.Column(name = "author")
+    @Column(name = "author")
     @Basic
     public String getAuthor() {
         return author;
@@ -76,7 +81,7 @@ public class GameEntity {
 
     private String image;
 
-    @javax.persistence.Column(name = "image")
+    @Column(name = "image")
     @Basic
     public String getImage() {
         return image;
@@ -88,7 +93,7 @@ public class GameEntity {
 
     private Integer addedBy;
 
-    @javax.persistence.Column(name = "added_by")
+    @Column(name = "added_by")
     @Basic
     public Integer getAddedBy() {
         return addedBy;
@@ -100,10 +105,14 @@ public class GameEntity {
 
     private Integer menRole;
 
-    @javax.persistence.Column(name = "men_role")
+    @Column(name = "men_role")
     @Basic
     public Integer getMenRole() {
         return menRole;
+    }
+
+    public void setMenRole(int menRole) {
+        this.menRole = menRole;
     }
 
     public void setMenRole(Integer menRole) {
@@ -112,10 +121,14 @@ public class GameEntity {
 
     private Integer womenRole;
 
-    @javax.persistence.Column(name = "women_role")
+    @Column(name = "women_role")
     @Basic
     public Integer getWomenRole() {
         return womenRole;
+    }
+
+    public void setWomenRole(int womenRole) {
+        this.womenRole = womenRole;
     }
 
     public void setWomenRole(Integer womenRole) {
@@ -124,10 +137,14 @@ public class GameEntity {
 
     private Integer bothRole;
 
-    @javax.persistence.Column(name = "both_role")
+    @Column(name = "both_role")
     @Basic
     public Integer getBothRole() {
         return bothRole;
+    }
+
+    public void setBothRole(int bothRole) {
+        this.bothRole = bothRole;
     }
 
     public void setBothRole(Integer bothRole) {
@@ -136,7 +153,7 @@ public class GameEntity {
 
     private String shortText;
 
-    @javax.persistence.Column(name = "short_text")
+    @Column(name = "short_text")
     @Basic
     public String getShortText() {
         return shortText;
@@ -148,7 +165,7 @@ public class GameEntity {
 
     private String place;
 
-    @javax.persistence.Column(name = "place")
+    @Column(name = "place")
     @Basic
     public String getPlace() {
         return place;
@@ -160,7 +177,7 @@ public class GameEntity {
 
     private String info;
 
-    @javax.persistence.Column(name = "info")
+    @Column(name = "info")
     @Basic
     public String getInfo() {
         return info;
@@ -172,7 +189,7 @@ public class GameEntity {
 
     private String aboutGame;
 
-    @javax.persistence.Column(name = "about_game")
+    @Column(name = "about_game")
     @Basic
     public String getAboutGame() {
         return aboutGame;
@@ -184,7 +201,7 @@ public class GameEntity {
 
     private String web;
 
-    @javax.persistence.Column(name = "web")
+    @Column(name = "web")
     @Basic
     public String getWeb() {
         return web;
@@ -196,7 +213,7 @@ public class GameEntity {
 
     private String larpDb;
 
-    @javax.persistence.Column(name = "larp_db")
+    @Column(name = "larp_db")
     @Basic
     public String getLarpDb() {
         return larpDb;
@@ -252,5 +269,17 @@ public class GameEntity {
         result = 31 * result + (web != null ? web.hashCode() : 0);
         result = 31 * result + (larpDb != null ? larpDb.hashCode() : 0);
         return result;
+    }
+
+    private Map<Object, UserAttendedGameEntity> gameEntities;
+
+    @MapKey(name = "gameId")
+    @OneToMany(mappedBy = "attendedGame")
+    public Map<Object, UserAttendedGameEntity> getGameEntities() {
+        return gameEntities;
+    }
+
+    public void setGameEntities(Map<Object, UserAttendedGameEntity> gameEntities) {
+        this.gameEntities = gameEntities;
     }
 }

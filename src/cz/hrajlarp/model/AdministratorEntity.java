@@ -1,7 +1,7 @@
 package cz.hrajlarp.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,12 +9,12 @@ import javax.persistence.Id;
  * Date: 6.3.13
  * Time: 23:12
  */
-@javax.persistence.Table(name = "administrator", schema = "public", catalog = "")
+@Table(name = "administrator", schema = "public", catalog = "")
 @Entity
 public class AdministratorEntity {
     private Integer id;
 
-    @javax.persistence.Column(name = "id")
+    @Column(name = "id")
     @Id
     public Integer getId() {
         return id;
@@ -40,4 +40,5 @@ public class AdministratorEntity {
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
+
 }

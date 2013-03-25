@@ -1,6 +1,7 @@
 package cz.hrajlarp.model;
 
 import javax.persistence.*;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -8,17 +9,21 @@ import javax.persistence.*;
  * Date: 6.3.13
  * Time: 23:12
  */
-@javax.persistence.Table(name = "hraj_user", schema = "public", catalog = "")
+@Table(name = "hraj_user", schema = "public", catalog = "")
 @Entity
 public class HrajUserEntity {
     private Integer id;
 
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_key_gen")
     @SequenceGenerator(name = "id_key_gen", sequenceName = "hraj_user_id_seq")
-    @javax.persistence.Column(name = "id")
+    @Column(name = "id")
     @Id
     public Integer getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setId(Integer id) {
@@ -27,7 +32,7 @@ public class HrajUserEntity {
 
     private String name;
 
-    @javax.persistence.Column(name = "name")
+    @Column(name = "name")
     @Basic
     public String getName() {
         return name;
@@ -39,7 +44,7 @@ public class HrajUserEntity {
 
     private String lastName;
 
-    @javax.persistence.Column(name = "last_name")
+    @Column(name = "last_name")
     @Basic
     public String getLastName() {
         return lastName;
@@ -51,7 +56,7 @@ public class HrajUserEntity {
 
     private String userName;
 
-    @javax.persistence.Column(name = "user_name")
+    @Column(name = "user_name")
     @Basic
     public String getUserName() {
         return userName;
@@ -63,7 +68,7 @@ public class HrajUserEntity {
 
     private String password;
 
-    @javax.persistence.Column(name = "password")
+    @Column(name = "password")
     @Basic
     public String getPassword() {
         return password;
@@ -75,7 +80,7 @@ public class HrajUserEntity {
 
     private String email;
 
-    @javax.persistence.Column(name = "email")
+    @Column(name = "email")
     @Basic
     public String getEmail() {
         return email;
@@ -87,7 +92,7 @@ public class HrajUserEntity {
 
     private String phone;
 
-    @javax.persistence.Column(name = "phone")
+    @Column(name = "phone")
     @Basic
     public String getPhone() {
         return phone;
@@ -99,10 +104,14 @@ public class HrajUserEntity {
 
     private Integer gender;
 
-    @javax.persistence.Column(name = "gender")
+    @Column(name = "gender")
     @Basic
     public Integer getGender() {
         return gender;
+    }
+
+    public void setGender(int gender) {
+        this.gender = gender;
     }
 
     public void setGender(Integer gender) {
@@ -111,7 +120,17 @@ public class HrajUserEntity {
 
     private Boolean mailInformation;
 
-    @javax.persistence.Column(name = "mail_information")
+    @Column(name = "mail_information")
+    @Basic
+    public boolean isMailInformation() {
+        return mailInformation;
+    }
+
+    public void setMailInformation(boolean mailInformation) {
+        this.mailInformation = mailInformation;
+    }
+
+    @Column(name = "mail_information")
     @Basic
     public Boolean getMailInformation() {
         return mailInformation;
@@ -172,5 +191,17 @@ public class HrajUserEntity {
 
     public String getPasswordAgain(){
         return passwordAgain;
+    }
+
+    private Map<Object, UserAttendedGameEntity> userEntities;
+
+    @MapKey(name = "userId")
+    @OneToMany(mappedBy = "userAttended")
+    public Map<Object, UserAttendedGameEntity> getUserEntities() {
+        return userEntities;
+    }
+
+    public void setUserEntities(Map<Object, UserAttendedGameEntity> userEntities) {
+        this.userEntities = userEntities;
     }
 }

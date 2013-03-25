@@ -190,28 +190,4 @@ public class GameDAO {
         session.close();
     }
 
-    /**
-     * This method selects game from database
-     * @param id
-     * @return GameEntity with id
-     */
-    @Transactional(readOnly=true)
-    public GameEntity findGame(int id){
-
-            if (id<=0) return null;
-            Session session = sessionFactory.openSession();
-            session.beginTransaction();
-            Query query = session.createQuery("FROM GameEntity WHERE id = :id");
-            query.setParameter("id", id);
-            List result = query.list();
-            session.getTransaction().commit();
-            session.close();
-            if (result != null && !result.isEmpty()) {
-                GameEntity game = (GameEntity) result.get(0);
-                return game;
-            }
-            else return null;
-
-    }
-
 }
