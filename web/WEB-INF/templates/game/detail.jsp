@@ -26,10 +26,41 @@
         <div class="siderow center">
         <span class="info">
           <!-- If user is logged and date is correct button Přihlaš tady bude. -->
-          <form method="post" action="http://hrajlarp.cz/attend/">
+      <c:choose>
+        <c:when test="${loggedInGame}">
+            <c:choose>
+                <c:when test="${substitute}">
+             <span>
+                 Jste přihlášen jako náhradník
+             </span>
+                </c:when>
+                <c:otherwise>
+             <span>
+                 Jste přihlášen jako řádný účastník
+             </span>
+                </c:otherwise>
+            </c:choose>
+            <form method="post" action="logOutGame">
+                <input type="hidden" name="gameId" value="${game.id}">
+                <input type="submit" value="Odhlásit ze hry.">
+            </form>
+        </c:when>
+        <c:otherwise>
+          <form method="post" action="logInGame">
               <input type="hidden" name="gameId" value="${game.id}">
               <input type="hidden" name="replace" value="1">
-              <input type="submit" value="Přihlásit se jako náhradník.">
+              <c:choose>
+                  <c:when test="${game.full}">
+                      <input type="submit" value="Přihlásit se jako náhradník.">
+                      <input type="hidden" name="substitute" value="1">
+                  </c:when>
+                  <c:otherwise>
+                      <input type="submit" value="Přihlásit se na hru.">
+                      <input type="hidden" name="substitute" value="0">
+                  </c:otherwise>
+              </c:choose>
+              </c:otherwise>
+              </c:choose>
           </form>
         </span>
         </div>
@@ -53,9 +84,15 @@
                 </tr>
                 <tr>
                     <td>z toho volných</td>
-                    <td>${game.menRole}</td>
-                    <td>${game.womenRole}</td>
-                    <td>${game.bothRole}</td>
+                    <td>${game.menFreeRoles}</td>
+                    <td>${game.womenFreeRoles}</td>
+                    <td>${game.bothFreeRoles}</td>
+                </tr>
+                <tr>
+                    <td>Zatím přihlášeno</td>
+                    <td>${game.menAssignedRoles}</td>
+                    <td>${game.womenAssignedRoles}</td>
+                    <td></td>
                 </tr>
                 </tbody>
             </table>
