@@ -5,6 +5,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
@@ -20,6 +21,7 @@ import java.util.Map;
  * Time: 14:45
  * To change this template use File | Settings | File Templates.
  */
+@Component
 public class GameDAO {
 
     private SessionFactory sessionFactory;

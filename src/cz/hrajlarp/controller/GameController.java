@@ -78,7 +78,7 @@ public class GameController{
         GameEntity game = myGame.getGameEntity();
         gameDAO.addGame(game);
         System.out.println("Formular odeslan");
-        return "/game/add";
+        return "/game/added";
     }
 
     /**
@@ -128,7 +128,7 @@ public class GameController{
         try {
             int intId = Integer.parseInt(id);
             if (intId < 0) return "game/error";
-            GameEntity game = gameDAO.findGame(intId);
+            GameEntity game = gameDAO.getGameById(intId);
             if (game != null) {
                 model.addAttribute("game", game);
                 model.addAttribute("date", game.getDate().toString().substring(0, 10));

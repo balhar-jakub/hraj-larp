@@ -47,14 +47,6 @@
         </property>
     </bean>
 
-    <bean id="gameDAO" class="cz.hrajlarp.model.GameDAO" >
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-
-    <bean id="userDAO" class="cz.hrajlarp.model.UserDAO" >
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-
     <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
