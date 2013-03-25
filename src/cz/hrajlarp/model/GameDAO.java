@@ -6,9 +6,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
+
 import java.util.List;
 import java.util.Map;
 
@@ -144,6 +142,7 @@ public class GameDAO {
         return gameList;
     }
 
+
     @Transactional(readOnly=true)
     public void getAllObjects(){
         final Session session = sessionFactory.openSession();
@@ -188,6 +187,31 @@ public class GameDAO {
         session.update(game);
         session.getTransaction().commit();
         session.close();
+    }
+
+
+    /**
+     * This method selects game from database
+     * @param id
+     * @return GameEntity with id
+     */
+    @Transactional(readOnly=true)
+    public GameEntity findGame(int id){
+
+            if (id<=0) return null;
+            Session session = sessionFactory.openSession();
+            session.beginTransaction();
+            Query query = session.createQuery("FROM GameEntity WHERE id = :id");
+            query.setParameter("id", id);
+            List result = query.list();
+            session.getTransaction().commit();
+            session.close();
+            if (result != null && !result.isEmpty()) {
+                GameEntity game = (GameEntity) result.get(0);
+                return game;
+            }
+            else return null;
+
     }
 
 }

@@ -101,12 +101,14 @@ public class ValidGame {
         try {
             SimpleDateFormat datetimeFormatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             if (time.isEmpty()) time = "12:00";
+
             Date changedDate = datetimeFormatter1.parse(date+" "+time);
             game.setDate(new Timestamp(changedDate.getTime()));
         } catch (ParseException e) {
             System.out.println("Error in timestamp converting ValidGame.java.");
         }
 
+        game.setId(4);
         game.setAboutGame(aboutGame);
         game.setAddedBy(1);
         game.setAnotation(anotation);
@@ -120,6 +122,7 @@ public class ValidGame {
         else game.setMenRole(0);
         if (!womenRole.isEmpty())game.setWomenRole(Integer.parseInt(womenRole));
         else game.setWomenRole(0);
+
         game.setName(name);
         game.setPlace(place);
         game.setShortText(shortText);

@@ -1,6 +1,9 @@
 package cz.hrajlarp.controller;
 
 import cz.hrajlarp.model.*;
+import cz.hrajlarp.model.GameDAO;
+import cz.hrajlarp.model.GameEntity;
+import cz.hrajlarp.model.ValidGame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +19,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.List;
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -73,6 +77,7 @@ public class GameController{
 
         GameEntity game = myGame.getGameEntity();
         gameDAO.addGame(game);
+
         System.out.println("Formular odeslan");
         return "/game/added";
     }
@@ -131,6 +136,7 @@ public class GameController{
             int intId = Integer.parseInt(id);
             if (intId < 0) return "game/error";
             GameEntity game = gameDAO.getGameById(intId);
+
             if (game != null) {
                 model.addAttribute("game", game);
                 model.addAttribute("date", game.getDate().toString().substring(0, 10));
@@ -164,6 +170,7 @@ public class GameController{
         //TODO image editation
         myGame.setImage("img.jpg");  //dump fix untill image editation will be done
         myGame.validate(r);
+
         if (r.hasErrors()) return "game/added";
 
         GameEntity game = myGame.getGameEntity();

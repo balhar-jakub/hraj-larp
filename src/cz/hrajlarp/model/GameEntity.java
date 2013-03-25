@@ -4,6 +4,8 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Map;
 
+
+
 /**
  * Created by IntelliJ IDEA.
  * User: Jakub Balhar
