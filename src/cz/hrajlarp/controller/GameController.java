@@ -86,7 +86,7 @@ public class GameController{
      * @return  String of .JSP file for game detail view
      */
     @RequestMapping(value="/game/detail")
-    public String detail(@RequestParam("id") String gameId, Model model) {
+    public String detail(@RequestParam("gameId") String gameId, Model model) {
         System.out.println("GameController: Passing through..." + "/game/detail" );
 
         if(gameId != null && !gameId.isEmpty()){
@@ -205,7 +205,7 @@ public class GameController{
     }
 
     @RequestMapping(value = "/game/logOutGame", method= RequestMethod.POST, produces="text/plain;charset=UTF-8")
-    public void logOutGame(
+    public String logOutGame(
             @ModelAttribute("gameId") int gameId
     ){
         if (rights.isLogged()){
@@ -218,12 +218,15 @@ public class GameController{
                     uage.setGameId(gameId);
                     uage.setUserId(userId);
                     userAttendedGameDAO.deleteUserAttendedGame(uage);
+                    return "forward:/game/detail";
                 }
             }
         }
         else {
             //TODO error page: you have to log in first
+            return "errors";
         }
+        return "errors";
     }
 
     /**

@@ -2348,3 +2348,15 @@ body {
   p, h2, h3 { orphans: 3; widows: 3; }
   h2, h3 { page-break-after: avoid; }
 }
+
+table.attended .header {
+    font-weight: bold;
+}
+
+table.attended {
+    margin: 5px;
+}
+
+table.attended td {
+    padding-right: 5px;
+}

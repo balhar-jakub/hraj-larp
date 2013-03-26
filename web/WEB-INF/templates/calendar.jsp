@@ -18,16 +18,16 @@
                     <c:forEach items="${requestScope.futureGames}" var="game">
                         <div class="clearfix den"><h2 class="datum"><span>${game.dateAsDM}</span>${game.dateAsDayName}</h2></div>
                         <div class="termin clearfix">
-                            <h3><a href="/game/detail?id=${game.id}" tabindex="-1">${game.name}</a></h3>
+                            <h3><a href="/game/detail?gameId=${game.id}" tabindex="-1">${game.name}</a></h3>
                             <div class="grid4">
                                 <div>
                                     <p>${game.info}</p>
-                                    <a href="/game/detail?id=${game.id}" class="biglink">podrobnosti o termínu &amp; přihlášení</a>
+                                    <a href="/game/detail?gameId=${game.id}" class="biglink">podrobnosti o termínu &amp; přihlášení</a>
                                 </div>
                             </div>
                         </div>
                         <div class="grid2 square1">
-                            <a href="/game/detail?id=${game.id}" tabindex="-1"><img src="${game.image}" alt="${game.name}"/></a>
+                            <a href="/game/detail?gameId=${game.id}" tabindex="-1"><img src="${game.image}" alt="${game.name}"/></a>
                         </div>
                     </c:forEach>
                 </c:if>
@@ -39,15 +39,15 @@
                 <c:forEach items="${requestScope.formerGames}" var="game">
                     <div class="clearfix den"><h2 class="datum"><span>${game.dateAsDM}</span>${game.dateAsDayName}</h2></div>
                     <div class="termin clearfix">
-                        <h3><a href="/game/detail?id=${game.id}" tabindex="-1">${game.name}</a></h3>
+                        <h3><a href="/game/detail?gameId=${game.id}" tabindex="-1">${game.name}</a></h3>
                         <div class="grid4">
                             <div>
                                 <p>${game.info}</p>
-                                <a href="/game/detail?id=${game.id}" class="biglink">podrobnosti o termínu &amp; přihlášení</a>
+                                <a href="/game/detail?gameId=${game.id}" class="biglink">podrobnosti o termínu &amp; přihlášení</a>
                             </div>
                         </div>
                         <div class="grid2 square1">
-                            <a href="/game/detail?id=${game.id}" tabindex="-1"><img src="${game.image}" alt="${game.name}"/></a>
+                            <a href="/game/detail?gameId=${game.id}" tabindex="-1"><img src="${game.image}" alt="${game.name}"/></a>
                         </div>
                     </div>
                 </c:forEach>

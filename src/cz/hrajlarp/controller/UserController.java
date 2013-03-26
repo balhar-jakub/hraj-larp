@@ -1,8 +1,8 @@
 package cz.hrajlarp.controller;
 
-import cz.hrajlarp.model.GameEntity;
 import cz.hrajlarp.model.HrajUserEntity;
 import cz.hrajlarp.model.UserAttendedGameDAO;
+import cz.hrajlarp.model.UserAttendedGameEntity;
 import cz.hrajlarp.model.UserDAO;
 import cz.hrajlarp.utils.HashString;
 import cz.hrajlarp.utils.UserValidator;
@@ -111,11 +111,12 @@ public class UserController {
     }
 
     @RequestMapping(value="/user/attended")
-    public String userAttended(Model model, @ModelAttribute("id") int id){
+    public String userAttended(Model model,
+                               @ModelAttribute("id") int id){
         id = 1;
         HrajUserEntity user = userDAO.getUserById(id);
-        List<GameEntity> attendedFormer = userAttendedGameDAO.getAttendedFormer(user);
-        List<GameEntity> attendedFuture = userAttendedGameDAO.getAttendedFuture(user);
+        List<UserAttendedGameEntity> attendedFormer = userAttendedGameDAO.getAttendedFormer(user);
+        List<UserAttendedGameEntity> attendedFuture = userAttendedGameDAO.getAttendedFuture(user);
 
         model.addAttribute("futureGames", attendedFuture);
         model.addAttribute("formerGames", attendedFormer);

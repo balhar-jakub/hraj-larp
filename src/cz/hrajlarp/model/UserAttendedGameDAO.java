@@ -187,11 +187,29 @@ public class UserAttendedGameDAO {
         return games;
     }
 
-    public List<GameEntity> getAttendedFormer(HrajUserEntity user) {
-        return null;  //To change body of created methods use File | Settings | File Templates.
+    public List<UserAttendedGameEntity> getAttendedFormer(HrajUserEntity user) {
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+
+        Query query = session.createQuery("select userAttendedGame from UserAttendedGameEntity as userAttendedGame " +
+                "join userAttendedGame.attendedGame as game " +
+                "with game.date < current_timestamp ");
+        List<UserAttendedGameEntity> result = query.list();
+        transaction.commit();
+        session.close();
+        return result;
     }
 
-    public List<GameEntity> getAttendedFuture(HrajUserEntity user) {
-        return null;  //To change body of created methods use File | Settings | File Templates.
+    public List<UserAttendedGameEntity> getAttendedFuture(HrajUserEntity user) {
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+
+        Query query = session.createQuery("select userAttendedGame from UserAttendedGameEntity as userAttendedGame " +
+                "join userAttendedGame.attendedGame as game " +
+                "with game.date >= current_timestamp ");
+        List<UserAttendedGameEntity> result = query.list();
+        transaction.commit();
+        session.close();
+        return result;
     }
 }
