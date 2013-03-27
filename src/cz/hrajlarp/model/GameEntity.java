@@ -4,6 +4,8 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Map;
 
+
+
 /**
  * Created by IntelliJ IDEA.
  * User: Jakub Balhar
@@ -16,15 +18,11 @@ public class GameEntity {
     private Integer id;
 
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_key_gen")
-    @SequenceGenerator(name = "id_key_gen", sequenceName = "hraj_game_id_seq")
+    @SequenceGenerator(name = "id_key_gen", sequenceName = "hraj_game_id_seq", allocationSize = 1)
     @Column(name = "id")
     @Id
     public Integer getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public void setId(Integer id) {
@@ -53,6 +51,17 @@ public class GameEntity {
 
     public void setDate(Timestamp date) {
         this.date = date;
+    }
+
+    @Transient
+    private String time;
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     private String anotation;
@@ -111,10 +120,6 @@ public class GameEntity {
         return menRole;
     }
 
-    public void setMenRole(int menRole) {
-        this.menRole = menRole;
-    }
-
     public void setMenRole(Integer menRole) {
         this.menRole = menRole;
     }
@@ -127,10 +132,6 @@ public class GameEntity {
         return womenRole;
     }
 
-    public void setWomenRole(int womenRole) {
-        this.womenRole = womenRole;
-    }
-
     public void setWomenRole(Integer womenRole) {
         this.womenRole = womenRole;
     }
@@ -141,10 +142,6 @@ public class GameEntity {
     @Basic
     public Integer getBothRole() {
         return bothRole;
-    }
-
-    public void setBothRole(int bothRole) {
-        this.bothRole = bothRole;
     }
 
     public void setBothRole(Integer bothRole) {

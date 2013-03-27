@@ -1,9 +1,6 @@
 package cz.hrajlarp.model;
 
-import javax.persistence.Basic;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 /**
@@ -18,6 +15,21 @@ import java.sql.Timestamp;
 @Entity
 public class UserAttendedGameEntity {
     private int userId;
+
+    private boolean substitute;
+
+    @Transient
+    private String substituteText;
+
+    @javax.persistence.Column(name = "substitute")
+    @Basic
+    public boolean isSubstitute() {
+        return substitute;
+    }
+
+    public void setSubstitute(boolean substitute) {
+        this.substitute = substitute;
+    }
 
     @javax.persistence.Column(name = "user_id")
     @Id
@@ -101,16 +113,12 @@ public class UserAttendedGameEntity {
         this.userAttended = userAttended;
     }
 
-
-    private boolean substitute;
-
-    @javax.persistence.Column(name = "substitute")
-    @Basic
-    public boolean isSubstitute() {
-        return substitute;
+    public String getSubstituteText() {
+        String result = (isSubstitute()) ? "Náhradník": "Řádný";
+        return result;
     }
 
-    public void setSubstitute(boolean substitute) {
-        this.substitute = substitute;
+    public void setSubstituteText(String substituteText) {
+        this.substituteText = substituteText;
     }
 }

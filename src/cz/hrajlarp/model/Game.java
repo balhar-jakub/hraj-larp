@@ -25,10 +25,7 @@ public class Game extends GameEntity{
 
     private int menAssignedRoles;
     private int womenAssignedRoles;
-
-    private boolean full;   // game is full (no free roles left)
-
-    private List<HrajUserEntity> assignedUsers;
+    private boolean full;
 
 
     private static final int MEN = 0;
@@ -68,6 +65,15 @@ public class Game extends GameEntity{
         super.setLarpDb(gameEntity.getLarpDb());
     }
 
+    public boolean isFull(){
+        return getFull();
+    }
+
+     public void setFull(int gender){
+        if (gender == MEN && getMenFreeRoles() > 0 && getBothFreeRoles() > 0) full = false;
+        else full = !(gender == WOMEN && getWomenFreeRoles() > 0 && getBothFreeRoles() > 0);
+    }
+
     public String getDateAsDMY(){
         return dateAsDMY;
     }
@@ -104,25 +110,26 @@ public class Game extends GameEntity{
         return sdf.format(date);
     }
 
-    public void setSignedRolesCounts(List<HrajUserEntity> assignedUsers){
-
-        this.assignedUsers = assignedUsers;
+    public void setSignedRolesCounts(List assignedUsers){
 
         int[] rolesAssigned = new int[ROLE_TYPES_CNT];
         Arrays.fill(rolesAssigned, 0);
 
-        for (HrajUserEntity user: assignedUsers){
-            if(user.getGender() == MEN)
-                rolesAssigned[MEN]++;
-            else
-                rolesAssigned[WOMEN]++;
+        for (Object o : assignedUsers){
+            if(o instanceof HrajUserEntity){
+                HrajUserEntity user = (HrajUserEntity) o;
 
-            if (getMenRole() < rolesAssigned[MEN])
-                rolesAssigned[BOTH] += rolesAssigned[MEN] - getMenRole();
-            if (getWomenRole() < rolesAssigned[WOMEN])
-                rolesAssigned[BOTH] += rolesAssigned[WOMEN] - getWomenRole();
+                if(user.getGender() == MEN)
+                    rolesAssigned[MEN]++;
+                else
+                    rolesAssigned[WOMEN]++;
+
+                if(getMenRole() < rolesAssigned[MEN])
+                    rolesAssigned[BOTH]+= rolesAssigned[MEN] - getMenRole();
+                if(getWomenRole() < rolesAssigned[WOMEN])
+                    rolesAssigned[BOTH]+= rolesAssigned[WOMEN] - getWomenRole();
+            }
         }
-
         this.menAssignedRoles = rolesAssigned[MEN];
         this.womenAssignedRoles = rolesAssigned[WOMEN];
 
@@ -134,6 +141,7 @@ public class Game extends GameEntity{
         this.menFreeRoles = getMenRole() - rolesAssigned[MEN];
         this.womenFreeRoles = getWomenRole() - rolesAssigned[WOMEN];
         this.bothFreeRoles = getBothRole() - rolesAssigned[BOTH];
+
     }
 
     public int getMenFreeRoles() {
@@ -156,28 +164,15 @@ public class Game extends GameEntity{
         return womenAssignedRoles;
     }
 
-    public boolean isFull(){
-        return this.full;
+    public boolean getFull(){
+        return menFreeRoles == 0 && womenFreeRoles == 0 && bothFreeRoles == 0;
     }
 
-    public void setFull(int gender){
-        if (gender == MEN && getMenFreeRoles() > 0 && getBothFreeRoles() > 0) full = false;
-        else full = !(gender == WOMEN && getWomenFreeRoles() > 0 && getBothFreeRoles() > 0);
+    public boolean isAvailableToUser(HrajUserEntity loggedUser) {
+        return false;  //To change body of created methods use File | Settings | File Templates.
     }
 
-    public boolean isAvailableToUser(HrajUserEntity user){
-        if(assignedUsers == null)
-            return false; // unknown ! ASSIGNED USERS NOT SET YET
-
-        if(assignedUsers.contains(user))
-            return false; // user is already signed
-
-        if(user.getGender() == MEN && getMenFreeRoles() > 0)
-            return true; // user is a man and there are some free men roles
-
-        if(user.getGender() == WOMEN && getWomenFreeRoles() > 0)
-            return true; // user is a woman and there are some free women roles
-
-        return (getBothFreeRoles() > 0); // user can still sign as undecided
+    public boolean attendedGame(HrajUserEntity loggedUser) {
+        return false;
     }
 }
