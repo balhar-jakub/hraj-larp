@@ -183,7 +183,7 @@ public class GameController{
      * @param gameId
      */
     @RequestMapping(value = "/game/logInGame", method= RequestMethod.POST, produces="text/plain;charset=UTF-8")
-    public String logInGame(
+    public void logInGame(
             @ModelAttribute("gameId") int gameId
     ){
         if (rights.isLogged()){
@@ -220,7 +220,7 @@ public class GameController{
      * @param gameId
      */
     @RequestMapping(value = "/game/logOutGame", method= RequestMethod.POST, produces="text/plain;charset=UTF-8")
-    public String logOutGame(
+    public void logOutGame(
             @ModelAttribute("gameId") int gameId
     ){
         if (rights.isLogged()){
