@@ -57,6 +57,17 @@ public class GameEntity {
         this.date = date;
     }
 
+    @Transient
+    private String time;
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
     private String anotation;
 
     @Column(name = "anotation")

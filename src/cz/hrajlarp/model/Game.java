@@ -66,7 +66,7 @@ public class Game extends GameEntity{
     }
 
     public boolean isFull(){
-        return full;
+        return getFull();
     }
 
      public void setFull(int gender){

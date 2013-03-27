@@ -91,11 +91,9 @@
             <c:choose>
             <c:when test="${requestScope.game.full}">
                 <input type="submit" value="Přihlásit se jako náhradník.">
-                <input type="hidden" name="substitute" value="1">
             </c:when>
             <c:otherwise>
                 <input type="submit" value="Přihlásit se na hru.">
-                <input type="hidden" name="substitute" value="0">
             </c:otherwise>
             </c:choose>
         </c:otherwise>

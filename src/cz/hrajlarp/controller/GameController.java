@@ -40,17 +40,6 @@ public class GameController{
     private Rights rights;
 
     /**
-     * Basic view of add game form
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = "/game/add", method= RequestMethod.GET, produces="text/plain;charset=UTF-8")
-    public String showForm(ModelMap model){
-        model.addAttribute("myGame", new ValidGame());
-        return "game/add";
-    }
-
-    /**
      * on submit method for add game form
      * Method fills pseudo bean ValidGame, which is similar to GameEntity, but has only String variables.
      * All variables are validated and error messages are generated if necessary.
@@ -81,6 +70,18 @@ public class GameController{
         System.out.println("Formular odeslan");
         return "/game/added";
     }
+
+    /**
+     * Basic view of add game form
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/game/add", method= RequestMethod.GET, produces="text/plain;charset=UTF-8")
+    public String showForm(ModelMap model){
+        model.addAttribute("myGame", new GameEntity());
+        return "game/add";
+    }
+
 
     /**
      * Method for view of game detail
@@ -179,24 +180,34 @@ public class GameController{
         return "/game/add";
     }
 
-
+    /**
+     * This method logs user to game with gameId. First is checked if user is logged to portal.
+     * Then is checked if this user doesnt have record in database for this game. If not, user is
+     * added into database and his status is set as substitute if all possible roles are full.
+     * @param gameId
+     */
     @RequestMapping(value = "/game/logInGame", method= RequestMethod.POST, produces="text/plain;charset=UTF-8")
     public void logInGame(
-            @ModelAttribute("gameId") int gameId,
-            @ModelAttribute("substitute") int substitute
+            @ModelAttribute("gameId") int gameId
     ){
         if (rights.isLogged()){
             int userId = 1;
             //TODO get userID from session
 
-            if (gameId > 0 && (substitute == 0 || substitute == 1)){
-                if (gameDAO.getGameById(gameId) != null){
+            if (gameId > 0){
+                Game game = gameDAO.getGameById(gameId);
+                if (game != null){
                     UserAttendedGameEntity uage = new UserAttendedGameEntity();
                     uage.setGameId(gameId);
                     uage.setUserId(userId);
-                    if (substitute == 0) uage.setSubstitute(false);
-                    else uage.setSubstitute(true);
-                    userAttendedGameDAO.addUserAttendedGame(uage);
+                    if (!userAttendedGameDAO.isLogged(uage)){  //user is not logged in this game
+                        List<HrajUserEntity> assignedUsers = userAttendedGameDAO.getUsersByGameId(game.getId());
+                        game.setSignedRolesCounts(assignedUsers);
+                        game.setFull(1);  //TODO set gender from user
+                        if (game.isFull()) uage.setSubstitute(true);
+                        else uage.setSubstitute(false);
+                        userAttendedGameDAO.addUserAttendedGame(uage);
+                    }
                 }
             }
         }
@@ -205,6 +216,13 @@ public class GameController{
         }
     }
 
+    /**
+     * This method logs out user from game and sets first substitute user (if exists) as ordinary player.
+     * First is checked if user is logged into portal, if game with gameId exists and if record with user and game
+     * exists in UserAttendedGame table. Then is user deleted from table. Then is checked free role according to old user gender.
+     * New user is choosed from substitutes with the oldest added atribute and right gender.
+     * @param gameId
+     */
     @RequestMapping(value = "/game/logOutGame", method= RequestMethod.POST, produces="text/plain;charset=UTF-8")
     public void logOutGame(
             @ModelAttribute("gameId") int gameId
@@ -214,11 +232,35 @@ public class GameController{
             //TODO get userID from session
 
             if (gameId > 0){
-                if (gameDAO.getGameById(gameId) != null){
+                Game game = gameDAO.getGameById(gameId);
+                HrajUserEntity oldUser = userDAO.getUserById(userId);
+                if (game != null){
                     UserAttendedGameEntity uage = new UserAttendedGameEntity();
-                    uage.setGameId(gameId);
-                    uage.setUserId(userId);
-                    userAttendedGameDAO.deleteUserAttendedGame(uage);
+                    uage.setGameId(game.getId());
+                    uage.setUserId(oldUser.getId());
+                    if (userAttendedGameDAO.isLogged(uage)){   //user is logged in this game
+                        userAttendedGameDAO.deleteUserAttendedGame(uage);   //logout old user
+
+                        List<HrajUserEntity> assignedUsers = userAttendedGameDAO.getUsersByGameId(game.getId());
+                        game.setSignedRolesCounts(assignedUsers);   //count new free roles count
+
+                        int gender = 2;                                   //default setting for none men or women free roles, only both roles are free
+                        if (oldUser.getGender()==0) {                     //loggouted user is man
+                            if (game.getMenFreeRoles() > 0) gender = 0;   //there are free men roles
+                        }
+                        else {                                            //loggouted user is woman
+                            if (game.getWomenFreeRoles() > 0) gender = 1; //there are free women roles
+                        }
+
+                        uage = userAttendedGameDAO.getFirstSubstitute(game.getId(), gender);  //get first substitute according to gender
+                        if (uage != null){
+                            HrajUserEntity newUser = userDAO.getUserById(uage.getUserId());
+                            uage.setUserId(newUser.getId());
+                            uage.setSubstitute(false);
+                            userAttendedGameDAO.editUserAttendedGame(uage);             //edit this substitute as ordinary player
+                            //TODO get newUser know, that he is ordinary player now
+                        }
+                    }
                 }
             }
         }
