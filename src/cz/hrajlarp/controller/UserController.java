@@ -1,6 +1,8 @@
 package cz.hrajlarp.controller;
 
 import cz.hrajlarp.model.HrajUserEntity;
+import cz.hrajlarp.model.UserAttendedGameDAO;
+import cz.hrajlarp.model.UserAttendedGameEntity;
 import cz.hrajlarp.model.UserDAO;
 import cz.hrajlarp.utils.HashString;
 import cz.hrajlarp.utils.UserValidator;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.List;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Jakub Balhar
@@ -21,8 +25,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class UserController {
 
-    @Autowired
     private UserDAO userDAO;
+    @Autowired
+    private UserAttendedGameDAO userAttendedGameDAO;
+
+    @Autowired
+    public void setUserDAO(UserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
 
     /**
      * Redirects to new user registration page.
@@ -61,7 +71,6 @@ public class UserController {
     @RequestMapping(value="/user/edit", method= RequestMethod.GET)
     public String edit(Model model, @ModelAttribute("id") String id){
         model.addAttribute("userForm", new HrajUserEntity());
-        id="2";//just testing value
         int userId = Integer.parseInt(id);
         HrajUserEntity user = userDAO.getUserById(userId);
         if (user==null)
@@ -69,7 +78,7 @@ public class UserController {
         else {
 
             if(user.getGender()!=null){
-                if(user.getGender().intValue()==0)
+                if(user.getGender()==0)
                     user.setGenderForm("M");
                 else user.setGenderForm("F");
             }
@@ -99,6 +108,19 @@ public class UserController {
 
         userDAO.editUser(user);
         return "user/success";
+    }
+
+    @RequestMapping(value="/user/attended")
+    public String userAttended(Model model,
+                               @ModelAttribute("id") int id){
+        id = 1;
+        HrajUserEntity user = userDAO.getUserById(id);
+        List<UserAttendedGameEntity> attendedFormer = userAttendedGameDAO.getAttendedFormer(user);
+        List<UserAttendedGameEntity> attendedFuture = userAttendedGameDAO.getAttendedFuture(user);
+
+        model.addAttribute("futureGames", attendedFuture);
+        model.addAttribute("formerGames", attendedFormer);
+        return "/user/attended";
     }
 
 }

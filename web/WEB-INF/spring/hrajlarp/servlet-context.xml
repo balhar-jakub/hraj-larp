@@ -24,12 +24,13 @@
     <mvc:resources mapping="/style/**" location="/assets/style/" />
     <mvc:resources mapping="/js/**" location="/assets/js/" />
     <mvc:resources mapping="/html/**" location="/assets/html/" />
+    <mvc:resources mapping="/fonts/**" location="/assets/fonts/" />
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
-        <property name="url" value="jdbc:postgresql://194.8.253.136/pasekhraj?characterEncoding=UTF-8" />
-        <property name="username" value="pasek" />
-        <property name="password" value="pasekDb" />
+        <property name="url" value="jdbc:postgresql://194.8.253.136/hrajlarp" />
+        <property name="username" value="hrajlarp" />
+        <property name="password" value="5e5icha" />
         <property name="initialSize" value="10" />
         <property name="maxActive" value="50" />
     </bean>
@@ -44,18 +45,6 @@
                 <prop key="hibernate.show_sql">false</prop>
             </props>
         </property>
-    </bean>
-
-    <bean id="gameDAO" class="cz.hrajlarp.model.GameDAO" >
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-
-    <bean id="userAttendedGameDAO" class="cz.hrajlarp.model.UserAttendedGameDAO" >
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-
-    <bean id="userDAO" class="cz.hrajlarp.model.UserDAO" >
-        <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">

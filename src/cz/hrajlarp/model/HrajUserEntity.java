@@ -15,15 +15,11 @@ public class HrajUserEntity {
     private Integer id;
 
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_key_gen")
-    @SequenceGenerator(name = "id_key_gen", sequenceName = "hraj_user_id_seq")
+    @SequenceGenerator(name = "id_key_gen", sequenceName = "hraj_user_id_seq", allocationSize = 1)
     @Column(name = "id")
     @Id
     public Integer getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public void setId(Integer id) {
@@ -110,10 +106,6 @@ public class HrajUserEntity {
         return gender;
     }
 
-    public void setGender(int gender) {
-        this.gender = gender;
-    }
-
     public void setGender(Integer gender) {
         this.gender = gender;
     }
@@ -127,16 +119,6 @@ public class HrajUserEntity {
     }
 
     public void setMailInformation(boolean mailInformation) {
-        this.mailInformation = mailInformation;
-    }
-
-    @Column(name = "mail_information")
-    @Basic
-    public Boolean getMailInformation() {
-        return mailInformation;
-    }
-
-    public void setMailInformation(Boolean mailInformation) {
         this.mailInformation = mailInformation;
     }
 

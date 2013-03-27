@@ -4,10 +4,16 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.metadata.ClassMetadata;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,7 +22,9 @@ import java.util.*;
  * Time: 13:52
  * To change this template use File | Settings | File Templates.
  */
+@Component
 public class UserAttendedGameDAO {
+    @Autowired
     private SessionFactory sessionFactory;
 
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -153,36 +161,36 @@ public class UserAttendedGameDAO {
         return null;
     }
 
-    /**
-     * This method return first substitute player according to game and gender.
-     * If there are free roles for men (gender = 0) or women (gender = 1), its created a sql query with inner join to HrajUser table. Query returns UserAttendedGame record where user's gender equals parameter.
-     * If there are only free roles for both genders (gender = 2), it's chosen substitute player with any gender.
-     * All results are ordered by attribute added and only the first one is returned.
-     * @param gameId id of selected game
-     * @param gender required player's gender
-     * @return first substitute player
-     */
-    @Transactional(readOnly = true)
-    public UserAttendedGameEntity getFirstSubstitute(int gameId, int gender) {
+    public List<Game> filterAvailableGames(List<Game> games, HrajUserEntity loggedUser) {
+
+        System.out.println("filterAvailableGames method");
+
+        if(games == null || games.isEmpty()) return games;
+
         Session session = null;
         try {
             session = sessionFactory.openSession();
-            if (gender < 2){ //because of missing hib.xml mapping is impossible to you inner join on construction. classic sql was used instead
-                SQLQuery query = session.createSQLQuery("select * from user_attended_game " +
-                        "inner join hraj_user on user_attended_game.user_id = hraj_user.id " +
-                        "where user_attended_game.game_id= :gameId and user_attended_game.substitute = true " +
-                        "and hraj_user.gender = :gender order by user_attended_game.added asc");
-                query.addEntity(UserAttendedGameEntity.class);
-                query.setParameter("gameId", gameId);
-                query.setParameter("gender", gender);
-                if (!query.list().isEmpty()) return (UserAttendedGameEntity)query.list().get(0);
+            Transaction transaction = session.beginTransaction();
+            List<Game> availableGames = new ArrayList<Game>();
+            for (Game game: games){
+                Query query = session.createQuery("select distinct uag.userAttended from UserAttendedGameEntity uag where uag.gameId in (:gameId)");
+                query.setParameter("gameId", game.getId());
+                System.out.println("executing: " + query.getQueryString());
+                List users = query.list();
+                System.out.println(Arrays.toString(users.toArray()));
+
+                game.setSignedRolesCounts(users); // fills game info: counts of signed users
+
+                if(game.isAvailableToUser(loggedUser)){
+                    System.out.println("game is available: " + game.getName());
+                    availableGames.add(game);
+                }
+                else
+                    System.out.println("game is NOT available: " + game.getName() + ", gender:" + loggedUser.getGender());
             }
-            else {
-                Query query = session.createQuery("from UserAttendedGameEntity where game_id= :gameId and substitute = true order by added asc");
-                query.setParameter("gameId", gameId);
-                if (!query.list().isEmpty()) return (UserAttendedGameEntity)query.list().get(0);
-            }
-            return null;
+
+            transaction.commit();
+            return availableGames;
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -192,19 +200,32 @@ public class UserAttendedGameDAO {
                 session.close();
             }
         }
-        return null;
+        return games;
     }
 
-    /**
-     * Update method for table UserAttendedGame.
-     * @param uage new record
-     */
-    @Transactional(readOnly = true)
-    public void editUserAttendedGame(UserAttendedGameEntity uage) {
+    public List<UserAttendedGameEntity> getAttendedFormer(HrajUserEntity user) {
         Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        session.update(uage);
-        session.getTransaction().commit();
+        Transaction transaction = session.beginTransaction();
+
+        Query query = session.createQuery("select userAttendedGame from UserAttendedGameEntity as userAttendedGame " +
+                "join userAttendedGame.attendedGame as game " +
+                "with game.date < current_timestamp ");
+        List<UserAttendedGameEntity> result = query.list();
+        transaction.commit();
         session.close();
+        return result;
+    }
+
+    public List<UserAttendedGameEntity> getAttendedFuture(HrajUserEntity user) {
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+
+        Query query = session.createQuery("select userAttendedGame from UserAttendedGameEntity as userAttendedGame " +
+                "join userAttendedGame.attendedGame as game " +
+                "with game.date >= current_timestamp ");
+        List<UserAttendedGameEntity> result = query.list();
+        transaction.commit();
+        session.close();
+        return result;
     }
 }

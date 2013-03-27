@@ -4,10 +4,10 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
+@Component
 public class UserDAO {
 
     private SessionFactory sessionFactory;
@@ -28,9 +28,8 @@ public class UserDAO {
             Query query = session.createQuery("from HrajUserEntity where id= :id ");
             query.setParameter("id", userId);
             System.out.println("executing: " + query.getQueryString());
-            List list = query.list();
-            System.out.println(list);
-            return (list != null && !list.isEmpty())?(HrajUserEntity)list.get(0):null;
+            HrajUserEntity user = (HrajUserEntity) query.uniqueResult();
+            return user;
         }
         catch (Exception e) {
             e.printStackTrace();

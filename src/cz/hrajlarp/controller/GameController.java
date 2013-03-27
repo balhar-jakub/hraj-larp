@@ -1,9 +1,6 @@
 package cz.hrajlarp.controller;
 
 import cz.hrajlarp.model.*;
-import cz.hrajlarp.model.GameDAO;
-import cz.hrajlarp.model.GameEntity;
-import cz.hrajlarp.model.ValidGame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -89,8 +86,8 @@ public class GameController{
      * @param model model
      * @return  String of .JSP file for game detail view
      */
-    @RequestMapping(value="/game/detail", method= RequestMethod.GET)
-    public String detail(@RequestParam("id") String gameId, Model model) {
+    @RequestMapping(value="/game/detail")
+    public String detail(@RequestParam("gameId") String gameId, Model model) {
         System.out.println("GameController: Passing through..." + "/game/detail" );
 
         if(gameId != null && !gameId.isEmpty()){
@@ -171,8 +168,7 @@ public class GameController{
         //TODO image editation
         myGame.setImage("img.jpg");  //dump fix untill image editation will be done
         myGame.validate(r);
-
-        if (r.hasErrors()) return "game/added";
+        if (r.hasErrors()) return "game/add";
 
         GameEntity game = myGame.getGameEntity();
         gameDAO.editGame(game);
@@ -212,8 +208,10 @@ public class GameController{
             }
         }
         else {
+            return "errors";
             //TODO error page: you have to log in first
         }
+        return "errors";
     }
 
     /**
@@ -266,7 +264,9 @@ public class GameController{
         }
         else {
             //TODO error page: you have to log in first
+            return "errors";
         }
+        return "errors";
     }
 
     /**
