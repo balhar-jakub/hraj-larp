@@ -48,15 +48,12 @@
         <c:otherwise>
           <form method="post" action="logInGame">
               <input type="hidden" name="gameId" value="${game.id}">
-              <input type="hidden" name="replace" value="1">
               <c:choose>
                   <c:when test="${game.full}">
                       <input type="submit" value="Přihlásit se jako náhradník.">
-                      <input type="hidden" name="substitute" value="1">
                   </c:when>
                   <c:otherwise>
                       <input type="submit" value="Přihlásit se na hru.">
-                      <input type="hidden" name="substitute" value="0">
                   </c:otherwise>
               </c:choose>
               </c:otherwise>
