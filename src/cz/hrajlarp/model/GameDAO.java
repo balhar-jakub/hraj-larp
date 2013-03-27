@@ -37,7 +37,7 @@ public class GameDAO {
      * @return game with given id
      */
     @Transactional(readOnly=true)
-    public Game getGameById(int gameId){
+    public GameEntity getGameById(int gameId){
 
         if(gameId <= 0) return null;
 
@@ -46,8 +46,7 @@ public class GameDAO {
             session = sessionFactory.openSession();
             Query query = session.createQuery("from GameEntity where id= :id ");
             query.setParameter("id", gameId);
-            List list = query.list();
-            return (list != null && !list.isEmpty())?new Game((GameEntity)list.get(0)):null;
+            return (GameEntity) query.uniqueResult();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -64,21 +63,21 @@ public class GameDAO {
     /**
      * @return List of all games (former and future too)
      */
-    public List<Game> getALLGames(){
+    public List<GameEntity> getALLGames(){
         return listGames(false, false);
     }
 
     /**
      * @return List of all games in future from current date
      */
-    public List<Game> getFutureGames(){
+    public List<GameEntity> getFutureGames(){
         return listGames(true, true);
     }
 
     /**
      * @return List of all games in past by current date
      */
-    public List<Game> getFormerGames(){
+    public List<GameEntity> getFormerGames(){
         return listGames(true, false);
     }
 
@@ -90,7 +89,7 @@ public class GameDAO {
      * @return list of all games based on given criteria
      */
     @Transactional(readOnly=true)
-    private List<Game> listGames(boolean criteria, boolean future){
+    private List<GameEntity> listGames(boolean criteria, boolean future){
 
         Session session = null;
         try {
@@ -114,12 +113,7 @@ public class GameDAO {
             System.out.println("executing: " + query.toString());
 
             Query finalQuery = session.createQuery(query.toString());
-            List list = finalQuery.list();
-
-            if(list == null || list.isEmpty()) return null;
-
-            List<Game> gameList = getGameList(list);
-            return (gameList.isEmpty())? null : gameList;
+            return finalQuery.list();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -131,23 +125,6 @@ public class GameDAO {
         }
         return null;
     }
-
-    /**
-     * Change type of elements in given List to Game if possible
-     * @param list List of GameEntity items
-     * @return list of Game items created from by given list
-     */
-    private List<Game> getGameList(List<GameEntity> list){
-        List<Game> gameList = new LinkedList<Game>();
-        for (GameEntity gen: list)
-            try{
-                gameList.add(new Game(gen));
-            }catch(ClassCastException e){
-                e.printStackTrace();
-            }
-        return gameList;
-    }
-
 
     @Transactional(readOnly=true)
     public void getAllObjects(){

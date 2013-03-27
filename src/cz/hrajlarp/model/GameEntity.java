@@ -2,6 +2,10 @@ package cz.hrajlarp.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 
@@ -278,5 +282,132 @@ public class GameEntity {
 
     public void setGameEntities(Map<Object, UserAttendedGameEntity> gameEntities) {
         this.gameEntities = gameEntities;
+    }
+
+
+
+
+
+
+    /* Attributes and methods taken from former Game.java class */
+
+    // number of remaining game roles (not assigned yet)
+    private int menFreeRoles;
+    private int womenFreeRoles;
+    private int bothFreeRoles;
+
+    private int menAssignedRoles;
+    private int womenAssignedRoles;
+
+    private boolean full; // true if game has no role left
+
+    private static final int MEN = 0;
+    private static final int WOMEN = 1;
+    private static final int BOTH = 2;
+    private static final int ROLE_TYPES_CNT = 3;
+
+    @Transient
+    public boolean isFull(){
+        return getFull();
+    }
+
+     @Transient
+     public void setFull(int gender){
+        if (gender == MEN && getMenFreeRoles() > 0 && getBothFreeRoles() > 0) full = false;
+        else full = !(gender == WOMEN && getWomenFreeRoles() > 0 && getBothFreeRoles() > 0);
+    }
+
+    @Transient
+    public String getDateAsDMY(){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+        return sdf.format(date);
+    }
+
+    @Transient
+    public String getDateAsDM(){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM");
+        return sdf.format(date);
+    }
+
+    @Transient
+    public String getDateAsDayName(){
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE");    // day name
+        return sdf.format(date);
+    }
+
+    @Transient
+    public String getDateTime(){
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        return sdf.format(date);
+    }
+
+    @Transient
+    public void setSignedRolesCounts(List assignedUsers){
+
+        int[] rolesAssigned = new int[ROLE_TYPES_CNT];
+        Arrays.fill(rolesAssigned, 0);
+
+        for (Object o : assignedUsers){
+            if(o instanceof HrajUserEntity){
+                HrajUserEntity user = (HrajUserEntity) o;
+
+                if(user.getGender() == MEN)
+                    rolesAssigned[MEN]++;
+                else
+                    rolesAssigned[WOMEN]++;
+
+                if(getMenRole() < rolesAssigned[MEN])
+                    rolesAssigned[BOTH]+= rolesAssigned[MEN] - getMenRole();
+                if(getWomenRole() < rolesAssigned[WOMEN])
+                    rolesAssigned[BOTH]+= rolesAssigned[WOMEN] - getWomenRole();
+            }
+        }
+        this.menAssignedRoles = rolesAssigned[MEN];
+        this.womenAssignedRoles = rolesAssigned[WOMEN];
+
+        if(menAssignedRoles > getMenRole())
+            rolesAssigned[MEN] = getMenRole();
+        if(womenAssignedRoles > getWomenRole())
+            rolesAssigned[WOMEN] = getWomenRole();
+
+        this.menFreeRoles = getMenRole() - rolesAssigned[MEN];
+        this.womenFreeRoles = getWomenRole() - rolesAssigned[WOMEN];
+        this.bothFreeRoles = getBothRole() - rolesAssigned[BOTH];
+
+    }
+
+    @Transient
+    public int getMenFreeRoles() {
+        return menFreeRoles;
+    }
+
+    @Transient
+    public int getWomenFreeRoles() {
+        return womenFreeRoles;
+    }
+
+    @Transient
+    public int getBothFreeRoles() {
+        return bothFreeRoles;
+    }
+
+    @Transient
+    public int getMenAssignedRoles() {
+        return menAssignedRoles;
+    }
+
+    @Transient
+    public int getWomenAssignedRoles() {
+        return womenAssignedRoles;
+    }
+
+    @Transient
+    public boolean getFull(){
+        return menFreeRoles == 0 && womenFreeRoles == 0 && bothFreeRoles == 0;
+    }
+
+    @Transient
+    public boolean isAvailableToUser(HrajUserEntity user){
+        return true;
     }
 }
