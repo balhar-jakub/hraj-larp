@@ -96,7 +96,7 @@ public class GameController{
                 if(id <= 0)
                     throw new Exception();
 
-                Game game = gameDAO.getGameById(id);
+                GameEntity game = gameDAO.getGameById(id);
 
                 List<HrajUserEntity> assignedUsers = userAttendedGameDAO.getUsersByGameId(game.getId());
                 game.setSignedRolesCounts(assignedUsers);
@@ -183,7 +183,7 @@ public class GameController{
      * @param gameId
      */
     @RequestMapping(value = "/game/logInGame", method= RequestMethod.POST, produces="text/plain;charset=UTF-8")
-    public void logInGame(
+    public String logInGame(
             @ModelAttribute("gameId") int gameId
     ){
         if (rights.isLogged()){
@@ -191,7 +191,7 @@ public class GameController{
             //TODO get userID from session
 
             if (gameId > 0){
-                Game game = gameDAO.getGameById(gameId);
+                GameEntity game = gameDAO.getGameById(gameId);
                 if (game != null){
                     UserAttendedGameEntity uage = new UserAttendedGameEntity();
                     uage.setGameId(gameId);
@@ -220,7 +220,7 @@ public class GameController{
      * @param gameId
      */
     @RequestMapping(value = "/game/logOutGame", method= RequestMethod.POST, produces="text/plain;charset=UTF-8")
-    public void logOutGame(
+    public String logOutGame(
             @ModelAttribute("gameId") int gameId
     ){
         if (rights.isLogged()){
@@ -228,7 +228,7 @@ public class GameController{
             //TODO get userID from session
 
             if (gameId > 0){
-                Game game = gameDAO.getGameById(gameId);
+                GameEntity game = gameDAO.getGameById(gameId);
                 HrajUserEntity oldUser = userDAO.getUserById(userId);
                 if (game != null){
                     UserAttendedGameEntity uage = new UserAttendedGameEntity();

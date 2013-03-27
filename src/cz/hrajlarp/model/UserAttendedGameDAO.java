@@ -161,7 +161,7 @@ public class UserAttendedGameDAO {
         return null;
     }
 
-    public List<Game> filterAvailableGames(List<Game> games, HrajUserEntity loggedUser) {
+    public List<GameEntity> filterAvailableGames(List<GameEntity> games, HrajUserEntity loggedUser) {
 
         System.out.println("filterAvailableGames method");
 
@@ -171,8 +171,8 @@ public class UserAttendedGameDAO {
         try {
             session = sessionFactory.openSession();
             Transaction transaction = session.beginTransaction();
-            List<Game> availableGames = new ArrayList<Game>();
-            for (Game game: games){
+            List<GameEntity> availableGames = new ArrayList<GameEntity>();
+            for (GameEntity game: games){
                 Query query = session.createQuery("select distinct uag.userAttended from UserAttendedGameEntity uag where uag.gameId in (:gameId)");
                 query.setParameter("gameId", game.getId());
                 System.out.println("executing: " + query.getQueryString());

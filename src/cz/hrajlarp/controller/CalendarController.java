@@ -50,15 +50,15 @@ public class CalendarController {
     public String calendar(Model model) {
         System.out.println("CalendarController: Passing through..." + "/calendar");
 
-        List <Game> futureGames = gameDAO.getFutureGames();
-        List <Game> formerGames = gameDAO.getFormerGames();
+        List <GameEntity> futureGames = gameDAO.getFutureGames();
+        List <GameEntity> formerGames = gameDAO.getFormerGames();
 
         model.addAttribute("futureGames", futureGames);
         model.addAttribute("formerGames", formerGames);
 
         HrajUserEntity testUser = userDAO.getUserById(2);
 
-        List<Game> availableGames = userAttendedGameDAO.filterAvailableGames(futureGames, testUser); /* TODO gender must be set by logged user from cookie or session */
+        List<GameEntity> availableGames = userAttendedGameDAO.filterAvailableGames(futureGames, testUser); /* TODO gender must be set by logged user from cookie or session */
         model.addAttribute("availableGames", availableGames);
 
         /* TODO what should be displayed if some of the lists (or both) is empty */
