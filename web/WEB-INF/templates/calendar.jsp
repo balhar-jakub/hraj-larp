@@ -9,6 +9,7 @@
     <ul class="nav nav-tabs">
         <li class="active"><a class="tabAnchor" id="tab" href="#tab1" data-toggle="tab">Nadcházející termíny</a></li>
         <li><a class="tabAnchor" href="#tab2" data-toggle="tab">Minulé termíny</a></li>
+        <li><a class="tabAnchor" href="#tab3" data-toggle="tab">Volné termíny</a></li>
     </ul>
 
     <div class="tab-content">
@@ -49,6 +50,27 @@
                         <div class="grid2 square1">
                             <a href="/game/detail?gameId=${game.id}" tabindex="-1"><img src="${game.image}" alt="${game.name}"/></a>
                         </div>
+                    </div>
+                </c:forEach>
+            </c:if>
+        </div>
+
+
+        <div class="tab-pane" id="tab3">
+            <c:if test="${not empty requestScope.availableGames}">
+                <c:forEach items="${requestScope.availableGames}" var="game">
+                    <div class="clearfix den"><h2 class="datum"><span>${game.dateAsDM}</span>${game.dateAsDayName}</h2></div>
+                    <div class="termin clearfix">
+                        <h3><a href="/game/detail?id=${game.id}" tabindex="-1">${game.name}</a></h3>
+                        <div class="grid4">
+                        <div>
+                        <p>${game.info}</p>
+                        <a href="/game/detail?id=${game.id}" class="biglink">podrobnosti o termínu &amp; přihlášení</a>
+                    </div>
+                    </div>
+                        <div class="grid2 square1">
+                        <a href="/game/detail?id=${game.id}" tabindex="-1"><img src="${game.image}" alt="${game.name}"/></a>
+                    </div>
                     </div>
                 </c:forEach>
             </c:if>

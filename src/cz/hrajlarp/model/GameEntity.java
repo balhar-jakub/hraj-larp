@@ -299,7 +299,9 @@ public class GameEntity {
     private int menAssignedRoles;
     private int womenAssignedRoles;
 
-    private boolean full; // true if game has no role left
+    private boolean full;
+
+    private List<HrajUserEntity> assignedUsers;
 
     private static final int MEN = 0;
     private static final int WOMEN = 1;
@@ -374,6 +376,7 @@ public class GameEntity {
         this.womenFreeRoles = getWomenRole() - rolesAssigned[WOMEN];
         this.bothFreeRoles = getBothRole() - rolesAssigned[BOTH];
 
+        this.assignedUsers = assignedUsers;
     }
 
     @Transient
@@ -408,6 +411,18 @@ public class GameEntity {
 
     @Transient
     public boolean isAvailableToUser(HrajUserEntity user){
-        return true;
+        if(assignedUsers == null)
+            return false; // unknown ! ASSIGNED USERS NOT SET YET
+
+        if(assignedUsers.contains(user))
+            return false; // user is already signed
+
+        if(user.getGender() == MEN && getMenFreeRoles() > 0)
+            return true; // user is a man and there are some free men roles
+
+        if(user.getGender() == WOMEN && getWomenFreeRoles() > 0)
+            return true; // user is a woman and there are some free women roles
+
+        return (getBothFreeRoles() > 0); // user can still sign as undecided
     }
 }
