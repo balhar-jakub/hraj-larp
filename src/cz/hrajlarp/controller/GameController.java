@@ -208,10 +208,8 @@ public class GameController{
             }
         }
         else {
-            return "errors";
             //TODO error page: you have to log in first
         }
-        return "errors";
     }
 
     /**
@@ -264,9 +262,7 @@ public class GameController{
         }
         else {
             //TODO error page: you have to log in first
-            return "errors";
         }
-        return "errors";
     }
 
     /**
