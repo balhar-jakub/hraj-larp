@@ -22,24 +22,14 @@ public class UserDAO {
 
         if(userId <= 0) return null;
 
-        Session session = null;
-        try {
-            session = sessionFactory.openSession();
+        Session session = sessionFactory.openSession();
+        try{
             Query query = session.createQuery("from HrajUserEntity where id= :id ");
             query.setParameter("id", userId);
             System.out.println("executing: " + query.getQueryString());
-            HrajUserEntity user = (HrajUserEntity) query.uniqueResult();
-            return user;
+            return (HrajUserEntity) query.uniqueResult();
         }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        finally{
-            if (session != null && session.isOpen()) {
-                session.close();
-            }
-        }
-        return null;
+        finally { session.close(); }
     }
 
     /**
@@ -48,12 +38,12 @@ public class UserDAO {
     @Transactional
     public void addUser(HrajUserEntity user){
         Session session = sessionFactory.openSession();
-
-        session.beginTransaction();
-        session.save(user);
-        session.getTransaction().commit();
-
-        session.close();
+        try{
+            session.beginTransaction();
+            session.save(user);
+            session.getTransaction().commit();
+        }
+        finally { session.close(); }
     }
 
     /**
@@ -62,11 +52,11 @@ public class UserDAO {
     @Transactional
     public void editUser(HrajUserEntity user){
         Session session = sessionFactory.openSession();
-
-        session.beginTransaction();
-        session.update(user);
-        session.getTransaction().commit();
-
-        session.close();
+        try{
+            session.beginTransaction();
+            session.update(user);
+            session.getTransaction().commit();
+        }
+        finally { session.close(); }
     }
 }
