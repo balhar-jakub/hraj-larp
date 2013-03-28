@@ -62,7 +62,6 @@ public class UserAttendedGameDAO {
             session.beginTransaction();
             session.save(record);
             session.getTransaction().commit();
-            session.close();
         }
         finally { session.close(); }
     }
@@ -78,7 +77,6 @@ public class UserAttendedGameDAO {
             session.beginTransaction();
             session.delete(record);
             session.getTransaction().commit();
-            session.close();
         }
         finally { session.close(); }
     }
@@ -164,28 +162,32 @@ public class UserAttendedGameDAO {
 
     public List<UserAttendedGameEntity> getAttendedFormer(HrajUserEntity user) {
         Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
+        try{
+            Transaction transaction = session.beginTransaction();
 
-        Query query = session.createQuery("select userAttendedGame from UserAttendedGameEntity as userAttendedGame " +
-                "join userAttendedGame.attendedGame as game " +
-                "with game.date < current_timestamp ");
-        List<UserAttendedGameEntity> result = query.list();
-        transaction.commit();
-        session.close();
-        return result;
+            Query query = session.createQuery("select userAttendedGame from UserAttendedGameEntity as userAttendedGame " +
+                    "join userAttendedGame.attendedGame as game " +
+                    "with game.date < current_timestamp ");
+            List<UserAttendedGameEntity> result = query.list();
+            transaction.commit();
+            return result;
+        }
+        finally { session.close(); }
     }
 
     public List<UserAttendedGameEntity> getAttendedFuture(HrajUserEntity user) {
         Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
+        try{
+            Transaction transaction = session.beginTransaction();
 
-        Query query = session.createQuery("select userAttendedGame from UserAttendedGameEntity as userAttendedGame " +
-                "join userAttendedGame.attendedGame as game " +
-                "with game.date >= current_timestamp ");
-        List<UserAttendedGameEntity> result = query.list();
-        transaction.commit();
-        session.close();
-        return result;
+            Query query = session.createQuery("select userAttendedGame from UserAttendedGameEntity as userAttendedGame " +
+                    "join userAttendedGame.attendedGame as game " +
+                    "with game.date >= current_timestamp ");
+            List<UserAttendedGameEntity> result = query.list();
+            transaction.commit();
+            return result;
+        }
+        finally { session.close(); }
     }
 
      /**
@@ -200,7 +202,6 @@ public class UserAttendedGameDAO {
      @Transactional(readOnly = true)
      public UserAttendedGameEntity getFirstSubstitute(int gameId, int gender) {
 
-         UserAttendedGameEntity entity;
          Session session = sessionFactory.openSession();
          try{
              if (gender < 2) { //because of missing hib.xml mapping is impossible to you inner join on construction. classic sql was used instead
@@ -213,14 +214,12 @@ public class UserAttendedGameDAO {
                          "with user.gender = :gender and uag.game_id = :gameId and uag.substitute = true");
                  query.setParameter("gameId", gameId);
                  query.setParameter("gender", gender);
-                 entity = (UserAttendedGameEntity) query.uniqueResult();
+                 return (UserAttendedGameEntity) query.uniqueResult();
              } else {
                  Query query = session.createQuery("from UserAttendedGameEntity where game_id= :gameId and substitute = true order by added asc");
                  query.setParameter("gameId", gameId);
-                 entity = (UserAttendedGameEntity) query.uniqueResult();
+                 return (UserAttendedGameEntity) query.uniqueResult();
              }
-             session.close();
-             return entity;
         }
         finally { session.close(); }
      }

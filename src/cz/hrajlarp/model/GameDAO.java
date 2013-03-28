@@ -45,7 +45,6 @@ public class GameDAO {
         try{
             Query query = session.createQuery("from GameEntity where id= :id ");
             query.setParameter("id", gameId);
-            session.close();
             return (GameEntity) query.uniqueResult();
         }
         finally { session.close(); }
@@ -92,9 +91,9 @@ public class GameDAO {
 
             if(!criteria); /* no criteria for date (list all games) */
             else if(future) // future games
-                query.append(" where date >= '" + sdf.format(now) + "'");
+                query.append(" where date >= current_timestamp");
             else   // former games
-                query.append(" where date < '" + sdf.format(now) + "'");
+                query.append(" where date < current_timestamp");
 
             query.append(" order by date");
             System.out.println("executing: " + query.toString());
