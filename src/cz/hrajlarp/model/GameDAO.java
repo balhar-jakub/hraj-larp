@@ -41,22 +41,14 @@ public class GameDAO {
 
         if(gameId <= 0) return null;
 
-        Session session = null;
-        try {
-            session = sessionFactory.openSession();
+        Session session = sessionFactory.openSession();
+        try{
             Query query = session.createQuery("from GameEntity where id= :id ");
             query.setParameter("id", gameId);
+            session.close();
             return (GameEntity) query.uniqueResult();
         }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        finally{
-            if (session != null && session.isOpen()) {
-                session.close();
-            }
-        }
-        return null;
+        finally { session.close(); }
     }
 
 
@@ -91,23 +83,18 @@ public class GameDAO {
     @Transactional(readOnly=true)
     private List<GameEntity> listGames(boolean criteria, boolean future){
 
-        Session session = null;
-        try {
-            session = sessionFactory.openSession();
+        Session session = sessionFactory.openSession();
+        try{
             Date now = new Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
             StringBuilder query = new StringBuilder("from GameEntity ");
 
-            if(!criteria){
-                /* no criteria for date (list all games) */
-            }
-            else if(future){ // future games
+            if(!criteria); /* no criteria for date (list all games) */
+            else if(future) // future games
                 query.append(" where date >= '" + sdf.format(now) + "'");
-            }
-            else{   // former games
+            else   // former games
                 query.append(" where date < '" + sdf.format(now) + "'");
-            }
 
             query.append(" order by date");
             System.out.println("executing: " + query.toString());
@@ -115,15 +102,7 @@ public class GameDAO {
             Query finalQuery = session.createQuery(query.toString());
             return finalQuery.list();
         }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        finally{
-            if (session != null && session.isOpen()) {
-                session.close();
-            }
-        }
-        return null;
+        finally { session.close(); }
     }
 
     @Transactional(readOnly=true)
@@ -141,9 +120,8 @@ public class GameDAO {
                     System.out.println("  " + o);
                 }
             }
-        } finally {
-            session.close();
         }
+        finally { session.close(); }
     }
 
     /**
@@ -153,10 +131,12 @@ public class GameDAO {
     @Transactional(readOnly=false)
     public void addGame(GameEntity game){
         Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        session.save(game);
-        session.getTransaction().commit();
-        session.close();
+        try{
+            session.beginTransaction();
+            session.save(game);
+            session.getTransaction().commit();
+        }
+        finally { session.close(); }
     }
 
     /**
@@ -166,9 +146,11 @@ public class GameDAO {
     @Transactional(readOnly=false)
     public void editGame(GameEntity game){
         Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        session.update(game);
-        session.getTransaction().commit();
-        session.close();
+        try{
+            session.beginTransaction();
+            session.update(game);
+            session.getTransaction().commit();
+        }
+        finally { session.close(); }
     }
 }
