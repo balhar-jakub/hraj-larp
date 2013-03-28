@@ -2,16 +2,16 @@ package cz.hrajlarp.model;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Map;
-
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 /**
- * Created by IntelliJ IDEA.
- * User: Jakub Balhar
- * Date: 6.3.13
- * Time: 23:12
- */
+* Created by IntelliJ IDEA.
+* User: Jakub Balhar
+* Date: 6.3.13
+* Time: 23:12
+*/
 @Table(name = "game", schema = "public", catalog = "")
 @Entity
 public class GameEntity {
@@ -278,5 +278,156 @@ public class GameEntity {
 
     public void setGameEntities(Map<Object, UserAttendedGameEntity> gameEntities) {
         this.gameEntities = gameEntities;
+    }
+
+
+
+
+
+
+    /* Attributes and methods taken from former Game.java class */
+
+    // number of remaining game roles (not assigned yet)
+    private int menFreeRoles;
+    private int womenFreeRoles;
+    private int bothFreeRoles;
+
+    private int menAssignedRoles;
+    private int womenAssignedRoles;
+
+    private List<HrajUserEntity> assignedUsers;
+
+    private static final int MEN = 0;
+    private static final int WOMEN = 1;
+    private static final int BOTH = 2;
+    private static final int ROLE_TYPES_CNT = 3;
+
+    private HrajUserEntity targetUser;
+
+    public void setTargetUser(HrajUserEntity targetUser){
+         this.targetUser = targetUser;
+    }
+
+    /**
+     * Method checks if the game is full for target user (or anyone if target user is not set)
+     * @return true, if the game is full for target user gender
+     */
+    @Transient
+    public boolean isFull(){
+        if(targetUser == null) return isFullForAnyone();
+        if (targetUser.getGender() == MEN && getMenFreeRoles() > 0 && getBothFreeRoles() > 0) return false;
+        else return !(targetUser.getGender() == WOMEN && getWomenFreeRoles() > 0 && getBothFreeRoles() > 0);
+    }
+
+    @Transient
+    public boolean isFullForAnyone(){
+        return menFreeRoles == 0 && womenFreeRoles == 0 && bothFreeRoles == 0;
+    }
+
+
+    @Transient
+    public String getDateAsDMY(){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+        return sdf.format(date);
+    }
+
+    @Transient
+    public String getDateAsDM(){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM");
+        return sdf.format(date);
+    }
+
+    @Transient
+    public String getDateAsDayName(){
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE");    // day name
+        return sdf.format(date);
+    }
+
+    @Transient
+    public String getDateTime(){
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        return sdf.format(date);
+    }
+
+    @Transient
+    public void setAssignedUsers(List assignedUsers){
+
+        int[] rolesAssigned = new int[ROLE_TYPES_CNT];
+
+        for (Object o : assignedUsers){
+            if(o instanceof HrajUserEntity){
+                HrajUserEntity user = (HrajUserEntity) o;
+
+                if(this.assignedUsers == null)
+                    this.assignedUsers = new ArrayList<HrajUserEntity>();
+                this.assignedUsers.add(user);
+
+                if(user.getGender() == MEN)
+                    rolesAssigned[MEN]++;
+                else
+                    rolesAssigned[WOMEN]++;
+            }
+        }
+
+        this.menAssignedRoles = rolesAssigned[MEN];
+        this.womenAssignedRoles = rolesAssigned[WOMEN];
+
+        if(menAssignedRoles > menRole) {
+            rolesAssigned[BOTH]+= menAssignedRoles - menRole;
+            rolesAssigned[MEN] = menRole;
+        }
+        if(womenAssignedRoles > womenRole) {
+            rolesAssigned[BOTH]+= womenAssignedRoles - womenRole;
+            rolesAssigned[WOMEN] = womenRole;
+        }
+
+        // now rolesAssigned[] contains real counts of assigned
+        // roles for MEN, WOMEN and BOTH (not only MEN and WOMEN)
+
+        menFreeRoles = menRole - rolesAssigned[MEN];
+        womenFreeRoles = womenRole - rolesAssigned[WOMEN];
+        bothFreeRoles = bothRole - rolesAssigned[BOTH];
+    }
+
+    @Transient
+    public int getMenFreeRoles() {
+        return menFreeRoles;
+    }
+
+    @Transient
+    public int getWomenFreeRoles() {
+        return womenFreeRoles;
+    }
+
+    @Transient
+    public int getBothFreeRoles() {
+        return bothFreeRoles;
+    }
+
+    @Transient
+    public int getMenAssignedRoles() {
+        return menAssignedRoles;
+    }
+
+    @Transient
+    public int getWomenAssignedRoles() {
+        return womenAssignedRoles;
+    }
+
+    @Transient
+    public boolean isAvailableToUser(HrajUserEntity user){
+        if(assignedUsers == null)
+            return false; // unknown ! ASSIGNED USERS WERE NOT SET YET !
+
+        if(assignedUsers.contains(user))
+            return false; // user is already signed
+
+        if(user.getGender() == MEN && getMenFreeRoles() > 0)
+            return true; // user is a man and there are some free men roles
+
+        if(user.getGender() == WOMEN && getWomenFreeRoles() > 0)
+            return true; // user is a woman and there are some free women roles
+
+        return (getBothFreeRoles() > 0); // user can still sign as undecided
     }
 }

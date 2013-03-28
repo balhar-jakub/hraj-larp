@@ -146,9 +146,7 @@ public class UserAttendedGameDAO {
             session = sessionFactory.openSession();
             Query query = session.createQuery("select distinct uag.userAttended from UserAttendedGameEntity uag where uag.gameId in (:gameId)");
             query.setParameter("gameId", gameId);
-            List list = query.list();
-
-            return list;
+            return query.list();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -161,7 +159,7 @@ public class UserAttendedGameDAO {
         return null;
     }
 
-    public List<Game> filterAvailableGames(List<Game> games, HrajUserEntity loggedUser) {
+    public List<GameEntity> filterAvailableGames(List<GameEntity> games, HrajUserEntity loggedUser) {
 
         System.out.println("filterAvailableGames method");
 
@@ -171,22 +169,18 @@ public class UserAttendedGameDAO {
         try {
             session = sessionFactory.openSession();
             Transaction transaction = session.beginTransaction();
-            List<Game> availableGames = new ArrayList<Game>();
-            for (Game game: games){
+            List<GameEntity> availableGames = new ArrayList<GameEntity>();
+            for (GameEntity game: games){
                 Query query = session.createQuery("select distinct uag.userAttended from UserAttendedGameEntity uag where uag.gameId in (:gameId)");
                 query.setParameter("gameId", game.getId());
                 System.out.println("executing: " + query.getQueryString());
                 List users = query.list();
                 System.out.println(Arrays.toString(users.toArray()));
 
-                game.setSignedRolesCounts(users); // fills game info: counts of signed users
+                game.setAssignedUsers(users); // fills game info: counts of signed users
 
-                if(game.isAvailableToUser(loggedUser)){
-                    System.out.println("game is available: " + game.getName());
+                if(game.isAvailableToUser(loggedUser))
                     availableGames.add(game);
-                }
-                else
-                    System.out.println("game is NOT available: " + game.getName() + ", gender:" + loggedUser.getGender());
             }
 
             transaction.commit();
