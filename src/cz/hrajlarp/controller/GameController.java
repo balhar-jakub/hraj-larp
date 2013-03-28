@@ -88,34 +88,34 @@ public class GameController{
      */
     @RequestMapping(value="/game/detail")
     public String detail(@RequestParam("gameId") String gameId, Model model) {
-        System.out.println("GameController: Passing through..." + "/game/detail" );
+        System.out.println("GameController: Passing through..." + "/game/detail" + "gameId: " + gameId );
 
-        if(gameId != null && !gameId.isEmpty()){
-            try{
-                int id = Integer.parseInt(gameId);
-                if(id <= 0)
-                    throw new Exception();
+        if(gameId == null || gameId.isEmpty()) return "calendar";
 
-                GameEntity game = gameDAO.getGameById(id);
+        try {
+            int id = Integer.parseInt(gameId);
+            if (id <= 0)
+                throw new Exception();
 
-                List<HrajUserEntity> assignedUsers = userAttendedGameDAO.getUsersByGameId(game.getId());
-                game.setAssignedUsers(assignedUsers);
+            GameEntity game = gameDAO.getGameById(id);
 
-                UserAttendedGameEntity uage = new UserAttendedGameEntity();
-                uage.setGameId(game.getId());
-                uage.setUserId(1);  //TODO get user id from session
-                game.setTargetUser(userDAO.getUserById(1));  //TODO set gender from user
-                model.addAttribute("game", game);
-                boolean logged = userAttendedGameDAO.isLogged(uage);
-                model.addAttribute("loggedInGame", logged);
-                if (logged) model.addAttribute("substitute", userAttendedGameDAO.isSubstitute(uage));
+            List<HrajUserEntity> assignedUsers = userAttendedGameDAO.getUsersByGameId(game.getId());
+            game.setAssignedUsers(assignedUsers);
 
-            }catch(Exception e){
+            UserAttendedGameEntity uage = new UserAttendedGameEntity();
+            uage.setGameId(game.getId());
+            uage.setUserId(1);  //TODO get user id from session
+            game.setTargetUser(userDAO.getUserById(1));  //TODO set gender from user
+            model.addAttribute("game", game);
+            boolean logged = userAttendedGameDAO.isLogged(uage);
+            model.addAttribute("loggedInGame", logged);
+            if (logged) model.addAttribute("substitute", userAttendedGameDAO.isSubstitute(uage));
 
-                /* TODO error message is too brief and not styled in .JSP file*/
-                model.addAttribute("error", "Hra #" + gameId + " nebyla nalezena");
-            }
+        } catch (Exception e) {
+            /* TODO error message is too brief and not styled in .JSP file*/
+            model.addAttribute("error", "Hra #" + gameId + " nebyla nalezena");
         }
+
         return "game/detail";
     }
 
