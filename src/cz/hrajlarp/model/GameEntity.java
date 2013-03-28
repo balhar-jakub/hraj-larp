@@ -3,19 +3,15 @@ package cz.hrajlarp.model;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 
 
 /**
- * Created by IntelliJ IDEA.
- * User: Jakub Balhar
- * Date: 6.3.13
- * Time: 23:12
- */
+* Created by IntelliJ IDEA.
+* User: Jakub Balhar
+* Date: 6.3.13
+* Time: 23:12
+*/
 @Table(name = "game", schema = "public", catalog = "")
 @Entity
 public class GameEntity {
@@ -57,9 +53,9 @@ public class GameEntity {
         this.date = date;
     }
 
-    @Transient
     private String time;
 
+    @Transient
     public String getTime() {
         return time;
     }
@@ -299,8 +295,6 @@ public class GameEntity {
     private int menAssignedRoles;
     private int womenAssignedRoles;
 
-    private boolean full;
-
     private List<HrajUserEntity> assignedUsers;
 
     private static final int MEN = 0;
@@ -308,16 +302,28 @@ public class GameEntity {
     private static final int BOTH = 2;
     private static final int ROLE_TYPES_CNT = 3;
 
-    @Transient
-    public boolean isFull(){
-        return getFull();
+    private HrajUserEntity targetUser;
+
+    public void setTargetUser(HrajUserEntity targetUser){
+         this.targetUser = targetUser;
     }
 
-     @Transient
-     public void setFull(int gender){
-        if (gender == MEN && getMenFreeRoles() > 0 && getBothFreeRoles() > 0) full = false;
-        else full = !(gender == WOMEN && getWomenFreeRoles() > 0 && getBothFreeRoles() > 0);
+    /**
+     * Method checks if the game is full for target user (or anyone if target user is not set)
+     * @return true, if the game is full for target user gender
+     */
+    @Transient
+    public boolean isFull(){
+        if(targetUser == null) return isFullForAnyone();
+        if (targetUser.getGender() == MEN && getMenFreeRoles() > 0 && getBothFreeRoles() > 0) return false;
+        else return !(targetUser.getGender() == WOMEN && getWomenFreeRoles() > 0 && getBothFreeRoles() > 0);
     }
+
+    @Transient
+    public boolean isFullForAnyone(){
+        return menFreeRoles == 0 && womenFreeRoles == 0 && bothFreeRoles == 0;
+    }
+
 
     @Transient
     public String getDateAsDMY(){
@@ -344,39 +350,43 @@ public class GameEntity {
     }
 
     @Transient
-    public void setSignedRolesCounts(List assignedUsers){
+    public void setAssignedUsers(List assignedUsers){
 
         int[] rolesAssigned = new int[ROLE_TYPES_CNT];
-        Arrays.fill(rolesAssigned, 0);
 
         for (Object o : assignedUsers){
             if(o instanceof HrajUserEntity){
                 HrajUserEntity user = (HrajUserEntity) o;
 
+                if(this.assignedUsers == null)
+                    this.assignedUsers = new ArrayList<HrajUserEntity>();
+                this.assignedUsers.add(user);
+
                 if(user.getGender() == MEN)
                     rolesAssigned[MEN]++;
                 else
                     rolesAssigned[WOMEN]++;
-
-                if(getMenRole() < rolesAssigned[MEN])
-                    rolesAssigned[BOTH]+= rolesAssigned[MEN] - getMenRole();
-                if(getWomenRole() < rolesAssigned[WOMEN])
-                    rolesAssigned[BOTH]+= rolesAssigned[WOMEN] - getWomenRole();
             }
         }
+
         this.menAssignedRoles = rolesAssigned[MEN];
         this.womenAssignedRoles = rolesAssigned[WOMEN];
 
-        if(menAssignedRoles > getMenRole())
-            rolesAssigned[MEN] = getMenRole();
-        if(womenAssignedRoles > getWomenRole())
-            rolesAssigned[WOMEN] = getWomenRole();
+        if(menAssignedRoles > menRole) {
+            rolesAssigned[BOTH]+= menAssignedRoles - menRole;
+            rolesAssigned[MEN] = menRole;
+        }
+        if(womenAssignedRoles > womenRole) {
+            rolesAssigned[BOTH]+= womenAssignedRoles - womenRole;
+            rolesAssigned[WOMEN] = womenRole;
+        }
 
-        this.menFreeRoles = getMenRole() - rolesAssigned[MEN];
-        this.womenFreeRoles = getWomenRole() - rolesAssigned[WOMEN];
-        this.bothFreeRoles = getBothRole() - rolesAssigned[BOTH];
+        // now rolesAssigned[] contains real counts of assigned
+        // roles for MEN, WOMEN and BOTH (not only MEN and WOMEN)
 
-        this.assignedUsers = assignedUsers;
+        menFreeRoles = menRole - rolesAssigned[MEN];
+        womenFreeRoles = womenRole - rolesAssigned[WOMEN];
+        bothFreeRoles = bothRole - rolesAssigned[BOTH];
     }
 
     @Transient
@@ -405,14 +415,9 @@ public class GameEntity {
     }
 
     @Transient
-    public boolean getFull(){
-        return menFreeRoles == 0 && womenFreeRoles == 0 && bothFreeRoles == 0;
-    }
-
-    @Transient
     public boolean isAvailableToUser(HrajUserEntity user){
         if(assignedUsers == null)
-            return false; // unknown ! ASSIGNED USERS NOT SET YET
+            return false; // unknown ! ASSIGNED USERS WERE NOT SET YET !
 
         if(assignedUsers.contains(user))
             return false; // user is already signed

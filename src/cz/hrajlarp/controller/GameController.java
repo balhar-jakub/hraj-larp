@@ -99,12 +99,12 @@ public class GameController{
                 GameEntity game = gameDAO.getGameById(id);
 
                 List<HrajUserEntity> assignedUsers = userAttendedGameDAO.getUsersByGameId(game.getId());
-                game.setSignedRolesCounts(assignedUsers);
+                game.setAssignedUsers(assignedUsers);
 
                 UserAttendedGameEntity uage = new UserAttendedGameEntity();
                 uage.setGameId(game.getId());
                 uage.setUserId(1);  //TODO get user id from session
-                game.setFull(1);  //TODO set gender from user
+                game.setTargetUser(userDAO.getUserById(1));  //TODO set gender from user
                 model.addAttribute("game", game);
                 boolean logged = userAttendedGameDAO.isLogged(uage);
                 model.addAttribute("loggedInGame", logged);
@@ -198,8 +198,8 @@ public class GameController{
                     uage.setUserId(userId);
                     if (!userAttendedGameDAO.isLogged(uage)){  //user is not logged in this game
                         List<HrajUserEntity> assignedUsers = userAttendedGameDAO.getUsersByGameId(game.getId());
-                        game.setSignedRolesCounts(assignedUsers);
-                        game.setFull(1);  //TODO set gender from user
+                        game.setAssignedUsers(assignedUsers);
+                        game.setTargetUser(userDAO.getUserById(1));  //TODO set gender from user
                         if (game.isFull()) uage.setSubstitute(true);
                         else uage.setSubstitute(false);
                         userAttendedGameDAO.addUserAttendedGame(uage);
@@ -238,7 +238,7 @@ public class GameController{
                         userAttendedGameDAO.deleteUserAttendedGame(uage);   //logout old user
 
                         List<HrajUserEntity> assignedUsers = userAttendedGameDAO.getUsersByGameId(game.getId());
-                        game.setSignedRolesCounts(assignedUsers);   //count new free roles count
+                        game.setAssignedUsers(assignedUsers);   //count new free roles count
 
                         int gender = 2;                                   //default setting for none men or women free roles, only both roles are free
                         if (oldUser.getGender()==0) {                     //loggouted user is man

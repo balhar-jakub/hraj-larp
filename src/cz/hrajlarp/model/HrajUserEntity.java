@@ -162,6 +162,7 @@ public class HrajUserEntity {
         this.genderForm = genderForm;
     }
 
+    @Transient
     public String getGenderForm(){
         return genderForm;
     }
@@ -171,6 +172,7 @@ public class HrajUserEntity {
         this.passwordAgain = passwordAgain;
     }
 
+    @Transient
     public String getPasswordAgain(){
         return passwordAgain;
     }
