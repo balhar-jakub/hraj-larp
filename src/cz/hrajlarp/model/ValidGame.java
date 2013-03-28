@@ -110,6 +110,7 @@ public class ValidGame {
 
         game.setAboutGame(aboutGame);
         game.setAddedBy(1);
+        //TODO get users id
         game.setAnotation(anotation);
         game.setAuthor(author);
         game.setImage(image);

@@ -139,6 +139,7 @@ public class GameController{
                 model.addAttribute("game", game);
                 model.addAttribute("date", game.getDate().toString().substring(0, 10));
                 model.addAttribute("time", game.getDate().toString().substring(11,16));
+                model.addAttribute("time", game.getDate().toString().substring(11,16));
                 return "game/edit";
             }
             else {
@@ -162,18 +163,27 @@ public class GameController{
     @RequestMapping(value = "/game/edit", method = RequestMethod.POST)
     public String onSubmitEditForm(
             @ModelAttribute("myGame") ValidGame myGame,
+            @RequestParam("imageFile") CommonsMultipartFile[] imageFile,
+            HttpServletRequest request,
             BindingResult r
             ){
 
-        //TODO image editation
-        myGame.setImage("img.jpg");  //dump fix untill image editation will be done
+        if (imageFile != null && imageFile.length > 0 && !imageFile[0].getOriginalFilename().equals("")) { //there is at least one image file
+            String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
+            myGame.setImage(image);
+        }
+        else {
+            myGame.setImage(gameDAO.getGameById(51).getImage());
+            //TODO add game id
+        }
         myGame.validate(r);
-        if (r.hasErrors()) return "game/add";
+        if (r.hasErrors()) return "game/edit";
 
         GameEntity game = myGame.getGameEntity();
+        System.out.println("Nejsem prazdna: "+game.getImage());
         gameDAO.editGame(game);
         System.out.println("Formular odeslan");
-        return "/game/add";
+        return "/game/added";
     }
 
     /**

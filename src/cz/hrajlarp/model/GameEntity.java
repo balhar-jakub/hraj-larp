@@ -53,9 +53,9 @@ public class GameEntity {
         this.date = date;
     }
 
-    @Transient
     private String time;
 
+    @Transient
     public String getTime() {
         return time;
     }

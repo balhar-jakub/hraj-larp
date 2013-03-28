@@ -113,6 +113,7 @@ public class UserAttendedGameEntity {
         this.userAttended = userAttended;
     }
 
+    @Transient
     public String getSubstituteText() {
         String result = (isSubstitute()) ? "Náhradník": "Řádný";
         return result;
