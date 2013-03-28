@@ -120,14 +120,6 @@ public class UserAttendedGameDAO {
             query.setParameter("userId", uage.getUserId());
             return (query.uniqueResult()!=null)?true:false;
         }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        finally{
-            if (session != null && session.isOpen()) {
-                session.close();
-            }
-        }
         finally { session.close(); }
     }
 
@@ -212,11 +204,13 @@ public class UserAttendedGameDAO {
          Session session = sessionFactory.openSession();
          try{
              if (gender < 2) { //because of missing hib.xml mapping is impossible to you inner join on construction. classic sql was used instead
-                 SQLQuery query = session.createSQLQuery("select * from user_attended_game " +
+                 /*SQLQuery query = session.createSQLQuery("select * from user_attended_game " +
                      "inner join hraj_user on user_attended_game.user_id = hraj_user.id " +
                      "where user_attended_game.game_id= :gameId and user_attended_game.substitute = true " +
                      "and hraj_user.gender = :gender order by user_attended_game.added asc");
-                 query.addEntity(UserAttendedGameEntity.class);
+                 query.addEntity(UserAttendedGameEntity.class);*/
+                 Query query = session.createQuery("from UserAttendedGameEntity as uag join uag.userAttended as user " +
+                         "with user.gender = :gender and uag.game_id = :gameId and uag.substitute = true");
                  query.setParameter("gameId", gameId);
                  query.setParameter("gender", gender);
                  entity = (UserAttendedGameEntity) query.uniqueResult();
