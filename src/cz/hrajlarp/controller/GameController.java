@@ -200,7 +200,7 @@ public class GameController{
      * @param gameId
      */
     @RequestMapping(value = "/game/logInGame", method= RequestMethod.POST, produces="text/plain;charset=UTF-8")
-    public void logInGame(
+    public String logInGame(
             @ModelAttribute("gameId") int gameId
     ){
         if (rights.isLogged()){
@@ -227,6 +227,7 @@ public class GameController{
         else {
             //TODO error page: you have to log in first
         }
+        return "redirect:/game/detail";
     }
 
     /**
@@ -237,7 +238,7 @@ public class GameController{
      * @param gameId
      */
     @RequestMapping(value = "/game/logOutGame", method= RequestMethod.POST, produces="text/plain;charset=UTF-8")
-    public void logOutGame(
+    public String logOutGame(
             @ModelAttribute("gameId") int gameId
     ){
         if (rights.isLogged()){
@@ -265,13 +266,13 @@ public class GameController{
                             if (game.getWomenFreeRoles() > 0) gender = 1; //there are free women roles
                         }
 
-                        uage = userAttendedGameDAO.getFirstSubstitute(game.getId(), gender);  //get first substitute according to gender
+                        uage = userAttendedGameDAO.getFirstSubstitutedUAG(game.getId(), gender);  //get first substitute according to gender
                         if (uage != null){
                             HrajUserEntity newUser = userDAO.getUserById(uage.getUserId());
                             uage.setUserId(newUser.getId());
                             uage.setSubstitute(false);
                             userAttendedGameDAO.editUserAttendedGame(uage);             //edit this substitute as ordinary player
-                            //TODO get newUser know, that he is ordinary player now
+                            //TODO let newUser know, that he is ordinary player now
                         }
                     }
                 }
@@ -280,6 +281,7 @@ public class GameController{
         else {
             //TODO error page: you have to log in first
         }
+        return "redirect:/game/detail";
     }
 
     /**

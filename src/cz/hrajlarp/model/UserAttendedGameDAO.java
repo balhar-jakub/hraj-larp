@@ -200,25 +200,23 @@ public class UserAttendedGameDAO {
      * @return first substitute player
      */
      @Transactional(readOnly = true)
-     public UserAttendedGameEntity getFirstSubstitute(int gameId, int gender) {
+     public UserAttendedGameEntity getFirstSubstitutedUAG(int gameId, int gender) {
 
          Session session = sessionFactory.openSession();
          try{
-             if (gender < 2) { //because of missing hib.xml mapping is impossible to you inner join on construction. classic sql was used instead
-                 /*SQLQuery query = session.createSQLQuery("select * from user_attended_game " +
-                     "inner join hraj_user on user_attended_game.user_id = hraj_user.id " +
-                     "where user_attended_game.game_id= :gameId and user_attended_game.substitute = true " +
-                     "and hraj_user.gender = :gender order by user_attended_game.added asc");
-                 query.addEntity(UserAttendedGameEntity.class);*/
-                 Query query = session.createQuery("from UserAttendedGameEntity as uag join uag.userAttended as user " +
-                         "with user.gender = :gender and uag.game_id = :gameId and uag.substitute = true");
-                 query.setParameter("gameId", gameId);
-                 query.setParameter("gender", gender);
-                 return (UserAttendedGameEntity) query.uniqueResult();
+             if (gender < 2) { //hibenate has problems with "join on" construction, classic sql was used instead
+                 SQLQuery query = session.createSQLQuery("select * from user_attended_game as uag inner join hraj_user on uag.user_id = hraj_user.id " +
+                     "where uag.game_id= :gameId and uag.substitute = true and hraj_user.gender = :gender order by uag.added asc");
+                 query.addEntity(UserAttendedGameEntity.class);
+                 query.setInteger("gender", gender);
+                 query.setInteger("gameId", gameId);
+                 if (query.list()!= null && !query.list().isEmpty()) return (UserAttendedGameEntity) query.list().get(0);
+                 else return null;
              } else {
                  Query query = session.createQuery("from UserAttendedGameEntity where game_id= :gameId and substitute = true order by added asc");
                  query.setParameter("gameId", gameId);
-                 return (UserAttendedGameEntity) query.uniqueResult();
+                 if (query.list()!= null && !query.list().isEmpty()) return (UserAttendedGameEntity) query.list().get(0);
+                 else return null;
              }
         }
         finally { session.close(); }
