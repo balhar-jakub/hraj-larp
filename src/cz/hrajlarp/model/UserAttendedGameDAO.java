@@ -122,8 +122,7 @@ public class UserAttendedGameDAO {
             Query query = session.createQuery("from UserAttendedGameEntity where game_id= :gameId and user_id= :userId and substitute = true ");
             query.setParameter("gameId", uage.getGameId());
             query.setParameter("userId", uage.getUserId());
-            List list = query.list();
-            return (list != null && !list.isEmpty())?true:false;
+            return (query.uniqueResult()!=null)?true:false;
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -269,7 +268,7 @@ public class UserAttendedGameDAO {
      * Update method for table UserAttendedGame.
      * @param uage new record
      */
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = false)
     public void editUserAttendedGame(UserAttendedGameEntity uage) {
         Session session = sessionFactory.openSession();
         session.beginTransaction();

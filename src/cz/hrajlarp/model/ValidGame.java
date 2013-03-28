@@ -60,7 +60,6 @@ public class ValidGame {
         if(this.date != null && !this.date.isEmpty())
         try {
             bDate = new Date(df.parse(this.date).getTime());
-            System.out.println("Atribut date byl zvalidovan jako datum.");
         }
         catch (ParseException e){
             errors.rejectValue("date", "date.wrongFormatException", "Musíte zadat datum ve formátu YYYY-MM-DD");

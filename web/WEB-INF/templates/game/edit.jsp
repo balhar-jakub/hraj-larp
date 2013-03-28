@@ -73,6 +73,6 @@
         <form:errors path="shortText"/>
         <textarea id="shortText" name="shortText">${game.shortText}</textarea>
     </div>
-
+    <input type="hidden" name="gameId" value=${game.id}>
     <input type="submit" value="Ulož změny">
 </form:form>

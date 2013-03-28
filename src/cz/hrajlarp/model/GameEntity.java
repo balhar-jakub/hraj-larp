@@ -208,7 +208,7 @@ public class GameEntity {
         this.web = web;
     }
 
-    private String larpDb;
+    private String larpDb="";
 
     @Column(name = "larp_db")
     @Basic

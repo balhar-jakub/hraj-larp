@@ -162,28 +162,35 @@ public class GameController{
      */
     @RequestMapping(value = "/game/edit", method = RequestMethod.POST)
     public String onSubmitEditForm(
+            @ModelAttribute("gameId") String id,
             @ModelAttribute("myGame") ValidGame myGame,
             @RequestParam("imageFile") CommonsMultipartFile[] imageFile,
             HttpServletRequest request,
             BindingResult r
             ){
+        try {
+            int gameId = Integer.parseInt(id);
+            if (gameId < 0) return "game/error";
 
-        if (imageFile != null && imageFile.length > 0 && !imageFile[0].getOriginalFilename().equals("")) { //there is at least one image file
-            String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
-            myGame.setImage(image);
-        }
-        else {
-            myGame.setImage(gameDAO.getGameById(51).getImage());
-            //TODO add game id
-        }
-        myGame.validate(r);
-        if (r.hasErrors()) return "game/edit";
+            if (imageFile != null && imageFile.length > 0 && !imageFile[0].getOriginalFilename().equals("")) { //there is at least one image file
+                String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
+                myGame.setImage(image);
+            }
+            else {
+                myGame.setImage(gameDAO.getGameById(gameId).getImage());
+            }
+            myGame.validate(r);
+            if (r.hasErrors()) return "game/edit";
 
-        GameEntity game = myGame.getGameEntity();
-        System.out.println("Nejsem prazdna: "+game.getImage());
-        gameDAO.editGame(game);
-        System.out.println("Formular odeslan");
-        return "/game/added";
+            GameEntity game = myGame.getGameEntity();
+            game.setId(gameId);
+            gameDAO.editGame(game);
+            System.out.println("Hra byla editovana");
+            return "/game/edited";
+        }
+        catch (NumberFormatException e){
+            return "/game/error";
+        }
     }
 
     /**
