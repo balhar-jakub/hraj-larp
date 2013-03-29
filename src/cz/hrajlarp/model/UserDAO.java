@@ -32,6 +32,21 @@ public class UserDAO {
         finally { session.close(); }
     }
 
+    @Transactional(readOnly=true)
+    public HrajUserEntity getUserByLogin(String login){
+
+        if(login == null || login.isEmpty()) return null;
+
+        Session session = sessionFactory.openSession();
+        try{
+            Query query = session.createQuery("from HrajUserEntity where user_name= :login ");
+            query.setParameter("login", login);
+            System.out.println("executing: " + query.getQueryString());
+            return (HrajUserEntity) query.uniqueResult();
+        }
+        finally { session.close(); }
+    }
+
     /**
      * Adds new user into DB.
      */

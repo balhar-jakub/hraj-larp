@@ -1,5 +1,8 @@
 package cz.hrajlarp.model;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Prasek
@@ -9,7 +12,7 @@ package cz.hrajlarp.model;
  */
 public class Rights {
 
-    public boolean isLogged(){
-        return true;
+    public boolean isLogged(Authentication a){
+        return (a.isAuthenticated());
     }
 }

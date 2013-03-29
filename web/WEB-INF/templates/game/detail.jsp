@@ -26,39 +26,46 @@
         <div class="siderow center">
         <span class="info">
           <!-- If user is logged and date is correct button Přihlaš tady bude. -->
-      <c:choose>
-        <c:when test="${loggedInGame}">
-            <c:choose>
-                <c:when test="${substitute}">
-             <span>
-                 Jste přihlášen jako náhradník
-             </span>
-                </c:when>
-                <c:otherwise>
-             <span>
-                 Jste přihlášen jako řádný účastník
-             </span>
-                </c:otherwise>
-            </c:choose>
-            <form method="post" action="logOutGame">
-                <input type="hidden" name="gameId" value="${game.id}">
-                <input type="submit" value="Odhlásit ze hry.">
-            </form>
-        </c:when>
-        <c:otherwise>
-          <form method="post" action="logInGame">
-              <input type="hidden" name="gameId" value="${game.id}">
-              <c:choose>
-                  <c:when test="${game.full}">
-                      <input type="submit" value="Přihlásit se jako náhradník.">
-                  </c:when>
-                  <c:otherwise>
-                      <input type="submit" value="Přihlásit se na hru.">
-                  </c:otherwise>
-              </c:choose>
-              </c:otherwise>
-              </c:choose>
-          </form>
+  <c:choose>
+      <c:when test="${logged}">
+          <c:choose>
+            <c:when test="${loggedInGame}">
+                <c:choose>
+                    <c:when test="${substitute}">
+                 <span>
+                     Jste přihlášen jako náhradník
+                 </span>
+                    </c:when>
+                    <c:otherwise>
+                 <span>
+                     Jste přihlášen jako řádný účastník
+                 </span>
+                    </c:otherwise>
+                </c:choose>
+                <form method="post" action="logOutGame">
+                    <input type="submit" value="Odhlásit ze hry.">
+                    <input type="hidden" name="gameId" value="${game.id}">
+                </form>
+            </c:when>
+            <c:otherwise>
+              <form method="post" action="logInGame">
+                  <input type="hidden" name="gameId" value="${game.id}">
+                  <c:choose>
+                      <c:when test="${game.full}">
+                          <input type="submit" value="Přihlásit se jako náhradník.">
+                      </c:when>
+                      <c:otherwise>
+                          <input type="submit" value="Přihlásit se na hru.">
+                      </c:otherwise>
+                  </c:choose>
+              </form>
+           </c:otherwise>
+          </c:choose>
+      </c:when>
+      <c:otherwise>
+          <span> Pro přihlášení na hru se přihlašte nebo registrujte. </span>
+      </c:otherwise>
+    </c:choose>
         </span>
         </div>
         <div class="siderow">

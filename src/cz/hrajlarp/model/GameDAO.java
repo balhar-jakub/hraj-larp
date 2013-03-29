@@ -152,4 +152,25 @@ public class GameDAO {
         }
         finally { session.close(); }
     }
+
+    /**
+     * This method returns true if user with userId created game with gameId.
+     * @param gameId
+     * @param userId
+     * @return
+     */
+    @Transactional(readOnly=true)
+    public boolean userOwnsGame(int gameId, int userId) {
+
+        if(userId <= 0) return false;
+
+        Session session = sessionFactory.openSession();
+        try{
+            Query query = session.createQuery("from GameEntity where id = :id and added_by= :user ");
+            query.setParameter("id", gameId);
+            query.setParameter("user", userId);
+            return (query.uniqueResult() != null);
+        }
+        finally { session.close(); }
+    }
 }
