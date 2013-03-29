@@ -52,4 +52,3 @@
 
     <input type="submit" value="Uprav">
 </form:form>
-</div>

@@ -139,8 +139,7 @@ public class GameController{
                 model.addAttribute("game", game);
                 model.addAttribute("date", game.getDate().toString().substring(0, 10));
                 model.addAttribute("time", game.getDate().toString().substring(11,16));
-                model.addAttribute("time", game.getDate().toString().substring(11,16));
-                return "game/edit";
+               return "game/edit";
             }
             else {
                 return "game/error";

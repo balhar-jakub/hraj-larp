@@ -176,6 +176,15 @@ public class HrajUserEntity {
     public String getPasswordAgain(){
         return passwordAgain;
     }
+    
+    private String oldPassword;
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
+    }
+    @Transient
+    public String getOldPassword(){
+        return oldPassword;
+    }
 
     private Map<Object, UserAttendedGameEntity> userEntities;
 
