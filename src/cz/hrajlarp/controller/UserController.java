@@ -6,6 +6,7 @@ import cz.hrajlarp.model.UserAttendedGameEntity;
 import cz.hrajlarp.model.UserDAO;
 import cz.hrajlarp.utils.HashString;
 import cz.hrajlarp.utils.UserValidator;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -50,7 +51,8 @@ public class UserController {
      * If everything is ok, saves data into db, else redirects back to reg. page.
      */
     @RequestMapping(value="/user/register", method = RequestMethod.POST)
-    public String register(@ModelAttribute("userForm") HrajUserEntity user, BindingResult result){
+    public String register(@ModelAttribute("userForm") HrajUserEntity user, BindingResult result, 
+    		Model model){
         new UserValidator().validate(user, result);
         if (result.hasErrors()) return "user/add";
 
@@ -62,7 +64,8 @@ public class UserController {
         }
 
         userDAO.addUser(user);
-        return "user/success";
+        model.addAttribute("info", "Registrace proběhla úspěšně. Prosím přihlašte se.");
+        return "user/login";
     }
 
     /**
@@ -82,6 +85,7 @@ public class UserController {
                     user.setGenderForm("M");
                 else user.setGenderForm("F");
             }
+            user.setOldPassword(user.getPassword());
             user.setPassword("");
             model.addAttribute("userForm", user);
             return "user/edit";
@@ -100,8 +104,12 @@ public class UserController {
         if (result.hasErrors()) return "user/edit";
 
         try{
+        	if (user.getPassword().trim()==null || user.getPassword().trim().equals("")){
+	            user.setPassword(user.getOldPassword());
+        	} else {
             String hashPass = new HashString().digest(user.getPassword());
             user.setPassword(hashPass);
+        	}
         }catch (Exception e){
             return "user/failed";
         }
@@ -122,5 +130,17 @@ public class UserController {
         model.addAttribute("formerGames", attendedFormer);
         return "/user/attended";
     }
-
+    
+    @RequestMapping(value="/user/login", method = RequestMethod.GET)
+	public String login(Model model) {
+    	
+		return "user/login";
+	}
+    
+    @RequestMapping(value="/user/loginfailed", method = RequestMethod.GET)
+	public String failed(Model model) {
+    	model.addAttribute("info", "Zadané jméno nebo heslo neexistuje. Zkuste to znovu.");
+		return "user/login";
+	}
+    
 }
