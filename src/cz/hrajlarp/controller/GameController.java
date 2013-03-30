@@ -2,6 +2,10 @@ package cz.hrajlarp.controller;
 
 import cz.hrajlarp.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -15,6 +19,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.security.Security;
 import java.util.List;
 
 
@@ -55,17 +60,25 @@ public class GameController{
             BindingResult r
             ){
 
-        String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
-        myGame.setImage(image);
-        myGame.validate(r);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        HrajUserEntity user = userDAO.getUserByLogin(auth.getName());
 
-        if (r.hasErrors()) return "game/add";
+        if (rights.isLogged(auth) && user!= null){
 
-        GameEntity game = myGame.getGameEntity();
-        gameDAO.addGame(game);
+            String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
+            myGame.setImage(image);
+            myGame.setAddedBy(user.getId());
+            myGame.validate(r);
 
-        System.out.println("Formular odeslan");
-        return "/game/added";
+            if (r.hasErrors()) return "game/add";
+
+            GameEntity game = myGame.getGameEntity();
+            gameDAO.addGame(game);
+
+            System.out.println("Formular odeslan");
+            return "/game/added";
+        }
+        else return "/error";
     }
 
     /**
@@ -75,8 +88,14 @@ public class GameController{
      */
     @RequestMapping(value = "/game/add", method= RequestMethod.GET, produces="text/plain;charset=UTF-8")
     public String showForm(ModelMap model){
-        model.addAttribute("myGame", new GameEntity());
-        return "game/add";
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        HrajUserEntity user = userDAO.getUserByLogin(auth.getName());
+
+        if (rights.isLogged(auth) && user!=null){
+            model.addAttribute("myGame", new GameEntity());
+            return "game/add";
+        }
+        else return "/error";
     }
 
 
@@ -89,27 +108,31 @@ public class GameController{
     @RequestMapping(value="/game/detail")
     public String detail(@RequestParam("gameId") String gameId, Model model) {
         System.out.println("GameController: Passing through..." + "/game/detail" + "gameId: " + gameId );
-
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(gameId == null || gameId.isEmpty()) return "calendar";
 
         try {
             int id = Integer.parseInt(gameId);
             if (id <= 0)
-                throw new Exception();
+            throw new Exception();
 
             GameEntity game = gameDAO.getGameById(id);
 
             List<HrajUserEntity> assignedUsers = userAttendedGameDAO.getUsersByGameId(game.getId());
             game.setAssignedUsers(assignedUsers);
-
-            UserAttendedGameEntity uage = new UserAttendedGameEntity();
-            uage.setGameId(game.getId());
-            uage.setUserId(1);  //TODO get user id from session
-            game.setTargetUser(userDAO.getUserById(1));  //TODO set gender from user
             model.addAttribute("game", game);
-            boolean logged = userAttendedGameDAO.isLogged(uage);
-            model.addAttribute("loggedInGame", logged);
-            if (logged) model.addAttribute("substitute", userAttendedGameDAO.isSubstitute(uage));
+
+            HrajUserEntity user = userDAO.getUserByLogin(auth.getName());
+            if (rights.isLogged(auth) && user != null){
+                UserAttendedGameEntity uage = new UserAttendedGameEntity();
+                uage.setGameId(game.getId());
+                uage.setUserId(user.getId());
+                game.setTargetUser(user);
+                model.addAttribute("logged", true);
+                boolean logged = userAttendedGameDAO.isLogged(uage);
+                model.addAttribute("loggedInGame", logged);
+                if (logged) model.addAttribute("substitute", userAttendedGameDAO.isSubstitute(uage));
+            }
 
         } catch (Exception e) {
             /* TODO error message is too brief and not styled in .JSP file*/
@@ -130,25 +153,33 @@ public class GameController{
     @RequestMapping(value = "/game/edit", method= RequestMethod.GET)
     public String showEditForm(Model model, @ModelAttribute("id") String id){
         model.addAttribute("myGame", new ValidGame());
-        try {
-            int intId = Integer.parseInt(id);
-            if (intId < 0) return "game/error";
-            GameEntity game = gameDAO.getGameById(intId);
 
-            if (game != null) {
-                model.addAttribute("game", game);
-                model.addAttribute("date", game.getDate().toString().substring(0, 10));
-                model.addAttribute("time", game.getDate().toString().substring(11,16));
-               return "game/edit";
-            }
-            else {
-                return "game/error";
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        HrajUserEntity user = userDAO.getUserByLogin(auth.getName());
+        if (rights.isLogged(auth) && user != null){
+            int gameId = Integer.parseInt(id);
+            if (gameId < 0) return "/error";
+
+            if (gameDAO.userOwnsGame(gameId, user.getId())){
+                try {
+                    GameEntity game = gameDAO.getGameById(gameId);
+
+                    if (game != null) {
+                        model.addAttribute("game", game);
+                        model.addAttribute("date", game.getDate().toString().substring(0, 10));
+                        model.addAttribute("time", game.getDate().toString().substring(11,16));
+                        return "game/edit";
+                    }
+                    else {
+                        return "/error";
+                    }
+                    }
+                    catch (NumberFormatException e) {
+                        return "/error";
+                    }
             }
         }
-        catch (NumberFormatException e) {
-            return "game/error";
-        }
-
+        return "/error";
     }
 
     /**
@@ -167,29 +198,39 @@ public class GameController{
             HttpServletRequest request,
             BindingResult r
             ){
-        try {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        HrajUserEntity user = userDAO.getUserByLogin(auth.getName());
+
+        if (rights.isLogged(auth) && user != null){
             int gameId = Integer.parseInt(id);
-            if (gameId < 0) return "game/error";
+            if (gameId < 0) return "/error";
 
-            if (imageFile != null && imageFile.length > 0 && !imageFile[0].getOriginalFilename().equals("")) { //there is at least one image file
-                String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
-                myGame.setImage(image);
-            }
-            else {
-                myGame.setImage(gameDAO.getGameById(gameId).getImage());
-            }
-            myGame.validate(r);
-            if (r.hasErrors()) return "game/edit";
+            if (gameDAO.userOwnsGame(gameId, user.getId())){
+                try {
 
-            GameEntity game = myGame.getGameEntity();
-            game.setId(gameId);
-            gameDAO.editGame(game);
-            System.out.println("Hra byla editovana");
-            return "/game/edited";
+                    if (imageFile != null && imageFile.length > 0 && !imageFile[0].getOriginalFilename().equals("")) { //there is at least one image file
+                        String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
+                        myGame.setImage(image);
+                    }
+                    else {
+                        myGame.setImage(gameDAO.getGameById(gameId).getImage());
+                    }
+                    myGame.validate(r);
+                    if (r.hasErrors()) return "game/edit";
+
+                    GameEntity game = myGame.getGameEntity();
+                    game.setId(gameId);
+                    gameDAO.editGame(game);
+                    System.out.println("Hra byla editovana");
+                    return "/game/edited";
+                }
+                catch (NumberFormatException e){
+                    return "/error";
+                }
+            }
         }
-        catch (NumberFormatException e){
-            return "/game/error";
-        }
+        return "/error";
     }
 
     /**
@@ -202,9 +243,11 @@ public class GameController{
     public String logInGame(
             @ModelAttribute("gameId") int gameId
     ){
-        if (rights.isLogged()){
-            int userId = 1;
-            //TODO get userID from session
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        HrajUserEntity user = userDAO.getUserByLogin(auth.getName());
+
+        if (rights.isLogged(auth) && user!=null){
+            int userId = user.getId();
 
             if (gameId > 0){
                 GameEntity game = gameDAO.getGameById(gameId);
@@ -215,7 +258,7 @@ public class GameController{
                     if (!userAttendedGameDAO.isLogged(uage)){  //user is not logged in this game
                         List<HrajUserEntity> assignedUsers = userAttendedGameDAO.getUsersByGameId(game.getId());
                         game.setAssignedUsers(assignedUsers);
-                        game.setTargetUser(userDAO.getUserById(1));  //TODO set gender from user
+                        game.setTargetUser(user);
                         if (game.isFull()) uage.setSubstitute(true);
                         else uage.setSubstitute(false);
                         userAttendedGameDAO.addUserAttendedGame(uage);
@@ -240,9 +283,11 @@ public class GameController{
     public String logOutGame(
             @ModelAttribute("gameId") int gameId
     ){
-        if (rights.isLogged()){
-            int userId = 1;
-            //TODO get userID from session
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        HrajUserEntity user = userDAO.getUserByLogin(auth.getName());
+
+        if (rights.isLogged(auth) && user != null){
+            int userId = user.getId();
 
             if (gameId > 0){
                 GameEntity game = gameDAO.getGameById(gameId);
