@@ -15,7 +15,7 @@
 
 <c:if test="${not empty displayName}">
     <div><c:out value="${displayName}"/></div>
-    <div><a href="http://hrajlarp.cz/ucast/14">Mé přihlášky</a> 
+    <div><a href="/user/attended">Mé přihlášky</a>
     <a href="<c:url value="/j_spring_security_logout" />">Odhlášení</a></div>
-	<div><a href="http://hrajlarp.cz/edituj-uzivatele">Editace údajů</a></div>
+	<div><a href="/user/edit">Editace údajů</a></div>
 </c:if>

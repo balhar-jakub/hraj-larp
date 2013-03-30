@@ -2,6 +2,7 @@ package cz.hrajlarp.model;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,7 +13,9 @@ import org.springframework.security.core.userdetails.User;
  */
 public class Rights {
 
-    public boolean isLogged(Authentication a){
-        return (a.isAuthenticated());
+    public static boolean isLogged(Authentication a){
+        // TODO add check for anonymous user!
+        return (a != null && a.getPrincipal() != null && a.isAuthenticated()
+                && a.getPrincipal() instanceof UserDetails);
     }
 }

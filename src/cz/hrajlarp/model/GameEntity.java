@@ -314,9 +314,12 @@ public class GameEntity {
      */
     @Transient
     public boolean isFull(){
-        if(targetUser == null) return isFullForAnyone();
+        if(targetUser == null)
+            return isFullForAnyone();
+
         if (targetUser.getGender() == MEN && getMenFreeRoles() > 0 && getBothFreeRoles() > 0) return false;
-        else return !(targetUser.getGender() == WOMEN && getWomenFreeRoles() > 0 && getBothFreeRoles() > 0);
+        if (targetUser.getGender() == WOMEN && getWomenFreeRoles() > 0 && getBothFreeRoles() > 0) return false;
+        return true;
     }
 
     @Transient
@@ -349,17 +352,20 @@ public class GameEntity {
         return sdf.format(date);
     }
 
+    /**
+     * Method sets the list of all users assigned to the game
+     * (not substitutes) and counts assigned and remaining roles
+     * @param assignedUsers list of user assigned to this game
+     */
     @Transient
     public void setAssignedUsers(List assignedUsers){
 
         int[] rolesAssigned = new int[ROLE_TYPES_CNT];
+        this.assignedUsers = new ArrayList<HrajUserEntity>();
 
         for (Object o : assignedUsers){
             if(o instanceof HrajUserEntity){
                 HrajUserEntity user = (HrajUserEntity) o;
-
-                if(this.assignedUsers == null)
-                    this.assignedUsers = new ArrayList<HrajUserEntity>();
                 this.assignedUsers.add(user);
 
                 if(user.getGender() == MEN)
@@ -414,8 +420,15 @@ public class GameEntity {
         return womenAssignedRoles;
     }
 
+    /**
+     * Method decides whether given user can sign up for this game or not.
+     * @param user tested user
+     * @return true, if user is not signed up for the game yet and the capacity
+     * has not been filled up yet (considering gender)
+     */
     @Transient
     public boolean isAvailableToUser(HrajUserEntity user){
+
         if(assignedUsers == null)
             return false; // unknown ! ASSIGNED USERS WERE NOT SET YET !
 

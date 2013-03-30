@@ -116,11 +116,16 @@ public class UserAttendedGameDAO {
             Query query = session.createQuery("from UserAttendedGameEntity where game_id= :gameId and user_id= :userId and substitute = true ");
             query.setParameter("gameId", uage.getGameId());
             query.setParameter("userId", uage.getUserId());
-            return (query.uniqueResult()!=null)?true:false;
+            return (query.uniqueResult()!=null);
         }
         finally { session.close(); }
     }
 
+    /**
+     * Method gets all users (including substitutes) signed up for game with given id.
+     * @param gameId game identifier
+     * @return list of users
+     */
     @Transactional(readOnly = true)
     public List getUsersByGameId(int gameId){
 
@@ -135,6 +140,36 @@ public class UserAttendedGameDAO {
         finally { session.close(); }
     }
 
+    /**
+     * Method gets from database all users signed up for game with given id.
+     * Excludes users signed as substitutes.
+     * @param gameId game identifier
+     * @return list of users signed up for game as regular users (not substitutes)
+     */
+    @Transactional(readOnly = true)
+    public List getUsersByGameIdNoSubstitutes(int gameId){
+
+        if(gameId <= 0) return null;
+
+        Session session = sessionFactory.openSession();
+        try{
+            Query query = session.createQuery("select distinct uag.userAttended from UserAttendedGameEntity uag" +
+                    " where uag.gameId in (:gameId) and uag.substitute = false");
+            query.setParameter("gameId", gameId);
+            return query.list();
+        }
+        finally { session.close(); }
+    }
+
+    /**
+     * Gets games available to user from given list.
+     * Excludes games, where user is already signed in.
+     * Excludes games, where capacity is filled (considering user gender).
+     * Does not consider date of game.
+     * @param games initial list, supposed to be future games
+     * @param loggedUser user who wants to be logged on game
+     * @return filtered list of games
+     */
     public List<GameEntity> filterAvailableGames(List<GameEntity> games, HrajUserEntity loggedUser) {
 
         if(games == null || games.isEmpty()) return games;
@@ -144,7 +179,11 @@ public class UserAttendedGameDAO {
             Transaction transaction = session.beginTransaction();
             List<GameEntity> availableGames = new ArrayList<GameEntity>();
             for (GameEntity game : games) {
-                Query query = session.createQuery("select distinct uag.userAttended from UserAttendedGameEntity uag where uag.gameId in (:gameId)");
+                Query query = session.createQuery(
+                    "select user from UserAttendedGameEntity as userAttendedGame " +
+                    " join userAttendedGame.attendedGame as game " +
+                    " with game.id=:gameId" +
+                    " join userAttendedGame.userAttended as user");
                 query.setParameter("gameId", game.getId());
                 List users = query.list();
 
@@ -165,9 +204,13 @@ public class UserAttendedGameDAO {
         try{
             Transaction transaction = session.beginTransaction();
 
-            Query query = session.createQuery("select userAttendedGame from UserAttendedGameEntity as userAttendedGame " +
-                    "join userAttendedGame.attendedGame as game " +
-                    "with game.date < current_timestamp ");
+            Query query = session.createQuery(
+                    "select userAttendedGame from UserAttendedGameEntity as userAttendedGame " +
+                    " join userAttendedGame.attendedGame as game " +
+                    " with game.date < current_timestamp" +
+                    " join userAttendedGame.userAttended as user " +
+                    " with user.id = :id");
+            query.setParameter("id", user.getId());
             List<UserAttendedGameEntity> result = query.list();
             transaction.commit();
             return result;
@@ -180,9 +223,13 @@ public class UserAttendedGameDAO {
         try{
             Transaction transaction = session.beginTransaction();
 
-            Query query = session.createQuery("select userAttendedGame from UserAttendedGameEntity as userAttendedGame " +
-                    "join userAttendedGame.attendedGame as game " +
-                    "with game.date >= current_timestamp ");
+            Query query = session.createQuery(
+                    "select userAttendedGame from UserAttendedGameEntity as userAttendedGame " +
+                    " join userAttendedGame.attendedGame as game " +
+                    " with game.date >= current_timestamp" +
+                    " join userAttendedGame.userAttended as user " +
+                    " with user.id = :id");
+            query.setParameter("id", user.getId());
             List<UserAttendedGameEntity> result = query.list();
             transaction.commit();
             return result;

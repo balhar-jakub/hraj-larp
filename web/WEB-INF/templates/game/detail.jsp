@@ -101,7 +101,6 @@
                 </tbody>
             </table>
         </div>
-
         <div class="siderow">
             <h4>Místo</h4>
             ${game.place}
