@@ -25,19 +25,19 @@
     <mvc:resources mapping="/js/**" location="/assets/js/" />
     <mvc:resources mapping="/html/**" location="/assets/html/" />
     <mvc:resources mapping="/fonts/**" location="/assets/fonts/" />
-
+	
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
-
+		
         <property name="url" value="jdbc:postgresql://194.8.253.136/hrajlarp" />
         <property name="username" value="hrajlarp" />
         <property name="password" value="5e5icha" />
 
-<!--
-        <property name="url" value="jdbc:postgresql://localhost:5432/hrajlarp?characterEncoding=UTF-8" />
+
+        <!-- <property name="url" value="jdbc:postgresql://localhost:5432/hrajlarp?characterEncoding=UTF-8" />
         <property name="username" value="postgres" />
-        <property name="password" value="Sockoban1" />
---><!--
+        <property name="password" value="Sockoban1" /> -->
+<!--
         <property name="url" value="jdbc:postgresql://194.8.253.136/sutrhraj?characterEncoding=utf-8" />
         <property name="username" value="sutr" />
         <property name="password" value="sutrDb" />
@@ -76,5 +76,28 @@
 
     <bean id="rights" class="cz.hrajlarp.model.Rights" >
     </bean>
+    
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+  		<property name="host" value="smtp.gmail.com"/>
+  		<property name="port" value="587"/>
+        <property name="username" value="hrajlarp111@gmail.com"/>
+        <property name="password" value="hrajlarp2013"/>
+        <property name="javaMailProperties">
+          <props>
+           <prop key="mail.smtp.auth">true</prop>
+       	   <prop key="mail.smtp.starttls.enable">true</prop>
+          </props>
+        </property>
+	</bean>
+
+	<bean id="templateMessage" class="org.springframework.mail.SimpleMailMessage">
+	  	<property name="from" value="hrajlarp111@gmail.com"/>
+	  	<property name="subject" value="HRAJLARP - Změna statusu u hry"/>
+	</bean>
+	
+	<bean id="mailService" class="cz.hrajlarp.utils.MailService">
+	  	<property name="mailSender" ref="mailSender"/>
+	  	<property name="templateMessage" ref="templateMessage"/>
+	</bean>
 
 </beans>

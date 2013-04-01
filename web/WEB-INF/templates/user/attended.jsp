@@ -8,7 +8,7 @@
     </tr>
     <c:forEach items="${futureGames}" var="future">
         <tr>
-            <td>${future.attendedGame.name}</td>
+            <td><a href="/game/detail?gameId=${future.attendedGame.id}">${future.attendedGame.name}</a></td>
             <td>${future.substituteText}</td>
         </tr>
     </c:forEach>
@@ -21,7 +21,7 @@
     </tr>
     <c:forEach items="${formerGames}" var="former">
         <tr>
-            <td>${former.attendedGame.name}</td>
+            <td><a href="/game/detail?gameId=${former.attendedGame.id}">${former.attendedGame.name}</a></td>
             <td>${former.substituteText}</td>
         </tr>
     </c:forEach>

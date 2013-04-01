@@ -2,8 +2,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <form:form method="post" action="update" commandName="userForm">
     <form:hidden path="id" value="${user.id}"/>
-
-    <div class="text">
+	<form:hidden path="oldPassword" value="${user.oldPassword}"/>
+    <div>
         <label for="name">Jméno: </label>
         <form:input path="name" id="name" value="${user.name}"/>
         <form:errors path="name"/>
