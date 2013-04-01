@@ -105,6 +105,12 @@
             <h4>Místo</h4>
             ${game.place}
         </div>
+        <c:if test="${not empty game.web}">
+            <div class="siderow">
+                <h4>Web Larpu</h4>
+                <a href="${game.web}">${game.web}</a>
+            </div>
+        </c:if>
     </div>
 
     <div class="text left">
