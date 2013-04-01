@@ -3,7 +3,7 @@
 <form:form method="post" action="update" commandName="userForm">
     <form:hidden path="id" value="${user.id}"/>
 	<form:hidden path="oldPassword" value="${user.oldPassword}"/>
-    <div class="text">
+    <div>
         <label for="name">Jméno: </label>
         <form:input path="name" id="name" value="${user.name}"/>
         <form:errors path="name"/>
