@@ -317,8 +317,10 @@ public class GameEntity {
         if(targetUser == null)
             return isFullForAnyone();
 
-        if (targetUser.getGender() == MEN && getMenFreeRoles() > 0 && getBothFreeRoles() > 0) return false;
-        if (targetUser.getGender() == WOMEN && getWomenFreeRoles() > 0 && getBothFreeRoles() > 0) return false;
+        if (targetUser.getGender() == MEN
+                && (getMenFreeRoles() > 0 || getBothFreeRoles() > 0)) return false;
+        if (targetUser.getGender() == WOMEN
+                && (getWomenFreeRoles() > 0 || getBothFreeRoles() > 0)) return false;
         return true;
     }
 
