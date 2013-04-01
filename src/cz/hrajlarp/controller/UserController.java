@@ -28,12 +28,12 @@ public class UserController {
 
     private UserDAO userDAO;
     private UserAttendedGameDAO userAttendedGameDAO;
-
+    
     @Autowired
     public void setUserDAO(UserDAO userDAO) {
         this.userDAO = userDAO;
     }
-
+    
     @Autowired
     public void setUserAttendedGameDAO(UserAttendedGameDAO uagDAO){
         this.userAttendedGameDAO = uagDAO;
@@ -111,15 +111,24 @@ public class UserController {
     @RequestMapping(value="/user/update", method = RequestMethod.POST)
     public String update(@ModelAttribute("userForm") HrajUserEntity user, BindingResult result){
 
+<<<<<<< HEAD
         new UserValidator().validate(user, result);
+=======
+        new UserValidator().validateEditedProfile(user, result);
+>>>>>>> origin/sendMail
         if (result.hasErrors()) return "user/edit";
 
         try{
         	if (user.getPassword().trim()==null || user.getPassword().trim().equals("")){
 	            user.setPassword(user.getOldPassword());
         	} else {
+<<<<<<< HEAD
             String hashPass = new HashString().digest(user.getPassword());
             user.setPassword(hashPass);
+=======
+        		String hashPass = new HashString().digest(user.getPassword());
+        		user.setPassword(hashPass);
+>>>>>>> origin/sendMail
         	}
         }catch (Exception e){
             return "user/failed";
@@ -159,7 +168,11 @@ public class UserController {
 
     @RequestMapping(value="/user/login", method = RequestMethod.GET)
 	public String login(Model model) {
+<<<<<<< HEAD
 
+=======
+    	
+>>>>>>> origin/sendMail
 		return "user/login";
 	}
 

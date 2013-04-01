@@ -1,10 +1,13 @@
 package cz.hrajlarp.controller;
 
 import cz.hrajlarp.model.*;
-import cz.hrajlarp.utils.FileUtils;
+import cz.hrajlarp.utils.MailService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -18,6 +21,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.security.Security;
 import java.util.List;
 
 
@@ -36,6 +40,13 @@ public class GameController{
     private UserDAO userDAO;
     @Autowired
     private UserAttendedGameDAO userAttendedGameDAO;
+    
+    private MailService mailService;
+
+    @Autowired
+    public void setMailService(MailService mailService) {
+        this.mailService = mailService;
+    }
 
     /**
      * on submit method for add game form
@@ -288,7 +299,7 @@ public class GameController{
                             uage.setUserId(newUser.getId());
                             uage.setSubstitute(false);
                             userAttendedGameDAO.editUserAttendedGame(uage);             //edit this substitute as ordinary player
-                            //TODO let newUser know, that he is ordinary player now
+                            mailService.sendMessage(newUser, game);
                         }
                     }
                 }
