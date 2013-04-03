@@ -4,7 +4,7 @@
 <table class="attended">
     <tr class="header">
         <td>Jméno hry</td>
-        <td>Stav (Normální / Náhradník)</td>
+        <td>Stav (Hráč / Náhradník)</td>
     </tr>
     <c:forEach items="${futureGames}" var="future">
         <tr>
@@ -17,7 +17,7 @@
 <table class="attended">
     <tr class="header">
         <td>Jméno hry</td>
-        <td>Stav (Normální / Náhradník)</td>
+        <td>Stav (Hráč / Náhradník)</td>
     </tr>
     <c:forEach items="${formerGames}" var="former">
         <tr>
