@@ -329,6 +329,14 @@ public class GameEntity {
         return menFreeRoles == 0 && womenFreeRoles == 0 && bothFreeRoles == 0;
     }
 
+    private boolean festival;
+
+    @Transient
+    public boolean isFestival(){
+        festival = shortText.equals("Festivalová");
+        return festival;
+    }
+
 
     @Transient
     public String getDateAsDMY(){

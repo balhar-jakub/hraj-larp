@@ -6,6 +6,12 @@
         <h1>Kalendář larpů</h1>
     </div>
 
+  <c:if test="${isLogged}">
+    <div class="text">
+        <h1><a href="/game/add">Přidej hru</a></h1>
+    </div>
+  </c:if>
+
     <ul class="nav nav-tabs">
         <li class="active"><a class="tabAnchor" id="tab" href="#tab1" data-toggle="tab">Nadcházející termíny</a></li>
         <li><a class="tabAnchor" href="#tab2" data-toggle="tab">Minulé termíny</a></li>
