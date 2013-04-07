@@ -1,9 +1,11 @@
 package cz.hrajlarp.controller;
 
-import cz.hrajlarp.model.*;
+import cz.hrajlarp.model.HrajUserEntity;
+import cz.hrajlarp.model.UserAttendedGameDAO;
+import cz.hrajlarp.model.UserAttendedGameEntity;
+import cz.hrajlarp.model.UserDAO;
 import cz.hrajlarp.utils.HashString;
 import cz.hrajlarp.utils.UserValidator;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,15 +37,15 @@ public class UserController {
     }
 
     @Autowired
-    public void setUserAttendedGameDAO(UserAttendedGameDAO uagDAO){
+    public void setUserAttendedGameDAO(UserAttendedGameDAO uagDAO) {
         this.userAttendedGameDAO = uagDAO;
     }
 
     /**
      * Redirects to new user registration page.
      */
-    @RequestMapping(value="/user/add")
-    public String add(Model model){
+    @RequestMapping(value = "/user/add")
+    public String add(Model model) {
         HrajUserEntity user = new HrajUserEntity();
         model.addAttribute("userForm", user);
         return "user/add";
@@ -54,21 +56,21 @@ public class UserController {
      * Transfers data from reg. form into UserValidator for validation.
      * If everything is ok, saves data into db, else redirects back to reg. page.
      */
-    @RequestMapping(value="/user/register", method = RequestMethod.POST)
-    public String register(@ModelAttribute("userForm") HrajUserEntity user, BindingResult result, 
-    		Model model){
+    @RequestMapping(value = "/user/register", method = RequestMethod.POST)
+    public String register(@ModelAttribute("userForm") HrajUserEntity user, BindingResult result,
+                           Model model) {
         new UserValidator().validate(user, result);
 
-        if(!userDAO.userNameIsUnique(user.getUserName()))
+        if (!userDAO.userNameIsUnique(user.getUserName()))
             result.rejectValue("userName", "userName is not unique in database",
                     "Uživatelské jméno už je zabrané, vyberte si prosím jiné.");
 
         if (result.hasErrors()) return "user/add";
 
-        try{
+        try {
             String hashPass = new HashString().digest(user.getPassword());
             user.setPassword(hashPass);
-        }catch (Exception e){
+        } catch (Exception e) {
             return "user/failed";
         }
 
@@ -80,22 +82,22 @@ public class UserController {
     /**
      * Loads user data from DB and prepares them for viewing in edit page form.
      */
-    @RequestMapping(value="/user/edit", method= RequestMethod.GET)
-    public String edit(Model model, @RequestParam(value = "id", required=false) Integer id){
+    @RequestMapping(value = "/user/edit", method = RequestMethod.GET)
+    public String edit(Model model, @RequestParam(value = "id", required = false) Integer id) {
         model.addAttribute("userForm", new HrajUserEntity());
 
         HrajUserEntity user = null;
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         HrajUserEntity logged = userDAO.getUserByLogin(auth.getName());
 
-        if(id != null) user = userDAO.getUserById(id);
+        if (id != null) user = userDAO.getUserById(id);
 
         /* rights for admins might be tested here */
         if (logged == null || (user != null && !user.equals(logged)))
             return "/error";   // attempt to edit foreign user account
 
-        if(logged.getGender()!=null)
-            logged.setGenderForm((logged.getGender()==0)?"M":"F");
+        if (logged.getGender() != null)
+            logged.setGenderForm((logged.getGender() == 0) ? "M" : "F");
 
         logged.setOldPassword(logged.getPassword());
         logged.setPassword("");
@@ -108,20 +110,20 @@ public class UserController {
      * Transfers data from update form into UserValidator for validation.
      * If everything is ok, saves data into db, else redirects back to edit page.
      */
-    @RequestMapping(value="/user/update", method = RequestMethod.POST)
-    public String update(@ModelAttribute("userForm") HrajUserEntity user, BindingResult result){
+    @RequestMapping(value = "/user/update", method = RequestMethod.POST)
+    public String update(@ModelAttribute("userForm") HrajUserEntity user, BindingResult result) {
 
-        new UserValidator().validate(user, result);
+        new UserValidator().validateEditedProfile(user, result);
         if (result.hasErrors()) return "user/edit";
 
-        try{
-        	if (user.getPassword().trim()==null || user.getPassword().trim().equals("")){
-	            user.setPassword(user.getOldPassword());
-        	} else {
-            String hashPass = new HashString().digest(user.getPassword());
-            user.setPassword(hashPass);
-        	}
-        }catch (Exception e){
+        try {
+            if (user.getPassword().trim() == null || user.getPassword().trim().equals("")) {
+                user.setPassword(user.getOldPassword());
+            } else {
+                String hashPass = new HashString().digest(user.getPassword());
+                user.setPassword(hashPass);
+            }
+        } catch (Exception e) {
             return "user/failed";
         }
 
@@ -131,19 +133,20 @@ public class UserController {
 
     /**
      * Method creates the overview of games attended by user (former and future)
+     *
      * @param model
-     * @param id user id
+     * @param id    user id
      * @return
      */
-    @RequestMapping(value="/user/attended", method= RequestMethod.GET)
+    @RequestMapping(value = "/user/attended", method = RequestMethod.GET)
     public String userAttended(Model model,
-                         @RequestParam(value = "id", required=false) Integer id){
+                               @RequestParam(value = "id", required = false) Integer id) {
 
         HrajUserEntity user = null;
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         HrajUserEntity logged = userDAO.getUserByLogin(auth.getName());
 
-        if(id != null) user = userDAO.getUserById(id);
+        if (id != null) user = userDAO.getUserById(id);
 
         /* rights for admins might be tested here */
         if (logged == null || (user != null && !user.equals(logged)))
@@ -157,16 +160,15 @@ public class UserController {
         return "/user/attended";
     }
 
-    @RequestMapping(value="/user/login", method = RequestMethod.GET)
-	public String login(Model model) {
+    @RequestMapping(value = "/user/login", method = RequestMethod.GET)
+    public String login(Model model) {
+        return "user/login";
+    }
 
-		return "user/login";
-	}
+    @RequestMapping(value = "/user/loginfailed", method = RequestMethod.GET)
+    public String failed(Model model) {
+        model.addAttribute("info", "Zadané jméno nebo heslo neexistuje. Zkuste to znovu.");
+        return "user/login";
+    }
 
-    @RequestMapping(value="/user/loginfailed", method = RequestMethod.GET)
-	public String failed(Model model) {
-    	model.addAttribute("info", "Zadané jméno nebo heslo neexistuje. Zkuste to znovu.");
-		return "user/login";
-	}
-    
 }

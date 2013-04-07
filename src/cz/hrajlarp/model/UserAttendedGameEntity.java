@@ -115,7 +115,7 @@ public class UserAttendedGameEntity {
 
     @Transient
     public String getSubstituteText() {
-        return (isSubstitute()) ? "Náhradník": "Řádný";
+        return (isSubstitute()) ? "Náhradník": "Hráč";
     }
 
     public void setSubstituteText(String substituteText) {
