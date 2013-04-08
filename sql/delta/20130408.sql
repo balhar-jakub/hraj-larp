@@ -14,3 +14,5 @@ create table user_is_editor (
 );
 
 alter table game add column registration_started timestamp;
+alter table game alter column confirmed set default false;
+ALTER TABLE game ALTER COLUMN confirmed SET NOT NULL;

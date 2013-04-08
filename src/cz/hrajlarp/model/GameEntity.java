@@ -3,7 +3,9 @@ package cz.hrajlarp.model;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -86,6 +88,18 @@ public class GameEntity {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    private Boolean confirmed;
+
+    @Column(name = "confirmed")
+    @Basic
+    public Boolean getConfirmed() {
+        return confirmed;
+    }
+
+    public void setConfirmed(Boolean confirmed) {
+        this.confirmed = confirmed;
     }
 
     private String image;

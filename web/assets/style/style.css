@@ -2362,3 +2362,7 @@ table.players td,
 table.attended td {
     padding-right: 10px;
 }
+
+.unfinished {
+    font-weight: bold;
+}

@@ -51,6 +51,26 @@ public class AdminController {
         }
     }
 
+    @RequestMapping(value = "/admin/game/list", method= RequestMethod.GET)
+    public String gameList(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        HrajUserEntity user = userDAO.getUserByLogin(auth.getName());
+        if (Rights.isLogged(auth) && user != null){
+            List <GameEntity> futureGames = gameDAO.getFutureGames();
+            List <GameEntity> formerGames = gameDAO.getFormerGames();
+            List <GameEntity> invalidGames = gameDAO.getInvalidGames();
+
+            model.addAttribute("futureGames", futureGames);
+            model.addAttribute("formerGames", formerGames);
+            model.addAttribute("unvalidatedGames", invalidGames);
+            model.addAttribute("isLogged", true);
+            return "/admin/game/list";
+        } else {
+            model.addAttribute("path", "/admin/game/list");
+            return "/admin/norights";
+        }
+    }
+
     @RequestMapping(value = "/admin/game/logout/{gameId}/{playerId}", method= RequestMethod.POST)
     public String logoutPlayer(Model model,
                                @PathVariable("gameId") Integer gameId,
@@ -92,6 +112,24 @@ public class AdminController {
             return "redirect:/admin/game/players/{id}";
         } else {
             model.addAttribute("path", "/admin/game/logout/" + String.valueOf(gameId) + "/" + playerId);
+            return "/admin/norights";
+        }
+    }
+
+    @RequestMapping(value = "/admin/game/validate/{gameId}")
+    public String validateGame(Model model,
+                               @PathVariable("gameId") Integer gameId,
+                               RedirectAttributes redirectAttributes) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        HrajUserEntity user = userDAO.getUserByLogin(auth.getName());
+        if (Rights.isLogged(auth) && user != null){
+            GameEntity game = gameDAO.getGameById(gameId);
+            game.setConfirmed(true);
+            gameDAO.editGame(game);
+
+            return "redirect:/admin/game/list";
+        } else {
+            model.addAttribute("path", "/admin/game/validate/" + String.valueOf(gameId));
             return "/admin/norights";
         }
     }
