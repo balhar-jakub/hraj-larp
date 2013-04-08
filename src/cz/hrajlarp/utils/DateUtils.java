@@ -1,5 +1,6 @@
 package cz.hrajlarp.utils;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -30,5 +31,11 @@ public class DateUtils {
     public static String getTime(Date date){
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         return sdf.format(date);
+    }
+
+    public static boolean isFuture(Timestamp timestamp){
+        Date now = new Date();
+        Timestamp nowTimestamp= new Timestamp(now.getTime());
+        return nowTimestamp.after(timestamp);
     }
 }

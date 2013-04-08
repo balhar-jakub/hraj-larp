@@ -5,10 +5,17 @@
     <h1>${game.name} | ${game.dateAsDMY}</h1>
 </div>
 
-<div class="page-termin">
+<c:choose>
+  <c:when test="${game.festival}">
+    <div class="page-termin festival">
+  </c:when>
+  <c:otherwise>
+    <div class="page-termin">
+  </c:otherwise>
+</c:choose>
 
     <div class="text left">
-        <p>${game.shortText}</p>
+        <p>${game.info}</p>
         <img src="${game.image}" alt="ilustrační obrázek">
     </div>
 
@@ -29,6 +36,11 @@
   <c:choose>
       <c:when test="${logged}">
           <c:choose>
+            <c:when test="${isFuture}">
+               <span>
+                     Hra již proběhla.
+               </span>
+            </c:when>
             <c:when test="${loggedInGame}">
                 <c:choose>
                     <c:when test="${substitute}">
@@ -118,6 +130,16 @@
         <p>${game.aboutGame}</p>
 
         <h3>Autor</h3>
-        ${game.author}
+        <p>${game.author}</p>
+
+        <h3>Typ hry:</h3>
+        <c:choose>
+            <c:when test="${game.festival}">
+                <p>Festivalová hra uváděná v rámci HRAJ Larp.</p>
+            </c:when>
+            <c:otherwise>
+                <p>${game.shortText}</p>
+            </c:otherwise>
+        </c:choose>
     </div>
 </div>

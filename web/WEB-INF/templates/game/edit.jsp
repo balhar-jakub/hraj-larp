@@ -14,6 +14,22 @@
         <textarea id="anotation" name="anotation">${game.anotation}</textarea>
     </div>
     <div>
+        <label for="shortText">Typ hry:</label>
+        <form:errors path="shortText" />
+        <form:select path="shortText" id="shortText">
+        <c:choose>
+          <c:when test="${game.festival}">
+            <form:option value="Nezávislá">Nezávislá</form:option>
+            <form:option value="Festivalová" selected="selected">Festivalová</form:option>
+          </c:when>
+          <c:otherwise>
+            <form:option value="Nezávislá" selected = "selected">Nezávislá</form:option>
+            <form:option value="Festivalová">Festivalová</form:option>
+          </c:otherwise>
+        </c:choose>
+        </form:select>
+    </div>
+    <div>
         <label for="aboutGame">O hře:</label>
         <form:errors path="aboutGame"/>
         <textarea id="aboutGame" name="aboutGame">${game.aboutGame}</textarea>
@@ -67,11 +83,6 @@
         <label for="place">Místo:</label>
         <form:errors path="place"/>
         <textarea id="place" name="place">${game.place}</textarea>
-    </div>
-    <div>
-        <label for="shortText">Info na případnou značku v kalendáři vedle termínu:</label>
-        <form:errors path="shortText"/>
-        <textarea id="shortText" name="shortText">${game.shortText}</textarea>
     </div>
     <input type="hidden" name="gameId" value=${game.id}>
     <input type="submit" value="Ulož změny">
