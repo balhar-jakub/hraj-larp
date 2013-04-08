@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -38,48 +37,38 @@ public class GameDAO {
      * @return game with given id
      */
     @Transactional(readOnly=true)
-    public Game getGameById(int gameId){
+    public GameEntity getGameById(int gameId){
 
         if(gameId <= 0) return null;
 
-        Session session = null;
-        try {
-            session = sessionFactory.openSession();
+        Session session = sessionFactory.openSession();
+        try{
             Query query = session.createQuery("from GameEntity where id= :id ");
             query.setParameter("id", gameId);
-            List list = query.list();
-            return (list != null && !list.isEmpty())?new Game((GameEntity)list.get(0)):null;
+            return (GameEntity) query.uniqueResult();
         }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        finally{
-            if (session != null && session.isOpen()) {
-                session.close();
-            }
-        }
-        return null;
+        finally { session.close(); }
     }
 
 
     /**
      * @return List of all games (former and future too)
      */
-    public List<Game> getALLGames(){
+    public List<GameEntity> getALLGames(){
         return listGames(false, false);
     }
 
     /**
      * @return List of all games in future from current date
      */
-    public List<Game> getFutureGames(){
+    public List<GameEntity> getFutureGames(){
         return listGames(true, true);
     }
 
     /**
      * @return List of all games in past by current date
      */
-    public List<Game> getFormerGames(){
+    public List<GameEntity> getFormerGames(){
         return listGames(true, false);
     }
 
@@ -91,64 +80,29 @@ public class GameDAO {
      * @return list of all games based on given criteria
      */
     @Transactional(readOnly=true)
-    private List<Game> listGames(boolean criteria, boolean future){
+    private List<GameEntity> listGames(boolean criteria, boolean future){
 
-        Session session = null;
-        try {
-            session = sessionFactory.openSession();
+        Session session = sessionFactory.openSession();
+        try{
             Date now = new Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
             StringBuilder query = new StringBuilder("from GameEntity ");
 
-            if(!criteria){
-                /* no criteria for date (list all games) */
-            }
-            else if(future){ // future games
-                query.append(" where date >= '" + sdf.format(now) + "'");
-            }
-            else{   // former games
-                query.append(" where date < '" + sdf.format(now) + "'");
-            }
+            if(!criteria); /* no criteria for date (list all games) */
+            else if(future) // future games
+                query.append(" where date >= current_timestamp");
+            else   // former games
+                query.append(" where date < current_timestamp");
 
             query.append(" order by date");
             System.out.println("executing: " + query.toString());
 
             Query finalQuery = session.createQuery(query.toString());
-            List list = finalQuery.list();
-
-            if(list == null || list.isEmpty()) return null;
-
-            List<Game> gameList = getGameList(list);
-            return (gameList.isEmpty())? null : gameList;
+            return finalQuery.list();
         }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        finally{
-            if (session != null && session.isOpen()) {
-                session.close();
-            }
-        }
-        return null;
+        finally { session.close(); }
     }
-
-    /**
-     * Change type of elements in given List to Game if possible
-     * @param list List of GameEntity items
-     * @return list of Game items created from by given list
-     */
-    private List<Game> getGameList(List<GameEntity> list){
-        List<Game> gameList = new LinkedList<Game>();
-        for (GameEntity gen: list)
-            try{
-                gameList.add(new Game(gen));
-            }catch(ClassCastException e){
-                e.printStackTrace();
-            }
-        return gameList;
-    }
-
 
     @Transactional(readOnly=true)
     public void getAllObjects(){
@@ -165,9 +119,8 @@ public class GameDAO {
                     System.out.println("  " + o);
                 }
             }
-        } finally {
-            session.close();
         }
+        finally { session.close(); }
     }
 
     /**
@@ -177,10 +130,12 @@ public class GameDAO {
     @Transactional(readOnly=false)
     public void addGame(GameEntity game){
         Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        session.save(game);
-        session.getTransaction().commit();
-        session.close();
+        try{
+            session.beginTransaction();
+            session.save(game);
+            session.getTransaction().commit();
+        }
+        finally { session.close(); }
     }
 
     /**
@@ -190,35 +145,32 @@ public class GameDAO {
     @Transactional(readOnly=false)
     public void editGame(GameEntity game){
         Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        session.update(game);
-        session.getTransaction().commit();
-        session.close();
+        try{
+            session.beginTransaction();
+            session.update(game);
+            session.getTransaction().commit();
+        }
+        finally { session.close(); }
     }
-
 
     /**
-     * This method selects game from database
-     * @param id
-     * @return GameEntity with id
+     * This method returns true if user with userId created game with gameId.
+     * @param gameId
+     * @param userId
+     * @return
      */
     @Transactional(readOnly=true)
-    public GameEntity findGame(int id){
+    public boolean userOwnsGame(int gameId, int userId) {
 
-            if (id<=0) return null;
-            Session session = sessionFactory.openSession();
-            session.beginTransaction();
-            Query query = session.createQuery("FROM GameEntity WHERE id = :id");
-            query.setParameter("id", id);
-            List result = query.list();
-            session.getTransaction().commit();
-            session.close();
-            if (result != null && !result.isEmpty()) {
-                GameEntity game = (GameEntity) result.get(0);
-                return game;
-            }
-            else return null;
+        if(userId <= 0) return false;
 
+        Session session = sessionFactory.openSession();
+        try{
+            Query query = session.createQuery("from GameEntity where id = :id and added_by= :user ");
+            query.setParameter("id", gameId);
+            query.setParameter("user", userId);
+            return (query.uniqueResult() != null);
+        }
+        finally { session.close(); }
     }
-
 }

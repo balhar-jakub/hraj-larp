@@ -2,6 +2,8 @@ package cz.hrajlarp.controller;
 
 import cz.hrajlarp.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,13 +35,14 @@ public class CalendarController {
         this.userDAO = userDAO;
     }
 
-
     private UserAttendedGameDAO userAttendedGameDAO;
 
     @Autowired
     public void setUserAttendedGameDAO(UserAttendedGameDAO userAttendedGameDAO) {
         this.userAttendedGameDAO = userAttendedGameDAO;
     }
+
+
 
     /**
      * Controller for view of calendar
@@ -48,18 +51,22 @@ public class CalendarController {
      */
     @RequestMapping(value = {"/kalendar","/"}, method= RequestMethod.GET)
     public String calendar(Model model) {
-        System.out.println("CalendarController: Passing through..." + "/calendar");
+        System.out.println("CalendarController: Passing through..." + "/kalendar");
 
-        List <Game> futureGames = gameDAO.getFutureGames();
-        List <Game> formerGames = gameDAO.getFormerGames();
+        List <GameEntity> futureGames = gameDAO.getFutureGames();
+        List <GameEntity> formerGames = gameDAO.getFormerGames();
 
         model.addAttribute("futureGames", futureGames);
         model.addAttribute("formerGames", formerGames);
 
-        HrajUserEntity testUser = userDAO.getUserById(2);
 
-        List<Game> availableGames = userAttendedGameDAO.filterAvailableGames(futureGames, testUser); /* TODO gender must be set by logged user from cookie or session */
-        model.addAttribute("availableGames", availableGames);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        HrajUserEntity user = userDAO.getUserByLogin(auth.getName());
+        if (Rights.isLogged(auth) && user != null){
+            List<GameEntity> availableGames = userAttendedGameDAO.filterAvailableGames(futureGames, user);
+            model.addAttribute("availableGames", availableGames);
+            model.addAttribute("isLogged", true);
+        }
 
         /* TODO what should be displayed if some of the lists (or both) is empty */
 

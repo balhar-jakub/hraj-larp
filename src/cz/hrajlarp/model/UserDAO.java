@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Component
 public class UserDAO {
 
@@ -19,30 +17,44 @@ public class UserDAO {
         this.sessionFactory = sessionFactory;
     }
 
+    /**
+     * Gets user from database by his id number
+     * @param userId user identifier
+     * @return user with given id
+     */
     @Transactional(readOnly=true)
     public HrajUserEntity getUserById(int userId){
 
         if(userId <= 0) return null;
 
-        Session session = null;
-        try {
-            session = sessionFactory.openSession();
+        Session session = sessionFactory.openSession();
+        try{
             Query query = session.createQuery("from HrajUserEntity where id= :id ");
             query.setParameter("id", userId);
             System.out.println("executing: " + query.getQueryString());
-            List list = query.list();
-            System.out.println(list);
-            return (list != null && !list.isEmpty())?(HrajUserEntity)list.get(0):null;
+            return (HrajUserEntity) query.uniqueResult();
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        finally { session.close(); }
+    }
+
+    /**
+     * Gets user from database by his user name (login name)
+     * @param login user name
+     * @return user with given user name
+     */
+    @Transactional(readOnly=true)
+    public HrajUserEntity getUserByLogin(String login){
+
+        if(login == null || login.isEmpty()) return null;
+
+        Session session = sessionFactory.openSession();
+        try{
+            Query query = session.createQuery("from HrajUserEntity where user_name= :login ");
+            query.setParameter("login", login);
+            System.out.println("executing: " + query.getQueryString());
+            return (HrajUserEntity) query.uniqueResult();
         }
-        finally{
-            if (session != null && session.isOpen()) {
-                session.close();
-            }
-        }
-        return null;
+        finally { session.close(); }
     }
 
     /**
@@ -51,12 +63,12 @@ public class UserDAO {
     @Transactional
     public void addUser(HrajUserEntity user){
         Session session = sessionFactory.openSession();
-
-        session.beginTransaction();
-        session.save(user);
-        session.getTransaction().commit();
-
-        session.close();
+        try{
+            session.beginTransaction();
+            session.save(user);
+            session.getTransaction().commit();
+        }
+        finally { session.close(); }
     }
 
     /**
@@ -65,11 +77,29 @@ public class UserDAO {
     @Transactional
     public void editUser(HrajUserEntity user){
         Session session = sessionFactory.openSession();
+        try{
+            session.beginTransaction();
+            session.update(user);
+            session.getTransaction().commit();
+        }
+        finally { session.close(); }
+    }
 
-        session.beginTransaction();
-        session.update(user);
-        session.getTransaction().commit();
+    /**
+     * Method checks if given username is unique (not present in the database yet).
+     * @param userName tested user name
+     * @return true if name is not present in the database yet
+     */
+    @Transactional(readOnly=true)
+    public boolean userNameIsUnique(String userName){
+        if(userName == null || userName.isEmpty()) return false;
 
-        session.close();
+        Session session = sessionFactory.openSession();
+        try{
+            Query query = session.createQuery("from HrajUserEntity where user_name= :login ");
+            query.setParameter("login", userName);
+            return (query.uniqueResult()==null);
+        }
+        finally { session.close(); }
     }
 }

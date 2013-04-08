@@ -114,11 +114,11 @@ public class HrajUserEntity {
 
     @Column(name = "mail_information")
     @Basic
-    public boolean isMailInformation() {
+    public Boolean getMailInformation() {
         return mailInformation;
     }
 
-    public void setMailInformation(boolean mailInformation) {
+    public void setMailInformation(Boolean mailInformation) {
         this.mailInformation = mailInformation;
     }
 
@@ -162,6 +162,7 @@ public class HrajUserEntity {
         this.genderForm = genderForm;
     }
 
+    @Transient
     public String getGenderForm(){
         return genderForm;
     }
@@ -171,8 +172,18 @@ public class HrajUserEntity {
         this.passwordAgain = passwordAgain;
     }
 
+    @Transient
     public String getPasswordAgain(){
         return passwordAgain;
+    }
+    
+    private String oldPassword;
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
+    }
+    @Transient
+    public String getOldPassword(){
+        return oldPassword;
     }
 
     private Map<Object, UserAttendedGameEntity> userEntities;

@@ -47,7 +47,42 @@ public class UserValidator implements Validator{
         }
 
     }
+    
+    public void validateEditedProfile(Object userToValidate, Errors errors) {
 
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name",
+                "required.name", "Musíte zadat jméno.");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName",
+                "required.lastName", "Musíte zadat příjmení.");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "userName",
+                "required.userName", "Musíte zadat uživatelské jméno.");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email",
+                "required.email", "Musíte zadat e-mailovou adresu.");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phone",
+                "required.phone", "Musíte zadat telefonní číslo.");
+
+        HrajUserEntity user = (HrajUserEntity)userToValidate;
+
+        if (user.getPassword().trim()!=null && !user.getPassword().trim().equals("")){
+	        if(!user.getPassword().equals(user.getPasswordAgain())){
+	            errors.rejectValue("password", "notmatch.password",
+	                    "Heslo neodpovídá kontrolnímu údaji");
+	        }
+        }
+
+        if(user.getGenderForm()==null){
+            errors.rejectValue("genderForm", "genderForm.required",
+                    "Musíte zadat Muž/Žena");
+        } else {
+            if (user.getGenderForm().trim().equals("M"))
+                user.setGender(new Integer(0));
+            else if (user.getGenderForm().trim().equals("F"))
+                user.setGender(new Integer(1));
+            else errors.rejectValue("genderForm", "genderForm.required",
+                        "Musíte zadat Muž/Žena");
+        }
+
+    }
 
     @Override
     public boolean supports(Class c) {
