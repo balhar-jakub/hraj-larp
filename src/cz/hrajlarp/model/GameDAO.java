@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -166,10 +165,19 @@ public class GameDAO {
 
         Session session = sessionFactory.openSession();
         try{
-            Query query = session.createQuery("from GameEntity where id = :id and added_by= :user ");
+            Query query = session.createQuery("from GameEntity where id = :id and addedBy= :user ");
             query.setParameter("id", gameId);
             query.setParameter("user", userId);
             return (query.uniqueResult() != null);
+        }
+        finally { session.close(); }
+    }
+
+    public List<GameEntity> getInvalidGames() {
+        Session session = sessionFactory.openSession();
+        try{
+            Query query = session.createQuery("from GameEntity where confirmed = false ");
+            return query.list();
         }
         finally { session.close(); }
     }

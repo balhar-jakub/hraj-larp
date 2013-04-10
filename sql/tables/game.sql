@@ -19,6 +19,11 @@ create table game (
   web text,
   larp_db text,
 
+  replacements_text text,
+  ordinary_player_text text,
+
+  confirmed boolean,
+
   FOREIGN KEY added_by references hraj_user(id),
   PRIMARY KEY id
 );

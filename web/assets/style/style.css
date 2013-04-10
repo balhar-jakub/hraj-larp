@@ -2349,14 +2349,20 @@ body {
   h2, h3 { page-break-after: avoid; }
 }
 
+table.players .first,
 table.attended .header {
     font-weight: bold;
 }
-
+table.players,
 table.attended {
     margin: 5px;
 }
 
+table.players td,
 table.attended td {
-    padding-right: 5px;
+    padding-right: 10px;
+}
+
+.unfinished {
+    font-weight: bold;
 }

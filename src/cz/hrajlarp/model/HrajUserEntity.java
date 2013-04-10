@@ -14,6 +14,7 @@ import java.util.Map;
 public class HrajUserEntity {
     private Integer id;
 
+
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_key_gen")
     @SequenceGenerator(name = "id_key_gen", sequenceName = "hraj_user_id_seq", allocationSize = 1)
     @Column(name = "id")
@@ -196,5 +197,23 @@ public class HrajUserEntity {
 
     public void setUserEntities(Map<Object, UserAttendedGameEntity> userEntities) {
         this.userEntities = userEntities;
+    }
+
+    private String genderTextual = null;
+
+    @Transient
+    public String getGenderTextual() {
+        if(genderTextual == null) {
+            if(getGender() == 0){
+                setGenderTextual("Muž");
+            } else {
+                setGenderTextual("Žena");
+            }
+        }
+        return genderTextual;
+    }
+
+    public void setGenderTextual(String genderTextual) {
+        this.genderTextual = genderTextual;
     }
 }

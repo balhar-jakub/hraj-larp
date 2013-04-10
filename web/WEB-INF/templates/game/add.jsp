@@ -14,6 +14,14 @@
         <form:textarea id="anotation" path="anotation" />
     </div>
     <div>
+        <label for="shortText">Typ hry:</label>
+        <form:errors path="shortText" />
+        <form:select path="shortText" id="shortText">
+            <form:option value="Nezávislá" selected = "selected">Nezávislá</form:option>
+            <form:option value="Festivalová">Festivalová</form:option>
+        </form:select>
+    </div>
+    <div>
         <label for="aboutGame">O hře:</label>
         <form:errors path="aboutGame" />
         <form:textarea id="aboutGame" path="aboutGame" />
@@ -68,12 +76,6 @@
         <form:errors path="place" />
         <form:textarea id="place" path="place"/>
     </div>
-    <div>
-        <label for="shortText">Info na případnou značku v kalendáři vedle termínu:</label>
-        <form:errors path="shortText" />
-        <form:textarea id="shortText" path="shortText" value=""/>
-    </div>
-
 
     <input type="submit" value="Přidej hru">
 </form:form>

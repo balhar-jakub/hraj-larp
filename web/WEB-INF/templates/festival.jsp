@@ -10,7 +10,7 @@
         bude na místě zajišťovat hladký průběh akce. Doufáme, že festival poskytne skvělou, a hlavně pravidelnou zábavu
         několika desítkám hráčů.</p>
 
-    <p><img src="../temp/img/thinkbig.png"></p>
+    <p><img src="/img/thinkbig.png"></p>
 
     <p>Pořádání festivalu je v roce 2013 podpořeno z programu Think Big, který realizuje Nadace O2 ve spolupráci s
         Nadací rozvoje občanské společnosti. Díky této podpoře mají všechny larpy na festivalu <strong>jednotnou cenu
