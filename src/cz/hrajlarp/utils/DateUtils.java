@@ -13,26 +13,6 @@ import java.util.Date;
  */
 public class DateUtils {
 
-    public static String getDateAsDMY(Date date){
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-        return sdf.format(date);
-    }
-
-    public static String getDateAsDM(Date date){
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM");
-        return sdf.format(date);
-    }
-
-    public static String getDateAsDayName(Date date){
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
-        return sdf.format(date);
-    }
-
-    public static String getTime(Date date){
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        return sdf.format(date);
-    }
-
     public static boolean isFuture(Timestamp timestamp){
         Date now = new Date();
         Timestamp nowTimestamp= new Timestamp(now.getTime());

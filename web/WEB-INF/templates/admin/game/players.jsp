@@ -20,5 +20,19 @@
             </td>
         </tr>
     </c:forEach>
+    <c:if test="${not empty requestScope.substitutes}">
+        <tr><td>Náhradníci:</td></tr>
+        <c:forEach items="${requestScope.substitutes}" var="substitute">
+            <tr>
+                <td>${substitute.name} ${substitute.lastName}</td>
+                <td>${substitute.phone}</td>
+                <td>${substitute.email}</td>
+                <td>${substitute.genderTextual}</td>
+                <td>
+                    <button type="submit" formaction="/admin/game/logout/${gameId}/${substitute.id}">Odhlásit</button>
+                </td>
+            </tr>
+        </c:forEach>
+    </c:if>
 </table>
 </form>
