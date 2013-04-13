@@ -22,6 +22,7 @@ import java.util.List;
  */
 @Controller
 public class AdminController {
+
     @Autowired
     private GameDAO gameDAO;
 
@@ -34,15 +35,20 @@ public class AdminController {
     @Autowired
     private MailService mailService;
 
+    @Autowired
+    private Rights rights;
+
     @RequestMapping(value = "/admin/game/players/{id}", method= RequestMethod.GET)
     public String gamePlayers(Model model, @PathVariable("id") Integer id) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        HrajUserEntity user = userDAO.getUserByLogin(auth.getName());
-        if (Rights.isLogged(auth) && user != null){
-            List<HrajUserEntity> players =  userAttendedGameDAO.getUsersByGameId(id);
+
+        if (rights.isLogged()){
+            /* TODO getUsersByGameId(id) includes substitutes, is this correct? */
+            List<HrajUserEntity> players =  userAttendedGameDAO.getUsersByGameIdNoSubstitutes(id);
+            List<HrajUserEntity> substitutes =  userAttendedGameDAO.getSubstituteUsersByGameId(id);
 
             model.addAttribute("gameId",id);
             model.addAttribute("players", players);
+            model.addAttribute("substitutes", substitutes);
             model.addAttribute("isLogged", true);
             return "/admin/game/players";
         } else {
@@ -53,9 +59,7 @@ public class AdminController {
 
     @RequestMapping(value = "/admin/game/list", method= RequestMethod.GET)
     public String gameList(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        HrajUserEntity user = userDAO.getUserByLogin(auth.getName());
-        if (Rights.isLogged(auth) && user != null){
+        if (rights.isLogged()){
             List <GameEntity> futureGames = gameDAO.getFutureGames();
             List <GameEntity> formerGames = gameDAO.getFormerGames();
             List <GameEntity> invalidGames = gameDAO.getInvalidGames();
@@ -76,19 +80,20 @@ public class AdminController {
                                @PathVariable("gameId") Integer gameId,
                                @PathVariable("playerId") Integer playerId,
                                RedirectAttributes redirectAttributes) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        HrajUserEntity user = userDAO.getUserByLogin(auth.getName());
-        if (Rights.isLogged(auth) && user != null){
+
+        if (rights.isLogged()){
             GameEntity game = gameDAO.getGameById(gameId);
             HrajUserEntity oldUser = userDAO.getUserById(playerId);
             UserAttendedGameEntity uage = new UserAttendedGameEntity();
             uage.setGameId(gameId);
             uage.setUserId(playerId);
             if (userAttendedGameDAO.isLogged(uage)){   //user is logged in this game
+                boolean wasSubstitute = userAttendedGameDAO.isSubstitute(uage);
                 userAttendedGameDAO.deleteUserAttendedGame(uage);   //logout old user
 
-                List<HrajUserEntity> assignedUsers = userAttendedGameDAO.getUsersByGameId(gameId);
-                game.setAssignedUsers(assignedUsers);   //count new free roles count
+                List<HrajUserEntity> signedUsers = userAttendedGameDAO.getUsersByGameIdNoSubstitutes(gameId);
+                List<HrajUserEntity> substitutes = userAttendedGameDAO.getSubstituteUsersByGameId(gameId);
+                game.setAssignedUsers(signedUsers, substitutes);   //count new free roles count
 
                 int gender = 2;                                   //default setting for none men or women free roles, only both roles are free
                 if (oldUser.getGender()==0) {                     //loggouted user is man
@@ -98,13 +103,16 @@ public class AdminController {
                     if (game.getWomenFreeRoles() > 0) gender = 1; //there are free women roles
                 }
 
-                uage = userAttendedGameDAO.getFirstSubstitutedUAG(game.getId(), gender);  //get first substitute according to gender
-                if (uage != null){
-                    HrajUserEntity newUser = userDAO.getUserById(uage.getUserId());
-                    uage.setUserId(newUser.getId());
-                    uage.setSubstitute(false);
-                    userAttendedGameDAO.editUserAttendedGame(uage);             //edit this substitute as ordinary player
-                    mailService.sendMessage(newUser, game);
+                /* if logged out user was not just a substitute, some of substitutes should replace him */
+                if(!wasSubstitute){
+                    uage = userAttendedGameDAO.getFirstSubstitutedUAG(game.getId(), gender);  //get first substitute according to gender
+                    if (uage != null) {
+                        HrajUserEntity newUser = userDAO.getUserById(uage.getUserId());
+                        uage.setUserId(newUser.getId());
+                        uage.setSubstitute(false);
+                        userAttendedGameDAO.editUserAttendedGame(uage);             //edit this substitute as ordinary player
+                        mailService.sendMessage(newUser, game);
+                    }
                 }
             }
 
@@ -120,9 +128,7 @@ public class AdminController {
     public String validateGame(Model model,
                                @PathVariable("gameId") Integer gameId,
                                RedirectAttributes redirectAttributes) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        HrajUserEntity user = userDAO.getUserByLogin(auth.getName());
-        if (Rights.isLogged(auth) && user != null){
+        if (rights.isLogged()){
             GameEntity game = gameDAO.getGameById(gameId);
             game.setConfirmed(true);
             gameDAO.editGame(game);

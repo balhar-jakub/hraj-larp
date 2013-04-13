@@ -10,11 +10,10 @@ import java.sql.Timestamp;
  * Time: 14:10
  * To change this template use File | Settings | File Templates.
  */
-@javax.persistence.IdClass(cz.hrajlarp.model.UserAttendedGameEntityPK.class)
+@javax.persistence.IdClass(UserGamePK.class)
 @javax.persistence.Table(name = "user_attended_game", schema = "public")
 @Entity
 public class UserAttendedGameEntity {
-    private int userId;
 
     private boolean substitute;
 
@@ -30,6 +29,8 @@ public class UserAttendedGameEntity {
     public void setSubstitute(boolean substitute) {
         this.substitute = substitute;
     }
+
+    private int userId;
 
     @javax.persistence.Column(name = "user_id")
     @Id

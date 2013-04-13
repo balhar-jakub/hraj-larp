@@ -104,10 +104,18 @@
                     <td>${game.womenFreeRoles}</td>
                     <td>${game.bothFreeRoles}</td>
                 </tr>
+                <!--
                 <tr>
                     <td>Zatím přihlášeno</td>
                     <td>${game.menAssignedRoles}</td>
                     <td>${game.womenAssignedRoles}</td>
+                    <td></td>
+                </tr>
+                -->
+                <tr>
+                    <td>Náhradníci</td>
+                    <td>${game.menSubstitutes}</td>
+                    <td>${game.womenSubstitutes}</td>
                     <td></td>
                 </tr>
                 </tbody>
