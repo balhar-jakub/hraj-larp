@@ -1,6 +1,7 @@
 package cz.hrajlarp.utils;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -16,6 +17,17 @@ public class DateUtils {
     public static boolean isFuture(Timestamp timestamp){
         Date now = new Date();
         Timestamp nowTimestamp= new Timestamp(now.getTime());
-        return nowTimestamp.after(timestamp);
+        return nowTimestamp.before(timestamp);
+    }
+
+    public static Date stringsToDate(String day, String time){
+        SimpleDateFormat datetimeFormatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date date = null;
+        try {
+            date = datetimeFormatter1.parse(day+" "+time);
+        } catch (ParseException e) {
+            System.out.println("Error in timestamp converting DateUtils.java.");
+        }
+        return date;
     }
 }

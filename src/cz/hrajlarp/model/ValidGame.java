@@ -1,5 +1,6 @@
 package cz.hrajlarp.model;
 
+import cz.hrajlarp.utils.DateUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
@@ -97,15 +98,8 @@ public class ValidGame {
 
         GameEntity game = new GameEntity();
 
-        try {
-            SimpleDateFormat datetimeFormatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            if (time.isEmpty()) time = "12:00";
-
-            Date changedDate = datetimeFormatter1.parse(date+" "+time);
-            game.setDate(new Timestamp(changedDate.getTime()));
-        } catch (ParseException e) {
-            System.out.println("Error in timestamp converting ValidGame.java.");
-        }
+        if (time.isEmpty()) time = "12:00";
+        game.setDate(new Timestamp(DateUtils.stringsToDate(date.toString(), time).getTime()));
 
         game.setAboutGame(aboutGame);
         game.setAddedBy(addedBy);

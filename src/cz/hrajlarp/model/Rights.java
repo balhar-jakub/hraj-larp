@@ -131,6 +131,6 @@ public class Rights {
      * @return true, if user has permission to edit game
      */
     public boolean hasRightsToEditGame(HrajUserEntity user, GameEntity game){
-        return userIsEditorDAO.isEditorOfGame(user, game);
+         return userIsEditorDAO.isEditorOfGame(user, game) || isAdministrator(user);
     }
 }
