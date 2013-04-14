@@ -94,7 +94,13 @@ public class AdminController {
 
                 List<HrajUserEntity> signedUsers = userAttendedGameDAO.getUsersByGameIdNoSubstitutes(gameId);
                 List<HrajUserEntity> substitutes = userAttendedGameDAO.getSubstituteUsersByGameId(gameId);
-                game.setAssignedUsers(signedUsers, substitutes);   //count new free roles count
+
+                try{
+                    game.setAssignedUsers(signedUsers, substitutes);   //count new free roles count
+                }catch(Exception e){
+                    e.printStackTrace();
+                    /* TODO handle error and fix data in the database */
+                }
 
                 int gender = 2;                                   //default setting for none men or women free roles, only both roles are free
                 if (oldUser.getGender()==0) {                     //loggouted user is man

@@ -322,6 +322,7 @@ public class GameEntity {
         result = 31 * result + (registrationStarted != null ? registrationStarted.hashCode() : 0);
         result = 31 * result + (ordinaryPlayerText != null ? ordinaryPlayerText.hashCode() : 0);
         result = 31 * result + (replacementsText != null ? replacementsText.hashCode() : 0);
+
         return result;
     }
 
@@ -399,7 +400,7 @@ public class GameEntity {
 
     @Transient
     public boolean isFullForAnyone(){
-        return menFreeRoles == 0 && womenFreeRoles == 0 && bothFreeRoles == 0;
+        return getMenFreeRoles() == 0 && getWomenFreeRoles() == 0 && getBothFreeRoles() == 0;
     }
 
     private boolean festival;
@@ -439,17 +440,27 @@ public class GameEntity {
      * Method sets the list of all users assigned to the game
      * (not substitutes) and counts assigned and remaining roles
      * @param assignedUsers list of user assigned to this game
+     * @param substitutes list of substitutes assigned to this game
      */
     @Transient
-    public void setAssignedUsers(List assignedUsers, List substitutes){
+    public void setAssignedUsers(List assignedUsers, List substitutes) throws Exception {
 
         int[] rolesAssigned = new int[ROLE_TYPES_CNT];
         this.assignedUsers = new ArrayList<HrajUserEntity>();
         this.substitutes = new ArrayList<HrajUserEntity>();
 
+        if(assignedUsers != null && !assignedUsers.isEmpty())
         for (Object o : assignedUsers){
             if(o instanceof HrajUserEntity){
                 HrajUserEntity user = (HrajUserEntity) o;
+
+                if(this.assignedUsers.contains(user)){
+                    // user is signed to this game as regular twice
+                    // should not happen (user and game makes primary key in UserAttendedGame)
+                    throw new Exception("GameEntity error: assigned user (id="+user.getId()
+                            +") is signed twice on one game (id=" +getId()+")");
+                }
+
                 this.assignedUsers.add(user);
 
                 if(user.getGender() == MEN)
@@ -459,9 +470,24 @@ public class GameEntity {
             }
         }
 
+        if(substitutes != null && !substitutes.isEmpty())
         for (Object o : substitutes){
             if(o instanceof HrajUserEntity){
                 HrajUserEntity user = (HrajUserEntity) o;
+
+                if(this.assignedUsers.contains(user)){
+                    // user is signed to this game as regular and substitute at the same time
+                    // should not happen (user and game makes primary key in UserAttendedGame)
+                    throw new Exception("GameEntity error: assigned user (id="+user.getId()
+                            +") is also a substitute on one game (id=" +getId()+")");
+                }
+                if(this.substitutes.contains(user)){
+                    // user is signed to this game as substitute twice
+                    // should not happen (user and game makes primary key in UserAttendedGame)
+                    throw new Exception("GameEntity error: assigned user (id="+user.getId()
+                            +") is a substitute twice on one game (id=" +getId()+")");
+                }
+
                 this.substitutes.add(user);
 
                 if(user.getGender() == MEN)
@@ -483,6 +509,24 @@ public class GameEntity {
             rolesAssigned[WOMEN] = womenRole;
         }
 
+        if(rolesAssigned[BOTH] > getBothRole()){
+            // the number of assigned players is bigger than the number of game roles
+            int assigned = rolesAssigned[MEN] + rolesAssigned[WOMEN] + rolesAssigned[BOTH];
+            throw new Exception("GameEntity error: number of assigned players (" + assigned +
+                    ") is above limit of game roles (game id=" + getId() + ")");
+        }
+
+        if((rolesAssigned[MEN] < getMenRole() && menSubstitutes > 0)
+                || (rolesAssigned[WOMEN] < getWomenRole() && womenSubstitutes > 0)
+                || (rolesAssigned[BOTH] < getBothRole()
+                && substitutes != null && !substitutes.isEmpty())){
+
+            // the game is not full and has substitutes
+            throw new Exception("GameEntity error: game has substitutes even " +
+                    "though it is not full yet");
+        }
+
+
         // now rolesAssigned[] contains real counts of assigned
         // roles for MEN, WOMEN and BOTH (not only MEN and WOMEN)
 
@@ -493,16 +537,22 @@ public class GameEntity {
 
     @Transient
     public int getMenFreeRoles() {
+        if(assignedUsers == null)
+            menFreeRoles = getMenRole();
         return menFreeRoles;
     }
 
     @Transient
     public int getWomenFreeRoles() {
+        if(assignedUsers == null)
+            womenFreeRoles = getWomenRole();
         return womenFreeRoles;
     }
 
     @Transient
     public int getBothFreeRoles() {
+        if(assignedUsers == null)
+            bothFreeRoles = getBothRole();
         return bothFreeRoles;
     }
 
@@ -531,6 +581,7 @@ public class GameEntity {
      * @param user tested user
      * @return true, if user is not signed up for the game yet and the capacity
      * has not been filled up yet (considering gender)
+     * false is returned even if list of assigned users has not been set yet!
      */
     @Transient
     public boolean isAvailableToUser(HrajUserEntity user){

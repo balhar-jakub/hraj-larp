@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static junit.framework.Assert.fail;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Prasek
@@ -211,7 +213,12 @@ public class UserAttendedGameDAO {
                 query.setParameter("gameId", game.getId());
                 List substitutes = query.list();
 
-                game.setAssignedUsers(signed, substitutes); // fills game info: counts of signed users
+                try{
+                    game.setAssignedUsers(signed, substitutes); // fills game info: counts of signed users
+                }catch(Exception e){
+                    e.printStackTrace();
+                    /* TODO handle error and fix data in the database */
+                }
 
                 if (game.isAvailableToUser(loggedUser)) {
                     availableGames.add(game);

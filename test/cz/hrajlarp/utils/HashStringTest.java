@@ -9,6 +9,7 @@ import org.junit.Test;
  * Time: 16:15
  */
 public class HashStringTest {
+
 	@Test
     public void testDigest() throws Exception {
     	String result = new HashString().digest("asd");

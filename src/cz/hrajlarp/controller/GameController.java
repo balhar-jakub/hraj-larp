@@ -119,17 +119,24 @@ public class GameController {
         if (game != null) {
             List<HrajUserEntity> signedUsers = userAttendedGameDAO.getUsersByGameIdNoSubstitutes(game.getId());
             List<HrajUserEntity> substitutes = userAttendedGameDAO.getSubstituteUsersByGameId(game.getId());
-            game.setAssignedUsers(signedUsers, substitutes);
+            try{
+                game.setAssignedUsers(signedUsers, substitutes);   //count new free roles count
+            }catch(Exception e){
+                e.printStackTrace();
+                /* TODO handle error and fix data in the database */
+            }
             SimpleDateFormat datetimeFormatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             try {
                 Date changedDate = datetimeFormatter1.parse(game.getDate() + " " + game.getTime());
                 if (!DateUtils.isFuture(new Timestamp(changedDate.getTime()))) model.addAttribute("isFuture", true);
+
                 Date startRegDate = datetimeFormatter1.parse(game.getRegistrationStarted().toString());
                 String regStart = DateUtils.getDateAsDMYHM(startRegDate);
             	model.addAttribute("regStart", regStart);
                 if (DateUtils.isFuture(new Timestamp(startRegDate.getTime()))){
                 	model.addAttribute("regStarted", true);
                 }
+                
                 if (rights.isLogged()) {
                     HrajUserEntity user = rights.getLoggedUser();
                     UserAttendedGameEntity uage = new UserAttendedGameEntity();
@@ -254,7 +261,14 @@ public class GameController {
                     if (!userAttendedGameDAO.isLogged(uage)) {  //user is not logged in this game
                         List<HrajUserEntity> signedUsers = userAttendedGameDAO.getUsersByGameIdNoSubstitutes(game.getId());
                         List<HrajUserEntity> substitutes = userAttendedGameDAO.getSubstituteUsersByGameId(game.getId());
-                        game.setAssignedUsers(signedUsers, substitutes);
+
+                        try {
+                            game.setAssignedUsers(signedUsers, substitutes);   //count new free roles count
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            /* TODO handle error and fix data in the database */
+                        }
+                        
                         game.setTargetUser(user);
                         if (game.isFull()) {
                         	uage.setSubstitute(true);
@@ -266,6 +280,7 @@ public class GameController {
                         	if (user.getMailInformation())
                         		mailService.sendMsgSignedAsRegular(user, game);
                         }
+
                         userAttendedGameDAO.addUserAttendedGame(uage);
                     }
                 }
@@ -306,7 +321,13 @@ public class GameController {
                         //count new free roles count
                         List<HrajUserEntity> signedUsers = userAttendedGameDAO.getUsersByGameIdNoSubstitutes(game.getId());
                         List<HrajUserEntity> substitutes = userAttendedGameDAO.getSubstituteUsersByGameId(game.getId());
-                        game.setAssignedUsers(signedUsers, substitutes);
+
+                        try {
+                            game.setAssignedUsers(signedUsers, substitutes);   //count new free roles count
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            /* TODO handle error and fix data in the database */
+                        }
 
                         int gender = 2;                                   //default setting for none men or women free roles, only both roles are free
                         if (oldUser.getGender() == 0) {                     //loggouted user is man

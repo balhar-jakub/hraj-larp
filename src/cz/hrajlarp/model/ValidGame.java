@@ -61,8 +61,8 @@ public class ValidGame {
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         DateFormat dfRegStart = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        df.setLenient(false);
         dfRegStart.setLenient(false);
+        
         Date bDate = null;
         if(this.date != null && !this.date.isEmpty())
         try {
@@ -119,6 +119,7 @@ public class ValidGame {
 
         if (time.isEmpty()) time = "12:00";
         game.setDate(new Timestamp(DateUtils.stringsToDate(date.toString(), time).getTime()));
+
         SimpleDateFormat datetimeFormatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date regStartDate;
 		try {
@@ -127,7 +128,7 @@ public class ValidGame {
 		} catch (ParseException e) {
 			System.out.println("Error in timestamp converting ValidGame.java.");
 		}
-        
+
         game.setAboutGame(aboutGame);
         game.setAddedBy(addedBy);
         game.setAnotation(anotation);
@@ -314,5 +315,4 @@ public class ValidGame {
     public void setReplacementsText(String replacementsText) {
         this.replacementsText = replacementsText;
     }
-
 }
