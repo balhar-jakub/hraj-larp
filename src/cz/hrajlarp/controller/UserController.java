@@ -110,7 +110,7 @@ public class UserController {
         if (result.hasErrors()) return "user/edit";
 
         try {
-            if (user.getPassword().trim() == null || user.getPassword().trim().equals("")) {
+            if (user.getPassword() == null || user.getPassword().trim().equals("")) {
                 user.setPassword(user.getOldPassword());
             } else {
                 String hashPass = new HashString().digest(user.getPassword());

@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,6 +38,9 @@ public class ValidGame {
     private String aboutGame;
     private String web;
     private String larpDb;
+    private String registrationStarted;
+    private String ordinaryPlayerText;
+    private String replacementsText;
     private Pattern pattern;
     private Matcher matcher;
     private static final String TIME_24H = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
@@ -56,7 +60,9 @@ public class ValidGame {
         validateInteger(this.bothRole, "bothRole", errors);
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        df.setLenient(false);
+        DateFormat dfRegStart = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        dfRegStart.setLenient(false);
+        
         Date bDate = null;
         if(this.date != null && !this.date.isEmpty())
         try {
@@ -70,6 +76,19 @@ public class ValidGame {
             pattern = Pattern.compile(TIME_24H);
             matcher = pattern.matcher(this.time);
             if(!matcher.matches()) errors.rejectValue("time", "time.wrongFormatException", "Musíte zadat čas ve formátu HH:MM");
+        }
+        
+        if(registrationStarted == null || registrationStarted.isEmpty()){
+        	Date now = Calendar.getInstance().getTime();
+        	registrationStarted = dfRegStart.format(now);
+        } else {
+        	try {
+        		Date startRegDate = new Date(dfRegStart.parse(registrationStarted).getTime());
+        		if(startRegDate.after(bDate)) 
+        			errors.rejectValue("registrationStarted", "startRegDate must be before bDate", "Datum povolení registrace musí být nižší než datum konání");
+        	}catch (ParseException e){
+        		errors.rejectValue("registrationStarted", "registrationStarted.wrongFormatException", "Datum a čas musí být ve formátu YYYY-MM-DD HH:MM");
+        	}
         }
     }
 
@@ -101,6 +120,15 @@ public class ValidGame {
         if (time.isEmpty()) time = "12:00";
         game.setDate(new Timestamp(DateUtils.stringsToDate(date.toString(), time).getTime()));
 
+        SimpleDateFormat datetimeFormatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date regStartDate;
+		try {
+			regStartDate = datetimeFormatter1.parse(registrationStarted);
+			game.setRegistrationStarted(new Timestamp(regStartDate.getTime()));
+		} catch (ParseException e) {
+			System.out.println("Error in timestamp converting ValidGame.java.");
+		}
+
         game.setAboutGame(aboutGame);
         game.setAddedBy(addedBy);
         game.setAnotation(anotation);
@@ -119,6 +147,8 @@ public class ValidGame {
         game.setPlace(place);
         game.setShortText(shortText);
         game.setWeb(web);
+        game.setOrdinaryPlayerText(ordinaryPlayerText);
+        game.setReplacementsText(replacementsText);
 
         return game;
     }
@@ -261,5 +291,28 @@ public class ValidGame {
 
         return time;
     }
+    
+    public String getRegistrationStarted() {
+        return registrationStarted;
+    }
 
+    public void setRegistrationStarted(String registrationStarted) {
+        this.registrationStarted = registrationStarted;
+    }
+    
+    public String getOrdinaryPlayerText() {
+        return ordinaryPlayerText;
+    }
+
+    public void setOrdinaryPlayerText(String ordinaryPlayerText) {
+        this.ordinaryPlayerText = ordinaryPlayerText;
+    }
+    
+    public String getReplacementsText() {
+        return replacementsText;
+    }
+
+    public void setReplacementsText(String replacementsText) {
+        this.replacementsText = replacementsText;
+    }
 }

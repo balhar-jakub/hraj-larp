@@ -9,8 +9,10 @@ import org.junit.Test;
  * Time: 16:15
  */
 public class HashStringTest {
-    @Test
-    public void testDigest() throws Exception {
 
+	@Test
+    public void testDigest() throws Exception {
+    	String result = new HashString().digest("asd");
+        assertEquals("688787d8ff144c502c7f5cffaafe2cc588d86079f9de88304c26b0cb99ce91c6", result);
     }
 }

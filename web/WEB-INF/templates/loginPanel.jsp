@@ -14,7 +14,7 @@
 </c:if>
 
 <c:if test="${not empty displayName}">
-    <div><c:out value="${displayName}"/></div>
+    <div><c:out value="${displayName}" escapeXml="false"/></div>
     <div><a href="/user/attended">Mé přihlášky</a>
     <a href="<c:url value="/j_spring_security_logout" />">Odhlášení</a></div>
     <div><a href="<c:url value="/user/edit" />">Editace údajů</a></div>

@@ -76,6 +76,23 @@
         <form:errors path="place" />
         <form:textarea id="place" path="place"/>
     </div>
+    <div>
+        <label for="registrationStarted">Datum a čas začátku přihlašování do hry(YYYY-mm-dd hh:mm):</label>
+        <form:input type="text" id="registrationStarted" path="registrationStarted" />
+        <form:errors path="registrationStarted" />
+    </div>
+    <div>
+        <label for="ordinaryPlayerText">Mail pro přihlášeného hráče:</label>
+        <form:textarea id="ordinaryPlayerText" path="ordinaryPlayerText" 
+        value="" escapeXml="true" />
+        <form:errors path="ordinaryPlayerText" />
+    </div>
+    <div>
+        <label for="replacementsText">Mail pro náhradu:</label>
+        <form:textarea id="replacementsText" path="replacementsText" 
+        value="" escapeXml="true" />
+        <form:errors path="replacementsText" />
+    </div>
 
     <input type="submit" value="Přidej hru">
 </form:form>

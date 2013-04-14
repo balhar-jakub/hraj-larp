@@ -60,23 +60,30 @@
                 </form>
             </c:when>
             <c:otherwise>
-              <form method="post" action="logInGame">
-                  <input type="hidden" name="gameId" value="${game.id}">
-                  <c:choose>
-                      <c:when test="${game.full}">
-                          <input type="submit" value="Přihlásit se jako náhradník.">
-                      </c:when>
-                      <c:otherwise>
-                          <input type="submit" value="Přihlásit se na hru.">
-                      </c:otherwise>
-                  </c:choose>
-              </form>
+	            <c:choose>
+	            	<c:when test="${regStarted}">
+	            		<form method="post" action="logInGame">
+		                  <input type="hidden" name="gameId" value="${game.id}">
+		                  <c:choose>
+		                      <c:when test="${game.full}">
+		                          <input type="submit" value="Přihlásit se jako náhradník.">
+		                      </c:when>
+		                      <c:otherwise>
+		                          <input type="submit" value="Přihlásit se na hru.">
+		                      </c:otherwise>
+		                  </c:choose>
+		              </form>
+	            	</c:when>
+		            <c:otherwise>
+		            	Přihlašování do hry je možné až od ${regStart}
+		           </c:otherwise>
+		       </c:choose>   
            </c:otherwise>
-          </c:choose>
-      </c:when>
-      <c:otherwise>
-          <span> Pro přihlášení na hru se přihlašte nebo registrujte. </span>
-      </c:otherwise>
+    	</c:choose>
+    </c:when>
+    <c:otherwise>
+      	<span> Pro přihlášení na hru se přihlašte nebo registrujte. </span>
+    </c:otherwise>
     </c:choose>
         </span>
         </div>

@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -117,7 +118,7 @@ public class AdminController {
                         uage.setUserId(newUser.getId());
                         uage.setSubstitute(false);
                         userAttendedGameDAO.editUserAttendedGame(uage);             //edit this substitute as ordinary player
-                        mailService.sendMessage(newUser, game);
+                        mailService.sendMsgChangedToActor(newUser, game);
                     }
                 }
             }
@@ -142,6 +143,39 @@ public class AdminController {
             return "redirect:/admin/game/list";
         } else {
             model.addAttribute("path", "/admin/game/validate/" + String.valueOf(gameId));
+            return "/admin/norights";
+        }
+    }
+    
+    @RequestMapping(value = "/admin/game/mail/{gameId}")
+    public String editMailText(Model model, @PathVariable("gameId") Integer gameId,
+                               RedirectAttributes redirectAttributes) {
+        if (rights.isLogged()){
+        	model.addAttribute("editMailForm", new GameEntity());
+            GameEntity game = gameDAO.getGameById(gameId);
+            model.addAttribute("game", game);
+            
+            return "admin/game/editmail";
+        } else {
+            model.addAttribute("path", "/admin/game/mail/" + String.valueOf(gameId));
+            return "/admin/norights";
+        }
+    }
+    
+    @RequestMapping(value="/admin/game/editmail", method = RequestMethod.POST)
+    public String submitMail(Model model, @ModelAttribute("editMailForm") GameEntity game) {
+        if (rights.isLogged()){
+        	Integer Id = game.getId();
+        	String opt = game.getOrdinaryPlayerText();
+        	String rt = game.getReplacementsText();
+            GameEntity g = gameDAO.getGameById(Id);
+            g.setOrdinaryPlayerText(opt);
+            g.setReplacementsText(rt);
+            gameDAO.editGame(g);
+        	
+            return "admin/game/list";
+        } else {
+            model.addAttribute("path", "/admin/game/editmail/" + String.valueOf(game.getId()));
             return "/admin/norights";
         }
     }

@@ -1,6 +1,7 @@
 package cz.hrajlarp.model;
 
 import javax.persistence.*;
+
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -233,6 +234,42 @@ public class GameEntity {
     public void setLarpDb(String larpDb) {
         this.larpDb = larpDb;
     }
+    
+    private Timestamp registrationStarted;
+
+    @Column(name = "registration_started")
+    @Basic
+    public Timestamp getRegistrationStarted() {
+        return registrationStarted;
+    }
+    
+    public void setRegistrationStarted(Timestamp registrationStarted) {
+        this.registrationStarted = registrationStarted;
+    }
+    
+    private String ordinaryPlayerText;
+
+    @Column(name = "ordinary_player_text")
+    @Basic
+    public String getOrdinaryPlayerText() {
+        return ordinaryPlayerText;
+    }
+
+    public void setOrdinaryPlayerText(String ordinaryPlayerText) {
+        this.ordinaryPlayerText = ordinaryPlayerText;
+    }
+    
+    private String replacementsText;
+
+    @Column(name = "replacements_text")
+    @Basic
+    public String getReplacementsText() {
+        return replacementsText;
+    }
+
+    public void setReplacementsText(String replacementsText) {
+        this.replacementsText = replacementsText;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -257,6 +294,9 @@ public class GameEntity {
         if (shortText != null ? !shortText.equals(that.shortText) : that.shortText != null) return false;
         if (web != null ? !web.equals(that.web) : that.web != null) return false;
         if (womenRole != null ? !womenRole.equals(that.womenRole) : that.womenRole != null) return false;
+        if (registrationStarted != null ? !registrationStarted.equals(that.registrationStarted) : that.registrationStarted != null) return false;
+        if (ordinaryPlayerText != null ? !ordinaryPlayerText.equals(that.ordinaryPlayerText) : that.ordinaryPlayerText != null) return false;
+        if (replacementsText != null ? !replacementsText.equals(that.replacementsText) : that.replacementsText != null) return false;
 
         return true;
     }
@@ -279,6 +319,10 @@ public class GameEntity {
         result = 31 * result + (aboutGame != null ? aboutGame.hashCode() : 0);
         result = 31 * result + (web != null ? web.hashCode() : 0);
         result = 31 * result + (larpDb != null ? larpDb.hashCode() : 0);
+        result = 31 * result + (registrationStarted != null ? registrationStarted.hashCode() : 0);
+        result = 31 * result + (ordinaryPlayerText != null ? ordinaryPlayerText.hashCode() : 0);
+        result = 31 * result + (replacementsText != null ? replacementsText.hashCode() : 0);
+
         return result;
     }
 

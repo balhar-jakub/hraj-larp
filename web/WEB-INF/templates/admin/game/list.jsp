@@ -65,6 +65,9 @@
                             <div>
                                 <p>${game.info}</p>
                                 <a href="/admin/game/validate/${game.id}" class="biglink">Schválit</a>
+                                <div>
+                                	<a href="/admin/game/mail/${game.id}" class="biglink">Změnit text mailů</a>
+                                </div>
                             </div>
                         </div>
                         <div class="grid2 square1">

@@ -63,7 +63,7 @@ public class UserValidator implements Validator{
 
         HrajUserEntity user = (HrajUserEntity)userToValidate;
 
-        if (user.getPassword().trim()!=null && !user.getPassword().trim().equals("")){
+        if (user.getPassword()!=null && !user.getPassword().trim().equals("")){
 	        if(!user.getPassword().equals(user.getPasswordAgain())){
 	            errors.rejectValue("password", "notmatch.password",
 	                    "Heslo neodpovídá kontrolnímu údaji");
