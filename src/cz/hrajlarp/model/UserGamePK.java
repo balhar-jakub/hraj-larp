@@ -6,12 +6,20 @@ import java.io.Serializable;
 
 /**
  * Created by IntelliJ IDEA.
- * User: Prasek
- * Date: 24.3.13
- * Time: 14:10
+ * User: Matheo
+ * Date: 12.4.13
+ * Time: 19:49
  * To change this template use File | Settings | File Templates.
  */
-public class UserAttendedGameEntityPK implements Serializable {
+public class UserGamePK implements Serializable {
+
+    public UserGamePK(){ }
+
+    public UserGamePK(int userId, int gameId) {
+        this.userId = userId;
+        this.gameId = gameId;
+    }
+
     private int userId;
 
     @Id
@@ -39,9 +47,9 @@ public class UserAttendedGameEntityPK implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof UserGamePK)) return false;
 
-        UserAttendedGameEntityPK that = (UserAttendedGameEntityPK) o;
+        UserGamePK that = (UserGamePK) o;
 
         if (gameId != that.gameId) return false;
         if (userId != that.userId) return false;

@@ -23,12 +23,8 @@ import java.util.Map;
 @Component
 public class GameDAO {
 
-    private SessionFactory sessionFactory;
-
     @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    private SessionFactory sessionFactory;
 
     /**
      * Methods gets Game fro database by given id number
@@ -83,9 +79,6 @@ public class GameDAO {
 
         Session session = sessionFactory.openSession();
         try{
-            Date now = new Date();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
             StringBuilder query = new StringBuilder("from GameEntity ");
 
             if(!criteria); /* no criteria for date (list all games) */

@@ -20,29 +20,17 @@ import java.util.List;
 @Controller
 public class CalendarController {
 
+    @Autowired
     private GameDAO gameDAO;
 
     @Autowired
-    public void setGameDAO(GameDAO gameDAO) {
-        this.gameDAO = gameDAO;
-    }
-
-
     private UserDAO userDAO;
 
     @Autowired
-    public void setUserDAO(UserDAO userDAO) {
-        this.userDAO = userDAO;
-    }
-
     private UserAttendedGameDAO userAttendedGameDAO;
 
     @Autowired
-    public void setUserAttendedGameDAO(UserAttendedGameDAO userAttendedGameDAO) {
-        this.userAttendedGameDAO = userAttendedGameDAO;
-    }
-
-
+    private Rights rights;
 
     /**
      * Controller for view of calendar
@@ -59,41 +47,13 @@ public class CalendarController {
         model.addAttribute("futureGames", futureGames);
         model.addAttribute("formerGames", formerGames);
 
+        if (rights.isLogged()){
+            List<GameEntity> availableGames = userAttendedGameDAO.
+                    filterAvailableGames(futureGames, rights.getLoggedUser());
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        HrajUserEntity user = userDAO.getUserByLogin(auth.getName());
-        if (Rights.isLogged(auth) && user != null){
-            List<GameEntity> availableGames = userAttendedGameDAO.filterAvailableGames(futureGames, user);
             model.addAttribute("availableGames", availableGames);
             model.addAttribute("isLogged", true);
         }
-
-        /* TODO what should be displayed if some of the lists (or both) is empty */
-
         return "calendar";
     }
-
-     /* methods used if future and former games were in separated .JSP files */
-     /*
-    @RequestMapping(value = "/calendar/future")
-    public String futureGames(Model model) {
-        System.out.println("CalendarController: Passing through..." + "/calendar/future");
-
-        List<Game> games = gameDAO.getFutureGames();
-        model.addAttribute("games", games);
-
-        return "calendar/futureEvents";
-    }
-
-
-    @RequestMapping(value = "/calendar/former")
-    public String formerGames(Model model) {
-        System.out.println("CalendarController: Passing through..." + "/calendar/former");
-
-        List<Game> games = gameDAO.getFormerGames();
-        model.addAttribute("games", games);
-
-        return "calendar/formerEvents";
-    }
-    */
 }

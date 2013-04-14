@@ -295,6 +295,18 @@ public class GameEntity {
     }
 
 
+    private Map<Object, UserIsEditorEntity> editedByUsers;
+
+    @MapKey(name = "gameId")
+    @OneToMany(mappedBy = "editGame")
+    public Map<Object, UserIsEditorEntity> getEditedByUsers() {
+        return editedByUsers;
+    }
+
+    public void setEditedByUsers(Map<Object, UserIsEditorEntity> editedByUsers) {
+        this.editedByUsers = editedByUsers;
+    }
+
 
 
 
@@ -309,7 +321,11 @@ public class GameEntity {
     private int menAssignedRoles;
     private int womenAssignedRoles;
 
+    private int menSubstitutes;
+    private int womenSubstitutes;
+
     private List<HrajUserEntity> assignedUsers;
+    private List<HrajUserEntity> substitutes;
 
     private static final int MEN = 0;
     private static final int WOMEN = 1;
@@ -382,10 +398,11 @@ public class GameEntity {
      * @param assignedUsers list of user assigned to this game
      */
     @Transient
-    public void setAssignedUsers(List assignedUsers){
+    public void setAssignedUsers(List assignedUsers, List substitutes){
 
         int[] rolesAssigned = new int[ROLE_TYPES_CNT];
         this.assignedUsers = new ArrayList<HrajUserEntity>();
+        this.substitutes = new ArrayList<HrajUserEntity>();
 
         for (Object o : assignedUsers){
             if(o instanceof HrajUserEntity){
@@ -396,6 +413,18 @@ public class GameEntity {
                     rolesAssigned[MEN]++;
                 else
                     rolesAssigned[WOMEN]++;
+            }
+        }
+
+        for (Object o : substitutes){
+            if(o instanceof HrajUserEntity){
+                HrajUserEntity user = (HrajUserEntity) o;
+                this.substitutes.add(user);
+
+                if(user.getGender() == MEN)
+                    menSubstitutes++;
+                else
+                    womenSubstitutes++;
             }
         }
 
@@ -435,6 +464,16 @@ public class GameEntity {
     }
 
     @Transient
+    public int getMenSubstitutes() {
+        return menSubstitutes;
+    }
+
+    @Transient
+    public int getWomenSubstitutes() {
+        return womenSubstitutes;
+    }
+
+    @Transient
     public int getMenAssignedRoles() {
         return menAssignedRoles;
     }
@@ -453,10 +492,10 @@ public class GameEntity {
     @Transient
     public boolean isAvailableToUser(HrajUserEntity user){
 
-        if(assignedUsers == null)
+        if(assignedUsers == null || substitutes == null)
             return false; // unknown ! ASSIGNED USERS WERE NOT SET YET !
 
-        if(assignedUsers.contains(user))
+        if(assignedUsers.contains(user) || substitutes.contains(user))
             return false; // user is already signed
 
         if(user.getGender() == MEN && getMenFreeRoles() > 0)

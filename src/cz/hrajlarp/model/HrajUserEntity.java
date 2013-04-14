@@ -187,18 +187,6 @@ public class HrajUserEntity {
         return oldPassword;
     }
 
-    private Map<Object, UserAttendedGameEntity> userEntities;
-
-    @MapKey(name = "userId")
-    @OneToMany(mappedBy = "userAttended")
-    public Map<Object, UserAttendedGameEntity> getUserEntities() {
-        return userEntities;
-    }
-
-    public void setUserEntities(Map<Object, UserAttendedGameEntity> userEntities) {
-        this.userEntities = userEntities;
-    }
-
     private String genderTextual = null;
 
     @Transient
@@ -215,5 +203,32 @@ public class HrajUserEntity {
 
     public void setGenderTextual(String genderTextual) {
         this.genderTextual = genderTextual;
+    }
+
+
+    private Map<Object, UserAttendedGameEntity> userEntities;
+
+    @MapKey(name = "userId")
+    @OneToMany(mappedBy = "userAttended")
+    public Map<Object, UserAttendedGameEntity> getUserEntities() {
+        return userEntities;
+    }
+
+
+    public void setUserEntities(Map<Object, UserAttendedGameEntity> userEntities) {
+        this.userEntities = userEntities;
+    }
+
+
+    private Map<Object, UserIsEditorEntity> editingGames;
+
+    @MapKey(name = "userId")
+    @OneToMany(mappedBy = "userEdit")
+    public Map<Object, UserIsEditorEntity> getEditingGames() {
+        return editingGames;
+    }
+
+    public void setEditingGames(Map<Object, UserIsEditorEntity> editingGames) {
+        this.editingGames = editingGames;
     }
 }

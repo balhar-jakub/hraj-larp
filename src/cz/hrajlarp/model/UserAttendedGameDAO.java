@@ -24,12 +24,9 @@ import java.util.Map;
  */
 @Component
 public class UserAttendedGameDAO {
+
     @Autowired
     private SessionFactory sessionFactory;
-
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
 
     @Transactional(readOnly=true)
     public void getAllObjects(){
@@ -52,7 +49,7 @@ public class UserAttendedGameDAO {
     }
 
     /**
-     * This method adds new userAttedndedGame record into database
+     * This method adds new UserAttendedGame record into database
      * @param record
      */
     @Transactional(readOnly=false)
@@ -126,6 +123,7 @@ public class UserAttendedGameDAO {
      * @param gameId game identifier
      * @return list of users
      */
+    @Deprecated /* holds no information about substitutes, takes all users */
     @Transactional(readOnly = true)
     public List getUsersByGameId(int gameId){
 
@@ -162,6 +160,28 @@ public class UserAttendedGameDAO {
     }
 
     /**
+     * Method gets from database all users signed up
+     * as substitutes for game with given id.
+     * Excludes users signed as regular (not substitutes).
+     * @param gameId game identifier
+     * @return list of users signed up for game as substitutes (not regular users)
+     */
+    @Transactional(readOnly = true)
+    public List getSubstituteUsersByGameId(int gameId){
+
+        if(gameId <= 0) return null;
+
+        Session session = sessionFactory.openSession();
+        try{
+            Query query = session.createQuery("select distinct uag.userAttended from UserAttendedGameEntity uag" +
+                    " where uag.gameId in (:gameId) and uag.substitute = true");
+            query.setParameter("gameId", gameId);
+            return query.list();
+        }
+        finally { session.close(); }
+    }
+
+    /**
      * Gets games available to user from given list.
      * Excludes games, where user is already signed in.
      * Excludes games, where capacity is filled (considering user gender).
@@ -170,6 +190,7 @@ public class UserAttendedGameDAO {
      * @param loggedUser user who wants to be logged on game
      * @return filtered list of games
      */
+    @Transactional(readOnly = true)
     public List<GameEntity> filterAvailableGames(List<GameEntity> games, HrajUserEntity loggedUser) {
 
         if(games == null || games.isEmpty()) return games;
@@ -179,15 +200,18 @@ public class UserAttendedGameDAO {
             Transaction transaction = session.beginTransaction();
             List<GameEntity> availableGames = new ArrayList<GameEntity>();
             for (GameEntity game : games) {
-                Query query = session.createQuery(
-                    "select user from UserAttendedGameEntity as userAttendedGame " +
-                    " join userAttendedGame.attendedGame as game " +
-                    " with game.id=:gameId" +
-                    " join userAttendedGame.userAttended as user");
-                query.setParameter("gameId", game.getId());
-                List users = query.list();
 
-                game.setAssignedUsers(users); // fills game info: counts of signed users
+                Query query = session.createQuery("select distinct uag.userAttended from UserAttendedGameEntity uag" +
+                    " where uag.gameId in (:gameId) and uag.substitute = false");
+                query.setParameter("gameId", game.getId());
+                List signed = query.list();
+
+                query = session.createQuery("select distinct uag.userAttended from UserAttendedGameEntity uag" +
+                                    " where uag.gameId in (:gameId) and uag.substitute = true");
+                query.setParameter("gameId", game.getId());
+                List substitutes = query.list();
+
+                game.setAssignedUsers(signed, substitutes); // fills game info: counts of signed users
 
                 if (game.isAvailableToUser(loggedUser)) {
                     availableGames.add(game);
@@ -199,6 +223,12 @@ public class UserAttendedGameDAO {
         finally { session.close(); }
     }
 
+    /**
+     * Method gets UserAttendedGamesEntity entities,
+     * where user was signed for the past events.
+     * @param user
+     * @return list of UserAttendedGamesEntity entities
+     */
     public List<UserAttendedGameEntity> getAttendedFormer(HrajUserEntity user) {
         Session session = sessionFactory.openSession();
         try{
@@ -218,6 +248,12 @@ public class UserAttendedGameDAO {
         finally { session.close(); }
     }
 
+    /**
+     * Method gets UserAttendedGamesEntity entities,
+     * where user is signed for the future events.
+     * @param user
+     * @return list of UserAttendedGamesEntity entities
+     */
     public List<UserAttendedGameEntity> getAttendedFuture(HrajUserEntity user) {
         Session session = sessionFactory.openSession();
         try{

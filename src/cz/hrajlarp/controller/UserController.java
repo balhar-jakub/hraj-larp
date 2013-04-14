@@ -28,18 +28,11 @@ import java.util.List;
 @Controller
 public class UserController {
 
+    @Autowired
     private UserDAO userDAO;
+
+    @Autowired
     private UserAttendedGameDAO userAttendedGameDAO;
-
-    @Autowired
-    public void setUserDAO(UserDAO userDAO) {
-        this.userDAO = userDAO;
-    }
-
-    @Autowired
-    public void setUserAttendedGameDAO(UserAttendedGameDAO uagDAO) {
-        this.userAttendedGameDAO = uagDAO;
-    }
 
     /**
      * Redirects to new user registration page.
