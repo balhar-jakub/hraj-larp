@@ -254,6 +254,7 @@ public class GameController{
                         List<HrajUserEntity> assignedUsers = userAttendedGameDAO.getUsersByGameId(game.getId());
                         game.setAssignedUsers(assignedUsers);
                         game.setTargetUser(user);
+                        System.out.println("GGGGGG "+game.isFull());
                         if (game.isFull()) uage.setSubstitute(true);
                         else uage.setSubstitute(false);
                         userAttendedGameDAO.addUserAttendedGame(uage);
