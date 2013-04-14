@@ -128,7 +128,7 @@ public class GameController {
             SimpleDateFormat datetimeFormatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             try {
                 Date changedDate = datetimeFormatter1.parse(game.getDate() + " " + game.getTime());
-                if (DateUtils.isFuture(new Timestamp(changedDate.getTime()))) model.addAttribute("isFuture", true);
+                if (!DateUtils.isFuture(new Timestamp(changedDate.getTime()))) model.addAttribute("isFuture", true);
 
                 if (rights.isLogged()) {
                     HrajUserEntity user = rights.getLoggedUser();
@@ -164,18 +164,19 @@ public class GameController {
     public String showEditForm(Model model, @RequestParam("gameId") Integer id) {
 
         if (id == null || id <= 0) return "/error";
-
         model.addAttribute("myGame", new ValidGame());
 
-        if (rights.isLogged()) {
-            if (gameDAO.userOwnsGame(id, rights.getLoggedUser().getId())) {
-                GameEntity game = gameDAO.getGameById(id);
-                if (game != null) {
-                    model.addAttribute("game", game);
-                    model.addAttribute("date", game.getDate().toString().substring(0, 10));
-                    model.addAttribute("time", game.getDate().toString().substring(11, 16));
-                    return "game/edit";
-                }
+        if (rights.isLogged()){
+            GameEntity game = gameDAO.getGameById(id);
+            HrajUserEntity user = rights.getLoggedUser();
+
+            if (game != null && (rights.hasRightsToEditGame(user, game) || gameDAO.userOwnsGame(id, user.getId()))) {
+                System.out.println("EDITOR: "+rights.isEditor(user));
+                System.out.println("OWNER: "+gameDAO.userOwnsGame(id, user.getId()));
+                model.addAttribute("game", game);
+                model.addAttribute("date", game.getDate().toString().substring(0, 10));
+                model.addAttribute("time", game.getDate().toString().substring(11, 16));
+                return "game/edit";
             }
         }
         return "/error";
@@ -205,7 +206,10 @@ public class GameController {
         if (rights.isLogged()) {
             if (id == null || id <= 0) return "/error";
 
-            if (gameDAO.userOwnsGame(id, rights.getLoggedUser().getId())) {
+            GameEntity game = gameDAO.getGameById(id);
+            HrajUserEntity user = rights.getLoggedUser();
+
+            if (game != null && (rights.hasRightsToEditGame(user, game) || gameDAO.userOwnsGame(game.getId(), user.getId()))) {
 
                 if (imageFile != null && imageFile.length > 0 && !imageFile[0].getOriginalFilename().equals("")) { //there is at least one image file
                     String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
@@ -216,7 +220,7 @@ public class GameController {
                 myGame.validate(r);
                 if (r.hasErrors()) return "game/edit";
 
-                GameEntity game = myGame.getGameEntity();
+                game = myGame.getGameEntity();
                 game.setId(id);
                 game.setAddedBy(gameDAO.getGameById(id).getAddedBy());
                 gameDAO.editGame(game);
@@ -243,7 +247,7 @@ public class GameController {
 
             if (gameId > 0) {
                 GameEntity game = gameDAO.getGameById(gameId);
-                if (game != null) {  //TODO && gameIsFuture
+                if (game != null && DateUtils.isFuture(new Timestamp(DateUtils.stringsToDate(game.getDate().toString(), game.getTime()).getTime()))) {
                     UserAttendedGameEntity uage = new UserAttendedGameEntity();
                     uage.setGameId(gameId);
                     uage.setUserId(user.getId());
@@ -288,7 +292,7 @@ public class GameController {
             if (gameId > 0) {
                 GameEntity game = gameDAO.getGameById(gameId);
                 HrajUserEntity oldUser = userDAO.getUserById(userId);
-                if (game != null) {       //TODO && gameIsFuture
+                if (game != null&& DateUtils.isFuture(new Timestamp(DateUtils.stringsToDate(game.getDate().toString(), game.getTime()).getTime()))) {
                     UserAttendedGameEntity uage = new UserAttendedGameEntity();
                     uage.setGameId(game.getId());
                     uage.setUserId(oldUser.getId());

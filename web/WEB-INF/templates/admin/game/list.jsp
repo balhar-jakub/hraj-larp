@@ -19,7 +19,7 @@
                     <c:forEach items="${requestScope.futureGames}" var="game">
                         <div class="clearfix den"><h2 class="datum"><span>${game.dateAsDM}</span>${game.dateAsDayName}</h2></div>
                         <div class="termin clearfix">
-                            <h3><a href="/game/detail?gameId=${game.id}" tabindex="-1">${game.name}</a></h3>
+                            <h3><a href="/game/edit?gameId=${game.id}" tabindex="-1">${game.name}</a></h3>
                             <div class="grid4">
                                 <div>
                                     <p>${game.info}</p>
