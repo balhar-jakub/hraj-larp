@@ -97,4 +97,8 @@
 	  	<property name="templateMessage" ref="templateMessage"/>
 	</bean>
 
+    <mvc:interceptors>
+        <bean class="cz.hrajlarp.utils.HrajInterceptor" />
+    </mvc:interceptors>
+
 </beans>
