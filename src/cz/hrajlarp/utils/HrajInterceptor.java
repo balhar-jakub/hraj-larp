@@ -31,10 +31,8 @@ public class HrajInterceptor implements HandlerInterceptor {
             Object obj,
             ModelAndView model
     ) {
-        System.out.println("PostHandle");
         HrajUserEntity hrajUser = rights.getLoggedUser();
         Boolean hasRights = rights.isEditor(hrajUser) || rights.isAdministrator(hrajUser);
-        System.out.println("Has Rights " + hasRights);
         model.addObject("hasRights", hasRights);
     }
 
