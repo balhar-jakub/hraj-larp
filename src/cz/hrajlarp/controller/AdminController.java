@@ -70,20 +70,22 @@ public class AdminController {
                 invalidGames = new ArrayList<GameEntity>();
             }
 
+            List<GameEntity> futureGamesResult = new ArrayList<GameEntity>();
+            List<GameEntity> formerGamesResult = new ArrayList<GameEntity>();
             // For every game, find if you have right to it.
             for(GameEntity game: futureGames){
-                if(!rights.hasRightsToEditGame(user, game)){
-                    futureGames.remove(game);
+                if(rights.hasRightsToEditGame(user, game)){
+                    futureGamesResult.add(game);
                 }
             }
             for(GameEntity game: formerGames){
-                if(!rights.hasRightsToEditGame(user, game)){
-                    formerGames.remove(game);
+                if(rights.hasRightsToEditGame(user, game)){
+                    formerGamesResult.add(game);
                 }
             }
 
-            model.addAttribute("futureGames", futureGames);
-            model.addAttribute("formerGames", formerGames);
+            model.addAttribute("futureGames", futureGamesResult);
+            model.addAttribute("formerGames", formerGamesResult);
             model.addAttribute("unvalidatedGames", invalidGames);
             model.addAttribute("isLogged", true);
             return "/admin/game/list";
