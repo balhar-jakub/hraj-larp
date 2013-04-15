@@ -3,8 +3,6 @@ package cz.hrajlarp.controller;
 import cz.hrajlarp.model.*;
 import cz.hrajlarp.utils.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,9 +40,10 @@ public class AdminController {
 
     @RequestMapping(value = "/admin/game/players/{id}", method= RequestMethod.GET)
     public String gamePlayers(Model model, @PathVariable("id") Integer id) {
+        HrajUserEntity user = rights.getLoggedUser();
+        GameEntity game = gameDAO.getGameById(id);
 
-        if (rights.isLogged()){
-            /* TODO getUsersByGameId(id) includes substitutes, is this correct? */
+        if (rights.hasRightsToEditGame(user, game)){
             List<HrajUserEntity> players =  userAttendedGameDAO.getUsersByGameIdNoSubstitutes(id);
             List<HrajUserEntity> substitutes =  userAttendedGameDAO.getSubstituteUsersByGameId(id);
 
@@ -60,10 +60,27 @@ public class AdminController {
 
     @RequestMapping(value = "/admin/game/list", method= RequestMethod.GET)
     public String gameList(Model model) {
-        if (rights.isLogged()){
+        HrajUserEntity user = rights.getLoggedUser();
+
+        if (rights.isEditor(user) || rights.isAdministrator(user)){
             List <GameEntity> futureGames = gameDAO.getFutureGames();
             List <GameEntity> formerGames = gameDAO.getFormerGames();
             List <GameEntity> invalidGames = gameDAO.getInvalidGames();
+            if(!rights.isAdministrator(user)){
+                invalidGames = new ArrayList<GameEntity>();
+            }
+
+            // For every game, find if you have right to it.
+            for(GameEntity game: futureGames){
+                if(!rights.hasRightsToEditGame(user, game)){
+                    futureGames.remove(game);
+                }
+            }
+            for(GameEntity game: formerGames){
+                if(!rights.hasRightsToEditGame(user, game)){
+                    formerGames.remove(game);
+                }
+            }
 
             model.addAttribute("futureGames", futureGames);
             model.addAttribute("formerGames", formerGames);
@@ -81,9 +98,10 @@ public class AdminController {
                                @PathVariable("gameId") Integer gameId,
                                @PathVariable("playerId") Integer playerId,
                                RedirectAttributes redirectAttributes) {
+        HrajUserEntity user = rights.getLoggedUser();
+        GameEntity game = gameDAO.getGameById(gameId);
 
-        if (rights.isLogged()){
-            GameEntity game = gameDAO.getGameById(gameId);
+        if (rights.hasRightsToEditGame(user, game)){
             HrajUserEntity oldUser = userDAO.getUserById(playerId);
             UserAttendedGameEntity uage = new UserAttendedGameEntity();
             uage.setGameId(gameId);
@@ -135,7 +153,8 @@ public class AdminController {
     public String validateGame(Model model,
                                @PathVariable("gameId") Integer gameId,
                                RedirectAttributes redirectAttributes) {
-        if (rights.isLogged()){
+        HrajUserEntity user = rights.getLoggedUser();
+        if (rights.isAdministrator(user)){
             GameEntity game = gameDAO.getGameById(gameId);
             game.setConfirmed(true);
             gameDAO.editGame(game);
@@ -150,9 +169,11 @@ public class AdminController {
     @RequestMapping(value = "/admin/game/mail/{gameId}")
     public String editMailText(Model model, @PathVariable("gameId") Integer gameId,
                                RedirectAttributes redirectAttributes) {
-        if (rights.isLogged()){
+        GameEntity game = gameDAO.getGameById(gameId);
+        HrajUserEntity user = rights.getLoggedUser();
+
+        if (rights.hasRightsToEditGame(user, game)){
         	model.addAttribute("editMailForm", new GameEntity());
-            GameEntity game = gameDAO.getGameById(gameId);
             model.addAttribute("game", game);
             
             return "admin/game/editmail";
@@ -164,8 +185,9 @@ public class AdminController {
     
     @RequestMapping(value="/admin/game/editmail", method = RequestMethod.POST)
     public String submitMail(Model model, @ModelAttribute("editMailForm") GameEntity game) {
-        if (rights.isLogged()){
-        	Integer Id = game.getId();
+        HrajUserEntity user = rights.getLoggedUser();
+        if (rights.hasRightsToEditGame(user, game)){
+            Integer Id = game.getId();
         	String opt = game.getOrdinaryPlayerText();
         	String rt = game.getReplacementsText();
             GameEntity g = gameDAO.getGameById(Id);
