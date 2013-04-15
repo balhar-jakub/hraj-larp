@@ -1,21 +1,14 @@
 package cz.hrajlarp.model;
 
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
 import org.hibernate.metadata.ClassMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import static junit.framework.Assert.fail;
 
 /**
  * Created by IntelliJ IDEA.
@@ -92,7 +85,7 @@ public class UserAttendedGameDAO {
 
         Session session = sessionFactory.openSession();
         try{
-            Query query = session.createQuery("from UserAttendedGameEntity where game_id= :gameId and user_id= :userId ");
+            Query query = session.createQuery("from UserAttendedGameEntity where gameId= :gameId and userId= :userId ");
             query.setParameter("gameId", uage.getGameId());
             query.setParameter("userId", uage.getUserId());
             UserAttendedGameEntity entity = (UserAttendedGameEntity) query.uniqueResult();
@@ -112,7 +105,7 @@ public class UserAttendedGameDAO {
 
         Session session = sessionFactory.openSession();
         try{
-            Query query = session.createQuery("from UserAttendedGameEntity where game_id= :gameId and user_id= :userId and substitute = true ");
+            Query query = session.createQuery("from UserAttendedGameEntity where gameId= :gameId and userId= :userId and substitute = true ");
             query.setParameter("gameId", uage.getGameId());
             query.setParameter("userId", uage.getUserId());
             return (query.uniqueResult()!=null);
@@ -303,7 +296,7 @@ public class UserAttendedGameDAO {
                  if (query.list()!= null && !query.list().isEmpty()) return (UserAttendedGameEntity) query.list().get(0);
                  else return null;
              } else {
-                 Query query = session.createQuery("from UserAttendedGameEntity where game_id= :gameId and substitute = true order by added asc");
+                 Query query = session.createQuery("from UserAttendedGameEntity where gameId= :gameId and substitute = true order by added asc");
                  query.setParameter("gameId", gameId);
                  if (query.list()!= null && !query.list().isEmpty()) return (UserAttendedGameEntity) query.list().get(0);
                  else return null;
