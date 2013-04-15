@@ -18,7 +18,6 @@
     <div><a href="/user/attended">Mé přihlášky</a>
     <a href="<c:url value="/j_spring_security_logout" />">Odhlášení</a></div>
     <div><a href="<c:url value="/user/edit" />">Editace údajů</a></div>
-    ${hasRights}
     <c:if test="${hasRights}">
         <div class="administrace">
             <a href="<c:url value="/admin/game/list" />">Administrace</a>

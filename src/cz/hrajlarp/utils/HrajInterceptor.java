@@ -33,7 +33,9 @@ public class HrajInterceptor implements HandlerInterceptor {
     ) {
         HrajUserEntity hrajUser = rights.getLoggedUser();
         Boolean hasRights = rights.isEditor(hrajUser) || rights.isAdministrator(hrajUser);
-        model.addObject("hasRights", hasRights);
+        if(model != null) {
+            model.addObject("hasRights", hasRights);
+        }
     }
 
     @Override
