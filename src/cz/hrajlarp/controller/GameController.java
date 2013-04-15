@@ -71,6 +71,7 @@ public class GameController {
             BindingResult r
     ) {
 
+        HrajUserEntity user = rights.getLoggedUser();
         if (rights.isLogged()) {
             String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
             myGame.setImage(image);
@@ -80,9 +81,14 @@ public class GameController {
             if (r.hasErrors()) return "game/add";
 
             GameEntity game = myGame.getGameEntity();
+            if(rights.isAdministrator(user)) {
+                game.setConfirmed(true);
+            } else {
+                game.setConfirmed(false);
+            }
             gameDAO.addGame(game);
 
-            HrajUserEntity user = rights.getLoggedUser();
+
             UserIsEditorEntity userIsEditorEntity = new UserIsEditorEntity();
             userIsEditorEntity.setGameId(game.getId());
             userIsEditorEntity.setUserId(user.getId());

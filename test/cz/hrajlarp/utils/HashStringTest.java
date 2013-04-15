@@ -2,6 +2,8 @@ package cz.hrajlarp.utils;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Jakub Balhar

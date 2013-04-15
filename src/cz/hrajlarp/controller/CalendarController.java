@@ -2,13 +2,12 @@ package cz.hrajlarp.controller;
 
 import cz.hrajlarp.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,8 +43,21 @@ public class CalendarController {
         List <GameEntity> futureGames = gameDAO.getFutureGames();
         List <GameEntity> formerGames = gameDAO.getFormerGames();
 
-        model.addAttribute("futureGames", futureGames);
-        model.addAttribute("formerGames", formerGames);
+        List<GameEntity> futureGameResult = new ArrayList<GameEntity>();
+        List<GameEntity> formerGamesResult = new ArrayList<GameEntity>();
+        for(GameEntity game: futureGames) {
+            if(game.getConfirmed()) {
+                futureGameResult.add(game);
+            }
+        }
+        for(GameEntity game: formerGames) {
+            if(game.getConfirmed()) {
+                formerGamesResult.add(game);
+            }
+        }
+
+        model.addAttribute("futureGames", futureGameResult);
+        model.addAttribute("formerGames", formerGamesResult);
 
         if (rights.isLogged()){
             List<GameEntity> availableGames = userAttendedGameDAO.

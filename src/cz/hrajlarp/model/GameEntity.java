@@ -1,7 +1,6 @@
 package cz.hrajlarp.model;
 
 import javax.persistence.*;
-
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -96,7 +95,7 @@ public class GameEntity {
     @Column(name = "confirmed")
     @Basic
     public Boolean getConfirmed() {
-        return confirmed;
+        return confirmed != null && confirmed;
     }
 
     public void setConfirmed(Boolean confirmed) {
