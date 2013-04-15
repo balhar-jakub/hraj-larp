@@ -5,8 +5,6 @@ import cz.hrajlarp.utils.DateUtils;
 import cz.hrajlarp.utils.FileUtils;
 import cz.hrajlarp.utils.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -45,6 +43,9 @@ public class GameController {
     private UserAttendedGameDAO userAttendedGameDAO;
 
     @Autowired
+    private UserIsEditorDAO userIsEditorDAO;
+
+    @Autowired
     private Rights rights;
     
     @Autowired
@@ -58,12 +59,12 @@ public class GameController {
      *
      * @param myGame    pseudo bean representing form
      * @param imageFile image uploaded in form
-     * @param request
-     * @param r
-     * @return
+     * @param request HttpRequest
+     * @param r Returned result
+     * @return Path to jsp file
      */
     @RequestMapping(method = RequestMethod.POST, value = "/game/add", produces = "text/plain;charset=UTF-8")
-    public String onSubmit(
+    public String addGame(
             @ModelAttribute("myGame") ValidGame myGame,
             @RequestParam("imageFile") CommonsMultipartFile[] imageFile,
             HttpServletRequest request,
@@ -71,7 +72,6 @@ public class GameController {
     ) {
 
         if (rights.isLogged()) {
-            System.out.println("SELECT: " + myGame.getShortText());
             String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
             myGame.setImage(image);
             myGame.setAddedBy(rights.getLoggedUser().getId());
@@ -82,7 +82,12 @@ public class GameController {
             GameEntity game = myGame.getGameEntity();
             gameDAO.addGame(game);
 
-            System.out.println("Formular odeslan");
+            HrajUserEntity user = rights.getLoggedUser();
+            UserIsEditorEntity userIsEditorEntity = new UserIsEditorEntity();
+            userIsEditorEntity.setGameId(game.getId());
+            userIsEditorEntity.setUserId(user.getId());
+            userIsEditorDAO.addUserIsEditor(userIsEditorEntity);
+
             return "/game/added";
         } else return "/error";
     }
@@ -94,7 +99,7 @@ public class GameController {
      * @return
      */
     @RequestMapping(value = "/game/add", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
-    public String showForm(ModelMap model) {
+    public String addGameShow(ModelMap model) {
         if (rights.isLogged()) {
             model.addAttribute("myGame", new GameEntity());
             return "game/add";
@@ -110,7 +115,7 @@ public class GameController {
      * @return String of .JSP file for game detail view
      */
     @RequestMapping(value = "/game/detail")
-    public String detail(@RequestParam("gameId") Integer id, Model model) {
+    public String detailGame(@RequestParam("gameId") Integer id, Model model) {
         System.out.println("GameController: Passing through..." + "/game/detail" + "gameId: " + id);
 
         if (id == null || id <= 0) return "kalendar";
@@ -134,7 +139,9 @@ public class GameController {
                 String regStart = DateUtils.getDateAsDMYHM(startRegDate);
             	model.addAttribute("regStart", regStart);
                 if (DateUtils.isFuture(new Timestamp(startRegDate.getTime()))){
-                	model.addAttribute("regStarted", true);
+                	model.addAttribute("regStarted", false);
+                } else {
+                    model.addAttribute("regStarted", true);
                 }
                 
                 if (rights.isLogged()) {
@@ -168,7 +175,7 @@ public class GameController {
      * @return
      */
     @RequestMapping(value = "/game/edit", method = RequestMethod.GET)
-    public String showEditForm(Model model, @RequestParam("gameId") Integer id) {
+    public String editGameForm(Model model, @RequestParam("gameId") Integer id) {
 
         if (id == null || id <= 0) return "/error";
         model.addAttribute("myGame", new ValidGame());
@@ -202,7 +209,7 @@ public class GameController {
      * @return
      */
     @RequestMapping(value = "/game/edit", method = RequestMethod.POST)
-    public String onSubmitEditForm(
+    public String editGame(
             @ModelAttribute("gameId") Integer id,
             @ModelAttribute("myGame") ValidGame myGame,
             @RequestParam("imageFile") CommonsMultipartFile[] imageFile,
