@@ -1,19 +1,22 @@
 package cz.hrajlarp.model;
 
+import cz.hrajlarp.exceptions.DuplicatePlayerException;
+import cz.hrajlarp.exceptions.TooManyPlayersException;
+import cz.hrajlarp.utils.DateUtils;
+import cz.hrajlarp.utils.MailService;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
-* Created by IntelliJ IDEA.
-* User: Jakub Balhar
-* Date: 6.3.13
-* Time: 23:12
-*/
+ * Created by IntelliJ IDEA.
+ * User: Jakub Balhar
+ * Date: 6.3.13
+ * Time: 23:12
+ */
 @Table(name = "game", schema = "public", catalog = "")
 @Entity
 public class GameEntity {
@@ -233,7 +236,7 @@ public class GameEntity {
     public void setLarpDb(String larpDb) {
         this.larpDb = larpDb;
     }
-    
+
     private Timestamp registrationStarted;
 
     @Column(name = "registration_started")
@@ -241,11 +244,11 @@ public class GameEntity {
     public Timestamp getRegistrationStarted() {
         return registrationStarted;
     }
-    
+
     public void setRegistrationStarted(Timestamp registrationStarted) {
         this.registrationStarted = registrationStarted;
     }
-    
+
     private String ordinaryPlayerText;
 
     @Column(name = "ordinary_player_text")
@@ -257,7 +260,7 @@ public class GameEntity {
     public void setOrdinaryPlayerText(String ordinaryPlayerText) {
         this.ordinaryPlayerText = ordinaryPlayerText;
     }
-    
+
     private String replacementsText;
 
     @Column(name = "replacements_text")
@@ -293,9 +296,12 @@ public class GameEntity {
         if (shortText != null ? !shortText.equals(that.shortText) : that.shortText != null) return false;
         if (web != null ? !web.equals(that.web) : that.web != null) return false;
         if (womenRole != null ? !womenRole.equals(that.womenRole) : that.womenRole != null) return false;
-        if (registrationStarted != null ? !registrationStarted.equals(that.registrationStarted) : that.registrationStarted != null) return false;
-        if (ordinaryPlayerText != null ? !ordinaryPlayerText.equals(that.ordinaryPlayerText) : that.ordinaryPlayerText != null) return false;
-        if (replacementsText != null ? !replacementsText.equals(that.replacementsText) : that.replacementsText != null) return false;
+        if (registrationStarted != null ? !registrationStarted.equals(that.registrationStarted) : that.registrationStarted != null)
+            return false;
+        if (ordinaryPlayerText != null ? !ordinaryPlayerText.equals(that.ordinaryPlayerText) : that.ordinaryPlayerText != null)
+            return false;
+        if (replacementsText != null ? !replacementsText.equals(that.replacementsText) : that.replacementsText != null)
+            return false;
 
         return true;
     }
@@ -351,213 +357,380 @@ public class GameEntity {
     }
 
 
-
-
-
-    /* Attributes and methods taken from former Game.java class */
-
-    // number of remaining game roles (not assigned yet)
-    private int menFreeRoles;
-    private int womenFreeRoles;
-    private int bothFreeRoles;
-
-    private int menAssignedRoles;
-    private int womenAssignedRoles;
-
-    private int menSubstitutes;
-    private int womenSubstitutes;
-
-    private List<HrajUserEntity> assignedUsers;
-    private List<HrajUserEntity> substitutes;
-
-    private static final int MEN = 0;
-    private static final int WOMEN = 1;
-    private static final int BOTH = 2;
-    private static final int ROLE_TYPES_CNT = 3;
-
-    private HrajUserEntity targetUser;
-
-    public void setTargetUser(HrajUserEntity targetUser){
-         this.targetUser = targetUser;
-    }
-
-    /**
-     * Method checks if the game is full for target user (or anyone if target user is not set)
-     * @return true, if the game is full for target user gender
-     */
     @Transient
-    public boolean isFull(){
-        if(targetUser == null)
-            return isFullForAnyone();
-
-        if (targetUser.getGender() == MEN
-                && (getMenFreeRoles() > 0 || getBothFreeRoles() > 0)) return false;
-        if (targetUser.getGender() == WOMEN
-                && (getWomenFreeRoles() > 0 || getBothFreeRoles() > 0)) return false;
-        return true;
-    }
-
-    @Transient
-    public boolean isFullForAnyone(){
-        return getMenFreeRoles() == 0 && getWomenFreeRoles() == 0 && getBothFreeRoles() == 0;
-    }
-
-    private boolean festival;
-
-    @Transient
-    public boolean isFestival(){
-        festival = shortText.equals("Festivalová");
-        return festival;
-    }
-
-
-    @Transient
-    public String getDateAsDMY(){
+    public String getDateAsDMY() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         return sdf.format(date);
     }
 
     @Transient
-    public String getDateAsDM(){
+    public String getDateAsYMD() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(date);
+    }
+
+    @Transient
+    public String getDateAsYMDHM() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(date);
+    }
+
+    @Transient
+    public String getDateAsDM() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM");
         return sdf.format(date);
     }
 
     @Transient
-    public String getDateAsDayName(){
+    public String getDateAsDayName() {
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE");    // day name
         return sdf.format(date);
     }
 
     @Transient
-    public String getDateTime(){
+    public String getTimeAsHM(){
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");    // day name
+        return sdf.format(getDate());
+    }
+
+    @Transient
+    public String getDateTime() {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         return sdf.format(date);
     }
 
+    private boolean festival;
+
+    @Transient
+    public boolean isFestival() {
+        festival = shortText.equals("Festivalová");
+        return festival;
+    }
+
+    @Transient
+    public String getRegistrationStartedDMYHM() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        return sdf.format(getRegistrationStarted());
+    }
+
+    @Transient
+    private int menFreeRoles;
+    @Transient
+    private int womenFreeRoles;
+    @Transient
+    private int bothFreeRoles;
+
+    @Transient
+    private int menSubstitutes;
+    @Transient
+    private int womenSubstitutes;
+
     /**
-     * Method sets the list of all users assigned to the game
-     * (not substitutes) and counts assigned and remaining roles
-     * @param assignedUsers list of user assigned to this game
-     * @param substitutes list of substitutes assigned to this game
+     * This method counts and assigns amount of free roles as well as amount of substitutes
+     * on gmae of every gender.
+     *
+     * @param userAttendedGameDAO Dao which can retrieve users for game
      */
     @Transient
-    public void setAssignedUsers(List assignedUsers, List substitutes) throws Exception {
+    public void countPlayers(UserAttendedGameDAO userAttendedGameDAO) throws Exception {
+        List<HrajUserEntity> assignedUsers = userAttendedGameDAO.getUsersByGameIdNoSubstitutes(getId());
+        List<HrajUserEntity> substitutes = userAttendedGameDAO.getSubstituteUsersByGameId(getId());
 
-        int[] rolesAssigned = new int[ROLE_TYPES_CNT];
-        this.assignedUsers = new ArrayList<HrajUserEntity>();
-        this.substitutes = new ArrayList<HrajUserEntity>();
+        countPlayers(assignedUsers,substitutes);
+    }
 
-        if(assignedUsers != null && !assignedUsers.isEmpty())
-        for (Object o : assignedUsers){
-            if(o instanceof HrajUserEntity){
-                HrajUserEntity user = (HrajUserEntity) o;
+    @Transient
+    protected void countPlayers(List<HrajUserEntity> assignedUsers,
+                                List<HrajUserEntity> substitutes) throws DuplicatePlayerException, TooManyPlayersException {
+        testForDuplicates(assignedUsers, substitutes);
+        countFreeRoles(assignedUsers);
+        countSubstitutes(assignedUsers, substitutes);
+        testRolesforTooMany();
+    }
 
-                if(this.assignedUsers.contains(user)){
-                    // user is signed to this game as regular twice
-                    // should not happen (user and game makes primary key in UserAttendedGame)
-                    throw new Exception("GameEntity error: assigned user (id="+user.getId()
-                            +") is signed twice on one game (id=" +getId()+")");
-                }
-
-                this.assignedUsers.add(user);
-
-                if(user.getGender() == MEN)
-                    rolesAssigned[MEN]++;
-                else
-                    rolesAssigned[WOMEN]++;
-            }
-        }
-
-        if(substitutes != null && !substitutes.isEmpty())
-        for (Object o : substitutes){
-            if(o instanceof HrajUserEntity){
-                HrajUserEntity user = (HrajUserEntity) o;
-
-                if(this.assignedUsers.contains(user)){
+    @Transient
+    private void countSubstitutes(List<HrajUserEntity> assignedUsers, List<HrajUserEntity> substitutes) throws DuplicatePlayerException {
+        if (substitutes != null && !substitutes.isEmpty()) {
+            for (HrajUserEntity user : substitutes) {
+                if (assignedUsers.contains(user)) {
                     // user is signed to this game as regular and substitute at the same time
                     // should not happen (user and game makes primary key in UserAttendedGame)
-                    throw new Exception("GameEntity error: assigned user (id="+user.getId()
-                            +") is also a substitute on one game (id=" +getId()+")");
-                }
-                if(this.substitutes.contains(user)){
-                    // user is signed to this game as substitute twice
-                    // should not happen (user and game makes primary key in UserAttendedGame)
-                    throw new Exception("GameEntity error: assigned user (id="+user.getId()
-                            +") is a substitute twice on one game (id=" +getId()+")");
+                    throw new DuplicatePlayerException("GameEntity error: assigned user (id=" + user.getId()
+                            + ") is also a substitute on one game (id=" + getId() + ")");
                 }
 
-                this.substitutes.add(user);
-
-                if(user.getGender() == MEN)
-                    menSubstitutes++;
+                if (user.getGender() == Gender.MEN.ordinal())
+                    setMenSubstitutes(getMenSubstitutes() + 1);
                 else
-                    womenSubstitutes++;
+                    setWomenSubstitutes(getWomenSubstitutes() + 1);
+            }
+        }
+    }
+
+    @Transient
+    private void countFreeRoles(List<HrajUserEntity> assignedUsers) {
+        int genderTypes = 3;
+        int[] rolesAssigned = new int[genderTypes];
+        if (assignedUsers != null && !assignedUsers.isEmpty()) {
+            for (HrajUserEntity user : assignedUsers) {
+                if (user.getGender() == Gender.MEN.ordinal())
+                    rolesAssigned[Gender.MEN.ordinal()]++;
+                else
+                    rolesAssigned[Gender.WOMEN.ordinal()]++;
             }
         }
 
-        this.menAssignedRoles = rolesAssigned[MEN];
-        this.womenAssignedRoles = rolesAssigned[WOMEN];
-
-        if(menAssignedRoles > menRole) {
-            rolesAssigned[BOTH]+= menAssignedRoles - menRole;
-            rolesAssigned[MEN] = menRole;
+        if (rolesAssigned[Gender.MEN.ordinal()] > menRole) {
+            rolesAssigned[Gender.BOTH.ordinal()] += rolesAssigned[Gender.MEN.ordinal()] - menRole;
+            rolesAssigned[Gender.MEN.ordinal()] = menRole;
         }
-        if(womenAssignedRoles > womenRole) {
-            rolesAssigned[BOTH]+= womenAssignedRoles - womenRole;
-            rolesAssigned[WOMEN] = womenRole;
+        if (rolesAssigned[Gender.WOMEN.ordinal()] > womenRole) {
+            rolesAssigned[Gender.BOTH.ordinal()] += rolesAssigned[Gender.WOMEN.ordinal()] - womenRole;
+            rolesAssigned[Gender.WOMEN.ordinal()] = womenRole;
         }
-
-        if(rolesAssigned[BOTH] > getBothRole()){
-            // the number of assigned players is bigger than the number of game roles
-            int assigned = rolesAssigned[MEN] + rolesAssigned[WOMEN] + rolesAssigned[BOTH];
-            throw new Exception("GameEntity error: number of assigned players (" + assigned +
-                    ") is above limit of game roles (game id=" + getId() + ")");
-        }
-
-        if((rolesAssigned[MEN] < getMenRole() && menSubstitutes > 0)
-                || (rolesAssigned[WOMEN] < getWomenRole() && womenSubstitutes > 0)
-                || (rolesAssigned[BOTH] < getBothRole()
-                && substitutes != null && !substitutes.isEmpty())){
-
-            // the game is not full and has substitutes
-            throw new Exception("GameEntity error: game has substitutes even " +
-                    "though it is not full yet");
-        }
-
 
         // now rolesAssigned[] contains real counts of assigned
         // roles for MEN, WOMEN and BOTH (not only MEN and WOMEN)
 
-        menFreeRoles = menRole - rolesAssigned[MEN];
-        womenFreeRoles = womenRole - rolesAssigned[WOMEN];
-        bothFreeRoles = bothRole - rolesAssigned[BOTH];
+        menFreeRoles = menRole - rolesAssigned[Gender.MEN.ordinal()];
+        womenFreeRoles = womenRole - rolesAssigned[Gender.WOMEN.ordinal()];
+        bothFreeRoles = bothRole - rolesAssigned[Gender.BOTH.ordinal()];
+        if(bothFreeRoles < 0) {
+            bothFreeRoles = 0;
+        }
+    }
+
+    @Transient
+    private boolean isDuplicate(List<HrajUserEntity> list, Set<HrajUserEntity> set) {
+        return list.size() != set.size();
+    }
+
+    /**
+     * It tests for duplicates, whether there is any user signed twice as regular player
+     * or signed twice as a substitute.
+     *
+     * @param pAssignedUsers Regular players of the game
+     * @param pSubstitutes Substitutes for the game
+     * @throws DuplicatePlayerException Duplicate players
+     */
+    @Transient
+    private void testForDuplicates(List<HrajUserEntity> pAssignedUsers,
+                                   List<HrajUserEntity> pSubstitutes) throws DuplicatePlayerException {
+        Set<HrajUserEntity> assignedUsers = new HashSet<HrajUserEntity>(pAssignedUsers);
+        Set<HrajUserEntity> substitutes = new HashSet<HrajUserEntity>(pSubstitutes);
+        // This should never happen
+        if (isDuplicate(pAssignedUsers, assignedUsers)) {
+            throw new DuplicatePlayerException("GameEntity error: assigned user is signed twice " +
+                    "on one game (id=" + getId() + ")");
+        }
+        if (isDuplicate(pSubstitutes, substitutes)) {
+            throw new DuplicatePlayerException("GameEntity error: assigned user is a substitute twice " +
+                    "on one game (id=" + getId() + ")");
+        }
+    }
+
+    /**
+     * It tests for conditions related to too many players logged on one game.
+     * These conditions should never happen.
+     *
+     * @throws cz.hrajlarp.exceptions.TooManyPlayersException
+     */
+    @Transient
+    private void testRolesforTooMany() throws TooManyPlayersException {
+        if (menFreeRoles < 0 || womenFreeRoles < 0 || bothFreeRoles < 0) {
+            // the number of assigned players is bigger than the number of game roles
+            int assigned = getMenFreeRoles() + getWomenFreeRoles() + getBothFreeRoles();
+            throw new TooManyPlayersException("GameEntity error: number of assigned players (" + assigned +
+                    ") is above limit of game roles (game id=" + getId() + ")");
+        }
+
+        if ((menFreeRoles > 0 || womenFreeRoles > 0) &&
+                (bothFreeRoles != getBothRole())) {
+            // The game is not full and has substitutes
+            throw new TooManyPlayersException("GameEntity error: game has substitutes even " +
+                    "though it is not full yet");
+        }
+    }
+
+    /**
+     * Method decides whether given user can sign up for this game or not.
+     *
+     *
+     * @param user tested user
+     * @return true, if user is not signed up for the game yet and the capacity
+     *         has not been filled up yet (considering gender)
+     *         false is returned even if list of assigned users has not been set yet!
+     */
+    @Transient
+    public boolean isAvailableToUser(UserAttendedGameDAO userAttendedGameDAO,
+                                     HrajUserEntity user) {
+        if (userAttendedGameDAO.isLogged(getId(), user.getId()))
+            return false; // user is already signed
+
+        if (user.getGender() == Gender.MEN.ordinal() && getMenFreeRoles() > 0)
+            return true; // user is a man and there are some free men roles
+
+        if (user.getGender() == Gender.WOMEN.ordinal() && getWomenFreeRoles() > 0)
+            return true; // user is a woman and there are some free women roles
+
+        return (getBothFreeRoles() > 0); // user can still sign as undecided
+    }
+
+    /**
+     * If any player becomes regular player, this sends email to him.
+     *
+     * @param mailService Serivce for sending the email.
+     * @param userAttendedGameDAO Dao needed for finding if user is now regular
+     * @param oldUser
+     */
+    @Transient
+    public void logoutAndMailNewRegularPlayer (
+            MailService mailService,
+            UserAttendedGameDAO userAttendedGameDAO,
+            HrajUserEntity oldUser) {
+        boolean wasSubstitute = userAttendedGameDAO.isSubstitute(getId(), oldUser.getId());
+        logOutUserFromGame(userAttendedGameDAO, oldUser.getId());
+
+        try {
+            countPlayers(userAttendedGameDAO);   //count new free roles count
+        } catch (Exception e) {
+            e.printStackTrace();
+            /* TODO handle error and fix data in the database */
+        }
+
+        /* if logged out user was not just a substitute, some of pSubstitutes should replace him */
+        if (!wasSubstitute) {
+            UserAttendedGameEntity player = userAttendedGameDAO.
+                    getFirstSubstitutedUAG(getId(), oldUser.getGender());  //get first substitute according to gender
+            if (player != null) {
+                player.setSubstitute(false);
+                userAttendedGameDAO.editUserAttendedGame(player);             //edit this substitute as ordinary player
+
+                player.notifyChangedByMail(mailService);
+            }
+        }
+    }
+
+    /**
+     * It gets all players actually assigned to the game. Decides who is regular and who
+     * is substitute and send mail to those whose status changed.
+     *
+     * @param userAttendedGameDAO Way to find players of game
+     * @param mailService Service needed for sending mail
+     */
+    @Transient
+    public void rerollLoggedUsers(UserAttendedGameDAO userAttendedGameDAO,
+                                  MailService mailService) {
+        List<UserAttendedGameEntity> allPlayers = userAttendedGameDAO.getAllPlayersOfGame(getId());
+
+        int menRemaining = getMenRole();
+        int womenRemaining = getWomenRole();
+        int bothRemaining = getBothRole();
+        for(UserAttendedGameEntity player: allPlayers) {
+            if(player.getUserAttended().getGender() == Gender.MEN.ordinal()) {
+                menRemaining--;
+            } else {
+                womenRemaining--;
+            }
+
+            if(menRemaining < 0){
+                bothRemaining--;
+                menRemaining = 0;
+            }
+            if(womenRemaining < 0){
+                bothRemaining--;
+                womenRemaining = 0;
+            }
+
+            if(bothRemaining < 0) {
+                if(!player.isSubstitute()){
+                    player.setSubstitute(true);
+                    player.notifyChangedByMail(mailService);
+                }
+            } else {
+                if(player.isSubstitute()) {
+                    player.setSubstitute(false);
+                    player.notifyChangedByMail(mailService);
+                }
+            }
+        }
+    }
+
+    /**
+     * It logs given player to the game and sends mail to him. Mail is chosen
+     * depending on whether he is a regular player or a substitute.
+     *
+     *
+     * @param userAttendedGameDAO
+     * @param mailService
+     * @param user
+     * @throws Exception
+     */
+    @Transient
+    public void loginAndMailPlayer(UserAttendedGameDAO userAttendedGameDAO,
+                                   MailService mailService,
+                                   HrajUserEntity user) throws Exception {
+        UserAttendedGameEntity uage = new UserAttendedGameEntity();
+        uage.setGameId(getId());
+        uage.setUserId(user.getId());
+        if (!userAttendedGameDAO.isLogged(uage)) {  //user is not logged in this game
+            countPlayers(userAttendedGameDAO);   //count new free roles count
+
+            if (isAvailableToUser(userAttendedGameDAO, user)) {
+                uage.setSubstitute(false);
+            }
+            else {
+                uage.setSubstitute(true);
+            }
+            userAttendedGameDAO.addUserAttendedGame(uage);
+            uage = userAttendedGameDAO.getLogged(getId(), user.getId());
+            uage.notifyByMail(mailService);
+        }
+    }
+
+    @Transient
+    public boolean isInFuture(){
+        Date gameDate = DateUtils.stringsToDate(getDate().toString(), getTime());
+        return gameDate.after(new Date());
+    }
+
+    /**
+     * This method takes care of logging user out of the game.
+     *
+     * @param userAttendedGameDAO dao used in logging
+     * @param userId Id of the user to logout
+     */
+    @Transient
+    private void logOutUserFromGame(UserAttendedGameDAO userAttendedGameDAO, int userId) {
+        UserAttendedGameEntity uage = new UserAttendedGameEntity();
+        uage.setGameId(getId());
+        uage.setUserId(userId);
+        userAttendedGameDAO.deleteUserAttendedGame(uage);
+    }
+
+    @Transient
+    public boolean differsInPlayers(GameEntity toCompare){
+        if(toCompare.getMenRole() != getMenRole() ||
+                toCompare.getWomenRole() != getWomenRole() ||
+                toCompare.getBothRole() != getBothRole()){
+            return true;
+        }
+        return false;
     }
 
     @Transient
     public int getMenFreeRoles() {
-        if(assignedUsers == null)
-            menFreeRoles = getMenRole();
         return menFreeRoles;
     }
 
     @Transient
     public int getWomenFreeRoles() {
-        if(assignedUsers == null)
-            womenFreeRoles = getWomenRole();
         return womenFreeRoles;
     }
 
     @Transient
     public int getBothFreeRoles() {
-        if(assignedUsers == null)
-            bothFreeRoles = getBothRole();
         return bothFreeRoles;
-    }
-
-    @Transient
-    public int getMenSubstitutes() {
-        return menSubstitutes;
     }
 
     @Transient
@@ -566,37 +739,22 @@ public class GameEntity {
     }
 
     @Transient
-    public int getMenAssignedRoles() {
-        return menAssignedRoles;
+    public void setWomenSubstitutes(int womenSubstitutes) {
+        this.womenSubstitutes = womenSubstitutes;
     }
 
     @Transient
-    public int getWomenAssignedRoles() {
-        return womenAssignedRoles;
+    public boolean registrationStartsInFuture() {
+        return registrationStarted.after(new Date());
     }
 
-    /**
-     * Method decides whether given user can sign up for this game or not.
-     * @param user tested user
-     * @return true, if user is not signed up for the game yet and the capacity
-     * has not been filled up yet (considering gender)
-     * false is returned even if list of assigned users has not been set yet!
-     */
     @Transient
-    public boolean isAvailableToUser(HrajUserEntity user){
+    public int getMenSubstitutes() {
+        return menSubstitutes;
+    }
 
-        if(assignedUsers == null || substitutes == null)
-            return false; // unknown ! ASSIGNED USERS WERE NOT SET YET !
-
-        if(assignedUsers.contains(user) || substitutes.contains(user))
-            return false; // user is already signed
-
-        if(user.getGender() == MEN && getMenFreeRoles() > 0)
-            return true; // user is a man and there are some free men roles
-
-        if(user.getGender() == WOMEN && getWomenFreeRoles() > 0)
-            return true; // user is a woman and there are some free women roles
-
-        return (getBothFreeRoles() > 0); // user can still sign as undecided
+    @Transient
+    public void setMenSubstitutes(int menSubstitutes) {
+        this.menSubstitutes = menSubstitutes;
     }
 }
