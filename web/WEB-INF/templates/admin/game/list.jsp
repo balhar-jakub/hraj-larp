@@ -24,6 +24,7 @@
                                 <div>
                                     <p>${game.info}</p>
                                     <a href="/admin/game/players/${game.id}" class="biglink">Hráči</a>
+                                    <input type="button" value="Smazat hru" onclick="location.href='/admin/game/confirmation/${game.id}'">
                                 </div>
                             </div>
                         </div>

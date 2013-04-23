@@ -319,4 +319,22 @@ public class UserAttendedGameDAO {
         }
         finally { session.close(); }
     }
+
+    /**
+     * Finds all records where game id is id.
+     * @param id game id
+     * @return list of all records where game id is id.
+     */
+    @Transactional(readOnly = false)
+    public List<UserAttendedGameEntity> getRecordsByGameId(Integer id) {
+        if(id <= 0) return null;
+
+        Session session = sessionFactory.openSession();
+        try{
+            Query query = session.createQuery("from UserAttendedGameEntity where game_id= :id ");
+            query.setParameter("id", id);
+            return query.list();
+        }
+        finally { session.close(); }
+    }
 }

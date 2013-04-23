@@ -73,8 +73,12 @@ public class GameController {
 
         HrajUserEntity user = rights.getLoggedUser();
         if (rights.isLogged()) {
-            String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
-            myGame.setImage(image);
+            if (imageFile != null && imageFile.length > 0 && !imageFile[0].getOriginalFilename().equals("")) { //there is at least one image file
+                String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
+                myGame.setImage(image);
+            } else {
+                myGame.setImage("");
+            }
             myGame.setAddedBy(rights.getLoggedUser().getId());
             myGame.validate(r);
 

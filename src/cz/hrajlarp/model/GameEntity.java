@@ -270,6 +270,18 @@ public class GameEntity {
         this.replacementsText = replacementsText;
     }
 
+    private String action;
+
+    @Column(name = "action")
+    @Basic
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -296,6 +308,7 @@ public class GameEntity {
         if (registrationStarted != null ? !registrationStarted.equals(that.registrationStarted) : that.registrationStarted != null) return false;
         if (ordinaryPlayerText != null ? !ordinaryPlayerText.equals(that.ordinaryPlayerText) : that.ordinaryPlayerText != null) return false;
         if (replacementsText != null ? !replacementsText.equals(that.replacementsText) : that.replacementsText != null) return false;
+        if (action != null ? !action.equals(that.action) : that.action != null) return false;
 
         return true;
     }
@@ -321,6 +334,7 @@ public class GameEntity {
         result = 31 * result + (registrationStarted != null ? registrationStarted.hashCode() : 0);
         result = 31 * result + (ordinaryPlayerText != null ? ordinaryPlayerText.hashCode() : 0);
         result = 31 * result + (replacementsText != null ? replacementsText.hashCode() : 0);
+        result = 31 * result + (action != null ? action.hashCode() : 0);
 
         return result;
     }

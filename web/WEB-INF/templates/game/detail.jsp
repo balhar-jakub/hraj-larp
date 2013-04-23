@@ -156,5 +156,9 @@
                 <p>${game.shortText}</p>
             </c:otherwise>
         </c:choose>
+        <c:if test="${not empty game.action}">
+            <h3>Akce:</h3>
+            <p>${game.action}</p>
+        </c:if>
     </div>
 </div>
