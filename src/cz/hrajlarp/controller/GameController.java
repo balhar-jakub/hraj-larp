@@ -1,7 +1,6 @@
 package cz.hrajlarp.controller;
 
 import cz.hrajlarp.model.*;
-import cz.hrajlarp.utils.DateUtils;
 import cz.hrajlarp.utils.FileUtils;
 import cz.hrajlarp.utils.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +17,6 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 
 /**
@@ -47,7 +42,7 @@ public class GameController {
 
     @Autowired
     private Rights rights;
-    
+
     @Autowired
     private MailService mailService;
 
@@ -59,8 +54,8 @@ public class GameController {
      *
      * @param myGame    pseudo bean representing form
      * @param imageFile image uploaded in form
-     * @param request HttpRequest
-     * @param r Returned result
+     * @param request   HttpRequest
+     * @param r         Returned result
      * @return Path to jsp file
      */
     @RequestMapping(method = RequestMethod.POST, value = "/game/add", produces = "text/plain;charset=UTF-8")
@@ -85,7 +80,7 @@ public class GameController {
             if (r.hasErrors()) return "game/add";
 
             GameEntity game = myGame.getGameEntity();
-            if(rights.isAdministrator(user)) {
+            if (rights.isAdministrator(user)) {
                 game.setConfirmed(true);
             } else {
                 game.setConfirmed(false);
@@ -113,7 +108,9 @@ public class GameController {
         if (rights.isLogged()) {
             model.addAttribute("myGame", new GameEntity());
             return "game/add";
-        } else return "/error";
+        } else {
+            return "/error";
+        }
     }
 
 
@@ -126,53 +123,46 @@ public class GameController {
      */
     @RequestMapping(value = "/game/detail")
     public String detailGame(@RequestParam("gameId") Integer id, Model model) {
-        System.out.println("GameController: Passing through..." + "/game/detail" + "gameId: " + id);
-
-        if (id == null || id <= 0) return "kalendar";
+        if (id == null || id <= 0) {
+            return "kalendar";
+        }
 
         GameEntity game = gameDAO.getGameById(id);
         if (game != null) {
-            List<HrajUserEntity> signedUsers = userAttendedGameDAO.getUsersByGameIdNoSubstitutes(game.getId());
-            List<HrajUserEntity> substitutes = userAttendedGameDAO.getSubstituteUsersByGameId(game.getId());
-            try{
-                game.setAssignedUsers(signedUsers, substitutes);   //count new free roles count
-            }catch(Exception e){
+            try {
+                game.countPlayers(userAttendedGameDAO);   //count new free roles count
+            } catch (Exception e) {
                 e.printStackTrace();
                 /* TODO handle error and fix data in the database */
             }
-            SimpleDateFormat datetimeFormatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            try {
-                Date changedDate = datetimeFormatter1.parse(game.getDate() + " " + game.getTime());
-                if (!DateUtils.isFuture(new Timestamp(changedDate.getTime()))) model.addAttribute("isFuture", true);
 
-                Date startRegDate = datetimeFormatter1.parse(game.getRegistrationStarted().toString());
-                String regStart = DateUtils.getDateAsDMYHM(startRegDate);
-            	model.addAttribute("regStart", regStart);
-                if (DateUtils.isFuture(new Timestamp(startRegDate.getTime()))){
-                	model.addAttribute("regStarted", false);
-                } else {
-                    model.addAttribute("regStarted", true);
-                }
-                
-                if (rights.isLogged()) {
-                    HrajUserEntity user = rights.getLoggedUser();
-                    UserAttendedGameEntity uage = new UserAttendedGameEntity();
-                    uage.setGameId(game.getId());
-                    uage.setUserId(user.getId());
-                    game.setTargetUser(user);
-                    model.addAttribute("logged", true);
-                    boolean logged = userAttendedGameDAO.isLogged(uage);
-                    model.addAttribute("loggedInGame", logged);
-                    if (logged) {
-                        model.addAttribute("substitute", userAttendedGameDAO.isSubstitute(uage));
-                    }
-                }
-                model.addAttribute("game", game);
-                return "game/detail";
-            } catch (Exception e) {
-                return "/error";
+            if (!game.isInFuture()) {
+                model.addAttribute("isFuture", true);
             }
-        } else return "/error";
+
+            model.addAttribute("regStart", game.getRegistrationStartedDMYHM());
+            if (game.registrationStartsInFuture()) {
+                model.addAttribute("regStarted", false);
+            } else {
+                model.addAttribute("regStarted", true);
+            }
+
+            if (rights.isLogged()) {
+                HrajUserEntity user = rights.getLoggedUser();
+                model.addAttribute("logged", true);
+                boolean logged = userAttendedGameDAO.isLogged(game.getId(), user.getId());
+                model.addAttribute("loggedInGame", logged);
+                model.addAttribute("isFull", game.isAvailableToUser(userAttendedGameDAO, user));
+                if (logged) {
+                    model.addAttribute("substitute", userAttendedGameDAO.isSubstitute(game.getId(), user.getId()));
+                }
+            }
+            model.addAttribute("game", game);
+            return "game/detail";
+
+        } else {
+            return "/error";
+        }
     }
 
     /**
@@ -186,24 +176,27 @@ public class GameController {
      */
     @RequestMapping(value = "/game/edit", method = RequestMethod.GET)
     public String editGameForm(Model model, @RequestParam("gameId") Integer id) {
-
-        if (id == null || id <= 0) return "/error";
+        if (id == null || id <= 0) {
+            return "/error";
+        }
         model.addAttribute("myGame", new ValidGame());
 
-        if (rights.isLogged()){
+        if (rights.isLogged()) {
             GameEntity game = gameDAO.getGameById(id);
             HrajUserEntity user = rights.getLoggedUser();
 
-            if (game != null && (rights.hasRightsToEditGame(user, game) || gameDAO.userOwnsGame(id, user.getId()))) {
-                System.out.println("EDITOR: "+rights.isEditor(user));
-                System.out.println("OWNER: "+gameDAO.userOwnsGame(id, user.getId()));
+            if (game != null &&
+                    (rights.hasRightsToEditGame(user, game))) {
                 model.addAttribute("game", game);
-                model.addAttribute("date", game.getDate().toString().substring(0, 10));
-                model.addAttribute("time", game.getDate().toString().substring(11, 16));
+                model.addAttribute("date", game.getDateAsYMD());
+                model.addAttribute("time", game.getTimeAsHM());
                 return "game/edit";
+            } else {
+                return "admin/norights";
             }
+        } else {
+            return "error";
         }
-        return "/error";
     }
 
     /**
@@ -211,7 +204,7 @@ public class GameController {
      * Method validates all variables and generates errors when necessary.
      * ValidGame is stored as GameEntity and updated with Hibernate and GameDAO
      *
-     * @param myGame pseudo bean representing form variables
+     * @param myGame    pseudo bean representing form variables
      * @param id
      * @param imageFile
      * @param request
@@ -228,12 +221,14 @@ public class GameController {
     ) {
 
         if (rights.isLogged()) {
-            if (id == null || id <= 0) return "/error";
+            if (id == null || id <= 0) {
+                return "/error";
+            }
 
-            GameEntity game = gameDAO.getGameById(id);
+            GameEntity gameOld = gameDAO.getGameById(id);
             HrajUserEntity user = rights.getLoggedUser();
 
-            if (game != null && (rights.hasRightsToEditGame(user, game) || gameDAO.userOwnsGame(game.getId(), user.getId()))) {
+            if (gameOld != null && rights.hasRightsToEditGame(user, gameOld)) {
 
                 if (imageFile != null && imageFile.length > 0 && !imageFile[0].getOriginalFilename().equals("")) { //there is at least one image file
                     String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
@@ -242,13 +237,17 @@ public class GameController {
                     myGame.setImage(gameDAO.getGameById(id).getImage());
                 }
                 myGame.validate(r);
-                if (r.hasErrors()) return "game/edit";
+                if (r.hasErrors()) {
+                    return "game/edit";
+                }
 
-                game = myGame.getGameEntity();
+                GameEntity game = myGame.getGameEntity();
                 game.setId(id);
                 game.setAddedBy(gameDAO.getGameById(id).getAddedBy());
+                if(game.differsInPlayers(gameOld)) {
+                    game.rerollLoggedUsers(userAttendedGameDAO, mailService);
+                }
                 gameDAO.editGame(game);
-                System.out.println("Hra byla editovana");
                 return "/game/edited";
             }
         }
@@ -271,34 +270,11 @@ public class GameController {
 
             if (gameId > 0) {
                 GameEntity game = gameDAO.getGameById(gameId);
-                if (game != null && DateUtils.isFuture(new Timestamp(DateUtils.stringsToDate(game.getDate().toString(), game.getTime()).getTime()))) {
-                    UserAttendedGameEntity uage = new UserAttendedGameEntity();
-                    uage.setGameId(gameId);
-                    uage.setUserId(user.getId());
-                    if (!userAttendedGameDAO.isLogged(uage)) {  //user is not logged in this game
-                        List<HrajUserEntity> signedUsers = userAttendedGameDAO.getUsersByGameIdNoSubstitutes(game.getId());
-                        List<HrajUserEntity> substitutes = userAttendedGameDAO.getSubstituteUsersByGameId(game.getId());
-
-                        try {
-                            game.setAssignedUsers(signedUsers, substitutes);   //count new free roles count
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            /* TODO handle error and fix data in the database */
-                        }
-                        
-                        game.setTargetUser(user);
-                        if (game.isFull()) {
-                        	uage.setSubstitute(true);
-                        	if (user.getMailInformation())
-                        		mailService.sendMsgSignedAsReplacement(user, game);
-                        }
-                        else {
-                        	uage.setSubstitute(false);
-                        	if (user.getMailInformation())
-                        		mailService.sendMsgSignedAsRegular(user, game);
-                        }
-
-                        userAttendedGameDAO.addUserAttendedGame(uage);
+                if (game != null && game.isInFuture()) {
+                    try {
+                        game.loginAndMailPlayer(userAttendedGameDAO, mailService, user);
+                    } catch (Exception e) {
+                        return "/error";
                     }
                 }
             }
@@ -324,47 +300,15 @@ public class GameController {
         if (rights.isLogged()) {
             int userId = rights.getLoggedUser().getId();
 
-            if (gameId > 0) {
-                GameEntity game = gameDAO.getGameById(gameId);
-                HrajUserEntity oldUser = userDAO.getUserById(userId);
-                if (game != null&& DateUtils.isFuture(new Timestamp(DateUtils.stringsToDate(game.getDate().toString(), game.getTime()).getTime()))) {
-                    UserAttendedGameEntity uage = new UserAttendedGameEntity();
-                    uage.setGameId(game.getId());
-                    uage.setUserId(oldUser.getId());
-                    if (userAttendedGameDAO.isLogged(uage)) {   //user is logged in this game
-                        boolean wasSubstitute = userAttendedGameDAO.isSubstitute(uage);
-                        userAttendedGameDAO.deleteUserAttendedGame(uage);   //logout old user
-
-                        //count new free roles count
-                        List<HrajUserEntity> signedUsers = userAttendedGameDAO.getUsersByGameIdNoSubstitutes(game.getId());
-                        List<HrajUserEntity> substitutes = userAttendedGameDAO.getSubstituteUsersByGameId(game.getId());
-
-                        try {
-                            game.setAssignedUsers(signedUsers, substitutes);   //count new free roles count
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            /* TODO handle error and fix data in the database */
-                        }
-
-                        int gender = 2;                                   //default setting for none men or women free roles, only both roles are free
-                        if (oldUser.getGender() == 0) {                     //loggouted user is man
-                            if (game.getMenFreeRoles() > 0) gender = 0;   //there are free men roles
-                        } else {                                            //loggouted user is woman
-                            if (game.getWomenFreeRoles() > 0) gender = 1; //there are free women roles
-                        }
-
-                        /* if logged out user was not just a substitute, some of substitutes should replace him */
-                        if(!wasSubstitute){
-                            uage = userAttendedGameDAO.getFirstSubstitutedUAG(game.getId(), gender);  //get first substitute according to gender
-                            if (uage != null) {
-                                HrajUserEntity newUser = userDAO.getUserById(uage.getUserId());
-                                uage.setUserId(newUser.getId());
-                                uage.setSubstitute(false);
-                                userAttendedGameDAO.editUserAttendedGame(uage);             //edit this substitute as ordinary player
-                                mailService.sendMsgChangedToActor(newUser, game);
-                            }
-                        }
-                    }
+            GameEntity game = gameDAO.getGameById(gameId);
+            HrajUserEntity oldUser = userDAO.getUserById(userId);
+            if (game != null && game.isInFuture()) {
+                if (userAttendedGameDAO.isLogged(game.getId(), oldUser.getId())) {   //user is logged in this game
+                    game.logoutAndMailNewRegularPlayer(
+                            mailService,
+                            userAttendedGameDAO,
+                            oldUser
+                    );
                 }
             }
         } else {

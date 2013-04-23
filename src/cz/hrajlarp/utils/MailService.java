@@ -38,6 +38,26 @@ public class MailService {
             System.err.println(e.getMessage());            
         }
     }
+
+    public void sendMsgChangedToReplacement(HrajUserEntity u, GameEntity g) {
+
+        SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
+        message.setTo(u.getEmail());
+        message.setText(
+                "Vážený uživateli " + u.getName() + " " + u.getLastName() + ",\n\n"
+                        + "tímto Vám dáváme vědět, že Vaše úloha ve hře "
+                        + g.getName() +", "
+                        + "se změnila ze závazné role na náhradu. Hra se koná " + g.getDateAsDMY() +"\n"
+                        + "Ověřte si prosím tuto skutečnost na stránce hrajlarp.cz\n\n"
+                        + "S přáním krásného dne Váš tým hrajlarp");
+        System.out.println("Sending message:\n" + message.getText() + "\n");
+        try{
+            this.mailSender.send(message);
+        }
+        catch(MailException e) {
+            System.err.println(e.getMessage());
+        }
+    }
     
     public void sendMsgSignedAsRegular(HrajUserEntity u, GameEntity g) {
 

@@ -1,5 +1,7 @@
 package cz.hrajlarp.model;
 
+import cz.hrajlarp.utils.MailService;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -121,5 +123,24 @@ public class UserAttendedGameEntity {
 
     public void setSubstituteText(String substituteText) {
         this.substituteText = substituteText;
+    }
+
+    @Transient
+    public void notifyByMail(MailService mailService) {
+        //To change body of created methods use File | Settings | File Templates.
+        if(!isSubstitute()){
+            mailService.sendMsgSignedAsRegular(getUserAttended(), getAttendedGame());
+        } else {
+            mailService.sendMsgSignedAsReplacement(getUserAttended(), getAttendedGame());
+        }
+    }
+
+    @Transient
+    public void notifyChangedByMail(MailService mailService) {
+        if(!isSubstitute()) {
+            mailService.sendMsgChangedToActor(getUserAttended(), getAttendedGame());
+        } else {
+            mailService.sendMsgChangedToReplacement(getUserAttended(), getAttendedGame());
+        }
     }
 }

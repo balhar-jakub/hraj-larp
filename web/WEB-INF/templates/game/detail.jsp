@@ -65,7 +65,7 @@
 	            		<form method="post" action="logInGame">
 		                  <input type="hidden" name="gameId" value="${game.id}">
 		                  <c:choose>
-		                      <c:when test="${game.full}">
+		                      <c:when test="${isFull}">
 		                          <input type="submit" value="Přihlásit se jako náhradník.">
 		                      </c:when>
 		                      <c:otherwise>
@@ -111,14 +111,6 @@
                     <td>${game.womenFreeRoles}</td>
                     <td>${game.bothFreeRoles}</td>
                 </tr>
-                <!--
-                <tr>
-                    <td>Zatím přihlášeno</td>
-                    <td>${game.menAssignedRoles}</td>
-                    <td>${game.womenAssignedRoles}</td>
-                    <td></td>
-                </tr>
-                -->
                 <tr>
                     <td>Náhradníci</td>
                     <td>${game.menSubstitutes}</td>
