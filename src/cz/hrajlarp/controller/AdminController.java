@@ -2,10 +2,6 @@ package cz.hrajlarp.controller;
 
 import cz.hrajlarp.model.*;
 import cz.hrajlarp.utils.MailService;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -233,24 +228,5 @@ public class AdminController {
             model.addAttribute("path", "/admin/game/editmail/" + String.valueOf(game.getId()));
             return "/admin/norights";
         }
-    }
-
-    @RequestMapping(value="/admin/payments")
-    public String getInfoAboutPayment() {
-        Document doc = null;
-        try {
-            doc = Jsoup.connect("https://www.fio.cz/scgi-bin/hermes/dz-transparent.cgi?ID_ucet=2300302640").get();
-            Elements linesToParse = doc.select("table.main tbody tr:not(.last)");
-            for(Element element: linesToParse){
-                Elements cells = element.select("td");
-                for(Element cell: cells) {
-                    System.out.println("Line " + cell.text());
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "/admin/error";
-        }
-        return "/admin/payments";
     }
 }

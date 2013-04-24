@@ -377,4 +377,35 @@ public class UserAttendedGameDAO {
         }
         finally { session.close(); }
     }
+
+    public List<UserAttendedGameEntity> getAllFuture() {
+        Session session = sessionFactory.openSession();
+        try{
+            Transaction transaction = session.beginTransaction();
+
+            Query query = session.createQuery(
+                    "select userAttendedGame from UserAttendedGameEntity as userAttendedGame " +
+                            " join userAttendedGame.attendedGame as game " +
+                            " with date(game.date) - date(current_date()) = 2");
+            List<UserAttendedGameEntity> result = query.list();
+            transaction.commit();
+            return result;
+        }
+        finally { session.close(); }
+    }
+
+    public UserAttendedGameEntity getByVS(String vs) {
+        Session session = sessionFactory.openSession();
+        try{
+            Transaction transaction = session.beginTransaction();
+
+            Query query = session.createQuery(
+                    "from UserAttendedGameEntity where variableSymbol = :varSymbol");
+            query.setParameter("varSymbol", vs);
+            UserAttendedGameEntity result = (UserAttendedGameEntity) query.uniqueResult();
+            transaction.commit();
+            return result;
+        }
+        finally { session.close(); }
+    }
 }

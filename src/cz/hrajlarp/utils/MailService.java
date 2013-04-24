@@ -106,4 +106,21 @@ public class MailService {
             System.err.println(e.getMessage());            
         }
     }
+
+    public void sendMsgBeforeGame(HrajUserEntity u, GameEntity g) {
+        SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
+        message.setTo(u.getEmail());
+        message.setText(
+                "Vážený uživateli " + u.getName() + " " + u.getLastName() + ",\n\n"
+                        + "nezaplatil jste hru "
+                        + g.getName()
+                        + "Hra se koná " + g.getDateAsDMY() +"\n");
+        System.out.println("Sending message:\n" + message.getText() + "\n");
+        try{
+            this.mailSender.send(message);
+        }
+        catch(MailException e) {
+            System.err.println(e.getMessage());
+        }
+    }
 }
