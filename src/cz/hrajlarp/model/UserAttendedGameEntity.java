@@ -168,7 +168,7 @@ public class UserAttendedGameEntity {
     public void notifyByMail(MailService mailService) {
         //To change body of created methods use File | Settings | File Templates.
         if(!isSubstitute()){
-            mailService.sendMsgSignedAsRegular(getUserAttended(), getAttendedGame());
+            mailService.sendMsgSignedAsRegular(getUserAttended(), getAttendedGame(), this);
         } else {
             mailService.sendMsgSignedAsReplacement(getUserAttended(), getAttendedGame());
         }

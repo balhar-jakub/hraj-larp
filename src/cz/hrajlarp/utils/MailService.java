@@ -2,6 +2,7 @@ package cz.hrajlarp.utils;
 
 import cz.hrajlarp.model.GameEntity;
 import cz.hrajlarp.model.HrajUserEntity;
+import cz.hrajlarp.model.UserAttendedGameEntity;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -59,12 +60,12 @@ public class MailService {
         }
     }
     
-    public void sendMsgSignedAsRegular(HrajUserEntity u, GameEntity g) {
+    public void sendMsgSignedAsRegular(HrajUserEntity u, GameEntity g, UserAttendedGameEntity uag) {
 
         SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
         message.setTo(u.getEmail());
         if (g.getOrdinaryPlayerText()!=null && !g.getOrdinaryPlayerText().trim().equals("")){
-        	message.setText(g.getOrdinaryPlayerText());
+            message.setText(g.getOrdinaryPlayerText() + " Variabilní symbol: " + uag.getVariableSymbol());
         } else {
 	        message.setText(
 	            "Vážený uživateli " + u.getName() + " " + u.getLastName() + ",\n\n"
