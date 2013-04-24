@@ -148,7 +148,7 @@ public class GameController {
                 model.addAttribute("logged", true);
                 boolean logged = userAttendedGameDAO.isLogged(game.getId(), user.getId());
                 model.addAttribute("loggedInGame", logged);
-                model.addAttribute("isFull", game.isAvailableToUser(userAttendedGameDAO, user));
+                model.addAttribute("isFull", !game.isAvailableToUser(userAttendedGameDAO, user));
                 if (logged) {
                     model.addAttribute("substitute", userAttendedGameDAO.isSubstitute(game.getId(), user.getId()));
                 }

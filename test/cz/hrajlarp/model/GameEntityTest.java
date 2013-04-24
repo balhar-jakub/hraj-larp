@@ -7,9 +7,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.fail;
+import static junit.framework.Assert.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -79,39 +77,6 @@ public class GameEntityTest {
         substitutes = new ArrayList<HrajUserEntity>();
     }
 
-    /* tests for isFullForAnyOne() method */
-
-    @Test
-    public void testIsFullForAnyone1() {
-        assertEquals(true, game_0_0_0.isFullForAnyone());
-        assertEquals(false, game_2_0_0.isFullForAnyone());
-    }
-
-    @Test
-    public void testIsFullForAnyone2() {
-        assignedUsers.add(male1);
-        assignedUsers.add(male2);
-
-        try {
-            game_2_0_0.setAssignedUsers(assignedUsers, substitutes);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-        assertEquals(true, game_2_0_0.isFullForAnyone());
-    }
-
-    @Test
-    public void testIsFullForAnyone3() {
-        assignedUsers.add(male1);
-
-        try {
-            game_2_0_0.setAssignedUsers(assignedUsers, substitutes);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-        assertEquals(false, game_2_0_0.isFullForAnyone());
-    }
-
     /* tests for getMenFreeRoles() method */
 
     @Test
@@ -126,7 +91,7 @@ public class GameEntityTest {
         assignedUsers.add(male1);
 
         try {
-            game_2_0_0.setAssignedUsers(assignedUsers, substitutes);
+            game_2_0_0.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -139,7 +104,7 @@ public class GameEntityTest {
         assignedUsers.add(male2);
 
         try {
-            game_2_0_0.setAssignedUsers(assignedUsers, substitutes);
+            game_2_0_0.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -152,7 +117,7 @@ public class GameEntityTest {
         assignedUsers.add(male2);
 
         try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
+            game_1_0_1.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -166,7 +131,7 @@ public class GameEntityTest {
         substitutes.add(male3);
 
         try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
+            game_1_0_1.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -188,7 +153,7 @@ public class GameEntityTest {
         assignedUsers.add(male2);
 
         try {
-            game_1_1_1.setAssignedUsers(assignedUsers, substitutes);
+            game_1_1_1.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -201,7 +166,7 @@ public class GameEntityTest {
         assignedUsers.add(female1);
 
         try {
-            game_1_1_1.setAssignedUsers(assignedUsers, substitutes);
+            game_1_1_1.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -214,7 +179,7 @@ public class GameEntityTest {
         assignedUsers.add(female1);
 
         try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
+            game_1_0_1.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -228,7 +193,7 @@ public class GameEntityTest {
         substitutes.add(female1);
 
         try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
+            game_1_0_1.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -250,7 +215,7 @@ public class GameEntityTest {
         assignedUsers.add(female1);
 
         try {
-            game_1_1_1.setAssignedUsers(assignedUsers, substitutes);
+            game_1_1_1.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -263,7 +228,7 @@ public class GameEntityTest {
         assignedUsers.add(male2);
 
         try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
+            game_1_0_1.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -276,7 +241,7 @@ public class GameEntityTest {
         assignedUsers.add(female1);
 
         try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
+            game_1_0_1.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -290,105 +255,11 @@ public class GameEntityTest {
         substitutes.add(female1);
 
         try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
+            game_1_0_1.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             fail(e.getMessage());
         }
         assertEquals(0, game_1_0_1.getWomenFreeRoles());
-    }
-
-    /* tests for getMenAssignedRoles() method */
-
-    @Test
-    public void testMenAssignedRoles1() {
-        assertEquals(0, game_1_1_1.getMenAssignedRoles());
-    }
-
-    @Test
-    public void testMenAssignedRoles2() {
-        assignedUsers.add(male1);
-        assignedUsers.add(female1);
-
-        try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-        assertEquals(1, game_1_0_1.getMenAssignedRoles());
-    }
-
-    @Test
-    public void testMenAssignedRoles3() {
-        assignedUsers.add(male1);
-        assignedUsers.add(male2);
-
-        try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-        assertEquals(2, game_1_0_1.getMenAssignedRoles());
-    }
-
-    @Test
-    public void testMenAssignedRoles4() {
-        assignedUsers.add(male1);
-        assignedUsers.add(male2);
-        substitutes.add(male3);
-
-        try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-        assertEquals(2, game_1_0_1.getMenAssignedRoles());
-    }
-
-    /* tests for getWomenAssignedRoles() method */
-
-    @Test
-    public void testWomenAssignedRoles1() {
-        assertEquals(0, game_1_1_1.getWomenAssignedRoles());
-    }
-
-    @Test
-    public void testWomenAssignedRoles2() {
-        assignedUsers.add(male1);
-        assignedUsers.add(female1);
-
-        try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-        assertEquals(1, game_1_0_1.getWomenAssignedRoles());
-    }
-
-    @Test
-    public void testWomenAssignedRoles3() {
-        assignedUsers.add(female1);
-        assignedUsers.add(female2);
-
-        try {
-            game_1_1_1.setAssignedUsers(assignedUsers, substitutes);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-        assertEquals(0, game_1_1_1.getMenAssignedRoles());
-    }
-
-    @Test
-    public void testWomenAssignedRoles4() {
-        assignedUsers.add(female1);
-        assignedUsers.add(female2);
-        substitutes.add(female3);
-
-        try {
-            game_1_1_1.setAssignedUsers(assignedUsers, substitutes);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-        assertEquals(2, game_1_1_1.getWomenAssignedRoles());
     }
 
     /* tests for getMenSubstitutes() method */
@@ -404,7 +275,7 @@ public class GameEntityTest {
         assignedUsers.add(female1);
 
         try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
+            game_1_0_1.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -417,7 +288,7 @@ public class GameEntityTest {
         assignedUsers.add(male2);
 
         try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
+            game_1_0_1.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -431,7 +302,7 @@ public class GameEntityTest {
         substitutes.add(male3);
 
         try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
+            game_1_0_1.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -451,7 +322,7 @@ public class GameEntityTest {
         assignedUsers.add(female1);
 
         try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
+            game_1_0_1.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -466,7 +337,7 @@ public class GameEntityTest {
         substitutes.add(female2);
 
         try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
+            game_1_0_1.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -476,328 +347,13 @@ public class GameEntityTest {
     /* tests for isFull() method */
 
     @Test
-    public void testIsFull1() {
-        assertEquals(true, game_0_0_0.isFull());
-        assertEquals(false, game_1_0_1.isFull());
-        assertEquals(false, game_1_1_1.isFull());
-    }
-
-    @Test
-    public void testIsFull2() {
-        game_0_0_0.setTargetUser(female1);
-        assertEquals(true, game_0_0_0.isFull());
-
-        game_2_0_0.setTargetUser(female1);
-        assertEquals(true, game_2_0_0.isFull());
-    }
-
-    @Test
-    public void testIsFull3() {
-        game_2_0_0.setTargetUser(male1);
-        assertEquals(false, game_2_0_0.isFull());
-
-        game_1_0_1.setTargetUser(male1);
-        assertEquals(false, game_1_0_1.isFull());
-
-        game_1_0_1.setTargetUser(female1);
-        assertEquals(false, game_1_0_1.isFull());
-    }
-
-    @Test
-    public void testIsFull4() {
-        assignedUsers.add(male1);
-        assignedUsers.add(female1);
-
-        try {
-            game_1_1_1.setAssignedUsers(assignedUsers, substitutes);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-        /* one unassigned role (gender both) */
-
-        game_1_1_1.setTargetUser(male1);
-        assertEquals(false, game_1_1_1.isFull());
-
-        game_1_1_1.setTargetUser(female1);
-        assertEquals(false, game_1_1_1.isFull());
-    }
-
-    @Test
-    public void testIsFull5() {
-        assignedUsers.add(male1);
-        assignedUsers.add(male2);
-        substitutes.add(male3);
-
-        try {
-            game_1_1_1.setAssignedUsers(assignedUsers, substitutes);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-        /* one unassigned role (gender female) */
-
-        game_1_1_1.setTargetUser(male1);
-        assertEquals(true, game_1_1_1.isFull());
-
-        game_1_1_1.setTargetUser(female1);
-        assertEquals(false, game_1_1_1.isFull());
-    }
-
-    /* tests for isAvailableToUser() method */
-
-    @Test
-    public void testIsAvailableToUser1() {
-
-        /* assert false because method setAssignedUsers(...) was not called yet
-        * so it is not possible to tell if user can sign up for this game
-        * (list of assigned users was not set, user can be on it) */
-
-        assertEquals(false, game_0_0_0.isAvailableToUser(male1));
-        assertEquals(false, game_2_0_0.isAvailableToUser(male1));
-        assertEquals(false, game_1_1_1.isAvailableToUser(male1));
-        assertEquals(false, game_1_1_1.isAvailableToUser(female1));
-    }
-
-    @Test
-    public void testIsAvailableToUser2() {
-        assignedUsers.add(male1);
-        assignedUsers.add(male2);
-        assignedUsers.add(female1);
-
-        try {
-            game_1_1_1.setAssignedUsers(assignedUsers, substitutes);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-
-        assertEquals(false, game_1_1_1.isAvailableToUser(male1)); // already assigned
-        assertEquals(false, game_1_1_1.isAvailableToUser(male3)); // no free role
-        assertEquals(false, game_1_1_1.isAvailableToUser(female1));
-        assertEquals(false, game_1_1_1.isAvailableToUser(female2));
-    }
-
-    @Test
-    public void testIsAvailableToUser3() {
-        assignedUsers.add(male1);
-        assignedUsers.add(female1);
-
-        try {
-            game_1_1_1.setAssignedUsers(assignedUsers, substitutes);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-        assertEquals(false, game_1_1_1.isAvailableToUser(male1));
-        assertEquals(false, game_1_1_1.isAvailableToUser(female1));
-        assertEquals(true, game_1_1_1.isAvailableToUser(male2));
-        assertEquals(true, game_1_1_1.isAvailableToUser(male3));
-        assertEquals(true, game_1_1_1.isAvailableToUser(female2));
-    }
-
-    @Test
-    public void testIsAvailableToUser4() {
-        assignedUsers.add(male1);
-        assignedUsers.add(male2);
-        substitutes.add(male3);
-
-        try {
-            game_1_1_1.setAssignedUsers(assignedUsers, substitutes);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-        assertEquals(false, game_1_1_1.isAvailableToUser(male1));
-        assertEquals(false, game_1_1_1.isAvailableToUser(male3));
-        assertEquals(true, game_1_1_1.isAvailableToUser(female1));
-    }
-
-    /* tests for setAssignedUsers() method */
-
-    @Test
-    public void testSetAssignedUsers1() {
-        assignedUsers.add(male1);
-        assignedUsers.add(male2);
-
-        try {
-            game_2_0_0.setAssignedUsers(assignedUsers, substitutes);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-        assertEquals(true, game_2_0_0.isFullForAnyone());
-
-        assertEquals(0, game_2_0_0.getMenFreeRoles());
-        assertEquals(0, game_2_0_0.getWomenFreeRoles());
-        assertEquals(0, game_2_0_0.getBothFreeRoles());
-
-        assertEquals(2, game_2_0_0.getMenAssignedRoles());
-        assertEquals(0, game_2_0_0.getWomenAssignedRoles());
-
-        assertEquals(0, game_2_0_0.getMenSubstitutes());
-        assertEquals(0, game_2_0_0.getWomenSubstitutes());
-
-        assertEquals(true, game_2_0_0.isFull());
-
-        game_2_0_0.setTargetUser(male1);
-        assertEquals(true, game_2_0_0.isFull());
-
-        game_2_0_0.setTargetUser(female1);
-        assertEquals(true, game_2_0_0.isFull());
-
-        assertEquals(false, game_2_0_0.isAvailableToUser(male1));
-        assertEquals(false, game_2_0_0.isAvailableToUser(male2));
-        assertEquals(false, game_2_0_0.isAvailableToUser(male3));
-        assertEquals(false, game_2_0_0.isAvailableToUser(female1));
-    }
-
-    @Test
-    public void testSetAssignedUsers2() {
-        assignedUsers.add(male1);
-
-        try {
-            game_2_0_0.setAssignedUsers(assignedUsers, substitutes);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-        assertEquals(false, game_2_0_0.isFullForAnyone());
-
-        assertEquals(1, game_2_0_0.getMenFreeRoles());
-        assertEquals(0, game_2_0_0.getWomenFreeRoles());
-        assertEquals(0, game_2_0_0.getBothFreeRoles());
-
-        assertEquals(1, game_2_0_0.getMenAssignedRoles());
-        assertEquals(0, game_2_0_0.getWomenAssignedRoles());
-
-        assertEquals(0, game_2_0_0.getMenSubstitutes());
-        assertEquals(0, game_2_0_0.getWomenSubstitutes());
-
-        assertEquals(false, game_2_0_0.isFull()); /* there are free roles (gender not determined) */
-
-        game_2_0_0.setTargetUser(male1);
-        assertEquals(false, game_2_0_0.isFull()); /* there are still free man roles */
-
-        game_2_0_0.setTargetUser(female1);
-        assertEquals(true, game_2_0_0.isFull()); /* is full for any woman */
-
-        assertEquals(false, game_2_0_0.isAvailableToUser(male1));  /* already assigned */
-        assertEquals(true, game_2_0_0.isAvailableToUser(male2));   /* not assigned, free men roles */
-        assertEquals(false, game_2_0_0.isAvailableToUser(female1)); /* no woman roles */
-    }
-
-    @Test
-    public void testSetAssignedUsers3() {
-        assignedUsers.add(male1);
-        assignedUsers.add(female1);
-
-        try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-        assertEquals(true, game_1_0_1.isFullForAnyone());
-
-        assertEquals(0, game_1_0_1.getMenFreeRoles());
-        assertEquals(0, game_1_0_1.getWomenFreeRoles());
-        assertEquals(0, game_1_0_1.getBothFreeRoles());
-
-        assertEquals(1, game_1_0_1.getMenAssignedRoles());
-        assertEquals(1, game_1_0_1.getWomenAssignedRoles());
-
-        assertEquals(0, game_1_0_1.getMenSubstitutes());
-        assertEquals(0, game_1_0_1.getWomenSubstitutes());
-
-        assertEquals(true, game_1_0_1.isFull());
-
-        game_1_0_1.setTargetUser(male2);
-        assertEquals(true, game_1_0_1.isFull());
-
-        game_1_0_1.setTargetUser(female1);
-        assertEquals(true, game_1_0_1.isFull());
-
-        assertEquals(false, game_1_0_1.isAvailableToUser(male1));
-        assertEquals(false, game_1_0_1.isAvailableToUser(male2));
-        assertEquals(false, game_1_0_1.isAvailableToUser(male3));
-        assertEquals(false, game_1_0_1.isAvailableToUser(female1));
-    }
-
-    @Test
-    public void testSetAssignedUsers4() {
-        assignedUsers.add(male1);
-        assignedUsers.add(female1);
-        substitutes.add(male2);
-
-        try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-        assertEquals(true, game_1_0_1.isFullForAnyone());
-
-        assertEquals(0, game_1_0_1.getMenFreeRoles());
-        assertEquals(0, game_1_0_1.getWomenFreeRoles());
-        assertEquals(0, game_1_0_1.getBothFreeRoles());
-
-        assertEquals(1, game_1_0_1.getMenAssignedRoles());
-        assertEquals(1, game_1_0_1.getWomenAssignedRoles());
-
-        assertEquals(1, game_1_0_1.getMenSubstitutes());
-        assertEquals(0, game_1_0_1.getWomenSubstitutes());
-
-        assertEquals(true, game_1_0_1.isFull());
-
-        game_1_0_1.setTargetUser(male3);
-        assertEquals(true, game_1_0_1.isFull());
-
-        game_1_0_1.setTargetUser(female1);
-        assertEquals(true, game_1_0_1.isFull());
-
-        assertEquals(false, game_1_0_1.isAvailableToUser(male1));
-        assertEquals(false, game_1_0_1.isAvailableToUser(male2));
-        assertEquals(false, game_1_0_1.isAvailableToUser(male3));
-        assertEquals(false, game_1_0_1.isAvailableToUser(female1));
-    }
-
-    @Test
-    public void testSetAssignedUsers5() {
-        assignedUsers.add(male1);
-        assignedUsers.add(male2);
-        substitutes.add(female1);
-
-        try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-        assertEquals(true, game_1_0_1.isFullForAnyone());
-
-        assertEquals(0, game_1_0_1.getMenFreeRoles());
-        assertEquals(0, game_1_0_1.getWomenFreeRoles());
-        assertEquals(0, game_1_0_1.getBothFreeRoles());
-
-        assertEquals(2, game_1_0_1.getMenAssignedRoles());
-        assertEquals(0, game_1_0_1.getWomenAssignedRoles());
-
-        assertEquals(0, game_1_0_1.getMenSubstitutes());
-        assertEquals(1, game_1_0_1.getWomenSubstitutes());
-
-        assertEquals(true, game_1_0_1.isFull());
-
-        game_1_0_1.setTargetUser(male3);
-        assertEquals(true, game_1_0_1.isFull());
-
-        game_1_0_1.setTargetUser(female1);
-        assertEquals(true, game_1_0_1.isFull());
-
-        assertEquals(false, game_1_0_1.isAvailableToUser(male1));
-        assertEquals(false, game_1_0_1.isAvailableToUser(male2));
-        assertEquals(false, game_1_0_1.isAvailableToUser(male3));
-        assertEquals(false, game_1_0_1.isAvailableToUser(female1));
-    }
-
-    @Test
     public void testSetAssignedUsers6(){
         assignedUsers.add(male1);
         assignedUsers.add(male1);
 
         Exception ex = null;
         try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
+            game_1_0_1.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             ex = e;
         }
@@ -811,7 +367,7 @@ public class GameEntityTest {
 
         Exception ex = null;
         try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
+            game_1_0_1.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             ex = e;
         }
@@ -827,7 +383,7 @@ public class GameEntityTest {
 
         Exception ex = null;
         try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
+            game_1_0_1.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             ex = e;
         }
@@ -842,7 +398,7 @@ public class GameEntityTest {
 
         Exception ex = null;
         try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
+            game_1_0_1.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             ex = e;
         }
@@ -857,7 +413,7 @@ public class GameEntityTest {
 
         Exception ex = null;
         try {
-            game_1_0_1.setAssignedUsers(assignedUsers, substitutes);
+            game_1_0_1.countPlayers(assignedUsers, substitutes);
         } catch (Exception e) {
             ex = e;
         }
@@ -870,7 +426,7 @@ public class GameEntityTest {
 
         Exception ex = null;
         try {
-            game_1_0_1.setAssignedUsers(null, substitutes);
+            game_1_0_1.countPlayers(null, substitutes);
         } catch (Exception e) {
             ex = e;
         }

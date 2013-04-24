@@ -10,6 +10,7 @@ create table hraj_user (
   phone text not null,
   gender int not null,
   mail_information boolean,
+  variable_symbol text not null,
 
   PRIMARY KEY(id)
 );
