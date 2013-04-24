@@ -1,6 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <form method="post">
+<h2><c:out value="${gameName}" /></h2>
+<span class="printButton"><input type=button onclick="window.print()" value="Tisk seznamu"></span>
 <table class="players">
     <tr class="first">
         <td>Jméno hráče</td>

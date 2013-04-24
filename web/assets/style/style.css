@@ -1483,6 +1483,12 @@ input:-moz-placeholder {
   tr {
     page-break-inside: avoid;
   }
+  nav {
+     display: none;
+  }
+  .printButton {
+      display:none;
+  }
 }
 
 

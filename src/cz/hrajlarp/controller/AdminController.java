@@ -5,10 +5,7 @@ import cz.hrajlarp.utils.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
@@ -28,6 +25,9 @@ public class AdminController {
 
     @Autowired
     private UserDAO userDAO;
+
+    @Autowired
+    private UserIsEditorDAO userIsEditorDAO;
 
     @Autowired
     private UserAttendedGameDAO userAttendedGameDAO;
@@ -50,6 +50,7 @@ public class AdminController {
                     userAttendedGameDAO.getPlayers(id, true);
 
             model.addAttribute("gameId",id);
+            model.addAttribute("gameName", game.getName());
             model.addAttribute("players", players);
             model.addAttribute("substitutes", substitutes);
             model.addAttribute("isLogged", true);
@@ -120,6 +121,32 @@ public class AdminController {
             return "/admin/game/list";
         } else {
             model.addAttribute("path", "/admin/game/list");
+            return "/admin/norights";
+        }
+    }
+
+    @RequestMapping(value = "/admin/game/confirmation/{id}", method = RequestMethod.GET)
+    public String deleteConfirmation(Model model, @PathVariable("id") Integer id) {
+        model.addAttribute("gameId", id);
+        return "/admin/game/confirmation";
+    }
+
+    @RequestMapping(value = "/admin/game/delete/{id}", method = RequestMethod.GET)
+    public String deleteGame(Model model, @PathVariable("id") Integer id) {
+        HrajUserEntity user = rights.getLoggedUser();
+        GameEntity game = gameDAO.getGameById(id);
+
+        if (game!=null && rights.hasRightsToEditGame(user, game)){
+            List<UserAttendedGameEntity> records = userAttendedGameDAO.getRecordsByGameId(id);
+            for(UserAttendedGameEntity uage : records){
+                userAttendedGameDAO.deleteUserAttendedGame(uage);
+            }
+            UserIsEditorEntity editor = (UserIsEditorEntity)userIsEditorDAO.getUserIsEditor(user, game);
+            if (editor != null) userIsEditorDAO.deleteUserIsEditor(editor);
+            gameDAO.deleteGame(game);
+            return "/admin/game/deleted";
+        } else {
+            model.addAttribute("path", "/admin/game/delete/" + String.valueOf(id));
             return "/admin/norights";
         }
     }
@@ -226,6 +253,52 @@ public class AdminController {
             return "admin/game/list";
         } else {
             model.addAttribute("path", "/admin/game/editmail/" + String.valueOf(game.getId()));
+            return "/admin/norights";
+        }
+    }
+
+    @RequestMapping(value = "/admin/game/actions", method= RequestMethod.GET)
+    public String actionsShow(Model model,
+                                @ModelAttribute("succesMessage") String succesMessage) {
+        HrajUserEntity user = rights.getLoggedUser();
+
+        if (rights.isAdministrator(user)){
+            List<String> actions = gameDAO.getAllActions();
+            model.addAttribute("actions", actions);
+            List<GameEntity> games = gameDAO.getFutureGames();
+            model.addAttribute("games", games);
+            if (!succesMessage.isEmpty()){
+                if (succesMessage.equals("succes")) model.addAttribute("succesMessage", true);
+                else model.addAttribute("succesMessage", false);
+            }
+            return "/admin/game/actions";
+        } else {
+            model.addAttribute("path", "/admin/game/actions/");
+            return "/admin/norights";
+        }
+    }
+
+    @RequestMapping(value = "/admin/game/addAction", method= RequestMethod.POST)
+    public String addAction(Model model,
+                            @RequestParam("actionText") String newAction,
+                            @RequestParam("gameText") Integer gameId) {
+        HrajUserEntity user = rights.getLoggedUser();
+
+        if (rights.isAdministrator(user)){
+            GameEntity game = gameDAO.getGameById(gameId);
+            if (game != null && !newAction.isEmpty()){
+                game.setAction(newAction);
+                gameDAO.editGame(game);
+                String succesMessage = "succes";
+                model.addAttribute("succesMessage", succesMessage);
+            }
+            else {
+                String succesMessage = "error";
+                model.addAttribute("succesMessage", succesMessage);
+            }
+            return "redirect:/admin/game/actions";
+        } else {
+            model.addAttribute("path", "/admin/game/actions/");
             return "/admin/norights";
         }
     }

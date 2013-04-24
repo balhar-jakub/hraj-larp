@@ -53,7 +53,6 @@ public class ValidGame {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "name.required", "Musíte zadat jméno!");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "anotation", "anotation.required","Musíte zadat popis hry!");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "author", "name.required","Musíte zadat autora hry!");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "image", "name.required","Musíte zadat cestu k obrázku!");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "date", "name.required","Musíte zadat datum akce!");
         validateInteger(this.menRole, "menRole", errors);
         validateInteger(this.womenRole, "womenRole", errors);

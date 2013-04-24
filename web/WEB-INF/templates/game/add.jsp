@@ -42,7 +42,7 @@
         <form:input type="text" id="time" path="time" value="${game.time}"/>
     </div>
     <div>
-        <label for="imageFile">Nahrajte obrázek:*</label>
+        <label for="imageFile">Nahrajte obrázek:</label>
         <input type="file" name="imageFile">
         <form:errors path="image" />
     </div>
