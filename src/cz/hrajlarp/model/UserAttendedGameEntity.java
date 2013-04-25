@@ -68,6 +68,45 @@ public class UserAttendedGameEntity {
         this.added = added;
     }
 
+    private Boolean payed;
+
+    @Column(name="payed")
+    @Basic
+    public Boolean getPayed(){
+        return payed;
+    }
+
+    public void setPayed(Boolean payed){
+        this.payed = payed;
+    }
+
+    private Boolean automatic;
+
+    @Column(name="automatic")
+    @Basic
+    public Boolean getAutomatic() {
+        if(automatic == null) {
+            automatic = false;
+        }
+        return automatic ;
+    }
+
+    public void setAutomatic(Boolean automatic) {
+        this.automatic = automatic;
+    }
+
+    private String variableSymbol;
+
+    @Column(name="variable_symbol")
+    @Basic
+    public String getVariableSymbol(){
+        return variableSymbol;
+    }
+
+    public void setVariableSymbol(String variableSymbol){
+        this.variableSymbol = variableSymbol;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -129,7 +168,7 @@ public class UserAttendedGameEntity {
     public void notifyByMail(MailService mailService) {
         //To change body of created methods use File | Settings | File Templates.
         if(!isSubstitute()){
-            mailService.sendMsgSignedAsRegular(getUserAttended(), getAttendedGame());
+            mailService.sendMsgSignedAsRegular(getUserAttended(), getAttendedGame(), this);
         } else {
             mailService.sendMsgSignedAsReplacement(getUserAttended(), getAttendedGame());
         }
@@ -142,5 +181,17 @@ public class UserAttendedGameEntity {
         } else {
             mailService.sendMsgChangedToReplacement(getUserAttended(), getAttendedGame());
         }
+    }
+
+    private String payedTextual;
+
+    @Transient
+    public String getPayedTextual(){
+        return (payed != null && payed) ? "Ano" : "";
+    }
+
+    @Transient
+    public void setPayedTextual(String payedTextual){
+        this.payedTextual = payedTextual;
     }
 }

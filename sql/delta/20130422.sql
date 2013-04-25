@@ -1,0 +1,1 @@
+Alter table user_attended_game add column payed boolean;

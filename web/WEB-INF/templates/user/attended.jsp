@@ -14,11 +14,15 @@
             <tr class="header">
                 <td>Jméno hry</td>
                 <td>Stav (Hráč / Náhradník)</td>
+                <td>Zaplaceno</td>
+                <td>Variabilní symbol</td>
             </tr>
             <c:forEach items="${futureGames}" var="future">
                 <tr>
                     <td><a href="/game/detail?gameId=${future.attendedGame.id}">${future.attendedGame.name}</a></td>
                     <td>${future.substituteText}</td>
+                    <td>${future.payedTextual}</td>
+                    <td>${future.variableSymbol}</td>
                 </tr>
             </c:forEach>
         </table>
@@ -30,11 +34,15 @@
             <tr class="header">
                 <td>Jméno hry</td>
                 <td>Stav (Hráč / Náhradník)</td>
+                <td>Zaplaceno</td>
+                <td>Variabilní symbol</td>
             </tr>
             <c:forEach items="${formerGames}" var="former">
                 <tr>
                     <td><a href="/game/detail?gameId=${former.attendedGame.id}">${former.attendedGame.name}</a></td>
                     <td>${former.substituteText}</td>
+                    <td>${former.payedTextual}</td>
+                    <td>${former.variableSymbol}</td>
                 </tr>
             </c:forEach>
         </table>

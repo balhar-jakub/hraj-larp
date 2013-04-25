@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -200,6 +201,21 @@ public class UserAttendedGameDAO {
         finally { session.close(); }
     }
 
+    @Transactional(readOnly = true)
+    public List<UserAttendedGameEntity> getPlayers(int gameId, boolean substitute){
+        if(gameId <= 0) return null;
+
+        Session session = sessionFactory.openSession();
+        try{
+            Query query = session.createQuery("from UserAttendedGameEntity where gameId in (:gameId) " +
+                    "and substitute = :substitute");
+            query.setParameter("gameId", gameId);
+            query.setParameter("substitute", substitute);
+            return query.list();
+        }
+        finally { session.close(); }
+    }
+
     /**
      * Method gets from database all users signed up
      * as substitutes for game with given id.
@@ -220,6 +236,13 @@ public class UserAttendedGameDAO {
             return query.list();
         }
         finally { session.close(); }
+    }
+
+    public Long getNextVariableSymbol(){
+        Session session = sessionFactory.openSession();
+        Query query = session.createSQLQuery("select nextval('hraj_user_attended_game_seq')");
+        Long key = ((BigInteger) query.uniqueResult()).longValue();
+        return key;
     }
 
     /**
@@ -351,6 +374,37 @@ public class UserAttendedGameDAO {
             session.beginTransaction();
             session.update(uage);
             session.getTransaction().commit();
+        }
+        finally { session.close(); }
+    }
+
+    public List<UserAttendedGameEntity> getAllFuture() {
+        Session session = sessionFactory.openSession();
+        try{
+            Transaction transaction = session.beginTransaction();
+
+            Query query = session.createQuery(
+                    "select userAttendedGame from UserAttendedGameEntity as userAttendedGame " +
+                            " join userAttendedGame.attendedGame as game " +
+                            " with date(game.date) - date(current_date()) = 2");
+            List<UserAttendedGameEntity> result = query.list();
+            transaction.commit();
+            return result;
+        }
+        finally { session.close(); }
+    }
+
+    public UserAttendedGameEntity getByVS(String vs) {
+        Session session = sessionFactory.openSession();
+        try{
+            Transaction transaction = session.beginTransaction();
+
+            Query query = session.createQuery(
+                    "from UserAttendedGameEntity where variableSymbol = :varSymbol");
+            query.setParameter("varSymbol", vs);
+            UserAttendedGameEntity result = (UserAttendedGameEntity) query.uniqueResult();
+            transaction.commit();
+            return result;
         }
         finally { session.close(); }
     }

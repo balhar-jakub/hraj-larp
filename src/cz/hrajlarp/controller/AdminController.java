@@ -2,17 +2,12 @@ package cz.hrajlarp.controller;
 
 import cz.hrajlarp.model.*;
 import cz.hrajlarp.utils.MailService;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,8 +44,10 @@ public class AdminController {
         GameEntity game = gameDAO.getGameById(id);
 
         if (rights.hasRightsToEditGame(user, game)){
-            List<HrajUserEntity> players =  userAttendedGameDAO.getUsersByGameIdNoSubstitutes(id);
-            List<HrajUserEntity> substitutes =  userAttendedGameDAO.getSubstituteUsersByGameId(id);
+            List<UserAttendedGameEntity> players =
+                    userAttendedGameDAO.getPlayers(id, false);
+            List<UserAttendedGameEntity> substitutes =
+                    userAttendedGameDAO.getPlayers(id, true);
 
             model.addAttribute("gameId",id);
             model.addAttribute("gameName", game.getName());
@@ -60,6 +57,33 @@ public class AdminController {
             return "/admin/game/players";
         } else {
             model.addAttribute("path", "/admin/game/players/" + String.valueOf(id));
+            return "/admin/norights";
+        }
+    }
+
+    @RequestMapping(value="/admin/user/payed/{gameId}/{userId}")
+    public String gamePayment(Model model,
+                              @PathVariable("gameId") Integer gameId,
+                              @PathVariable("userId") Integer userId,
+                              RedirectAttributes redirectAttributes) {
+        HrajUserEntity user = rights.getLoggedUser();
+        GameEntity game = gameDAO.getGameById(gameId);
+        if (rights.hasRightsToEditGame(user, game)){
+            UserAttendedGameEntity payingPlayer = userAttendedGameDAO.getLogged(gameId, userId);
+            if(payingPlayer != null){
+                if(payingPlayer.getPayed() == null || !payingPlayer.getPayed()){
+                    payingPlayer.setPayed(true);
+                } else {
+                    payingPlayer.setPayed(false);
+                }
+            }
+            userAttendedGameDAO.editUserAttendedGame(payingPlayer);
+
+            redirectAttributes.addAttribute("id",gameId);
+            return "redirect:/admin/game/players/{id}";
+        } else {
+            model.addAttribute("path", "/admin/user/payed/" +
+                    String.valueOf(gameId) + "/" + String.valueOf(userId));
             return "/admin/norights";
         }
     }
@@ -278,24 +302,4 @@ public class AdminController {
             return "/admin/norights";
         }
     }
-
-    @RequestMapping(value="/admin/payments")
-    public String getInfoAboutPayment() {
-        Document doc = null;
-        try {
-            doc = Jsoup.connect("https://www.fio.cz/scgi-bin/hermes/dz-transparent.cgi?ID_ucet=2300302640").get();
-            Elements linesToParse = doc.select("table.main tbody tr:not(.last)");
-            for(Element element: linesToParse){
-                Elements cells = element.select("td");
-                for(Element cell: cells) {
-                    System.out.println("Line " + cell.text());
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "/admin/error";
-        }
-        return "/admin/payments";
-    }
-
 }
