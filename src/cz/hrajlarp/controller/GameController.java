@@ -8,10 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.servlet.ServletContext;
@@ -175,18 +172,20 @@ public class GameController {
      * @return
      */
     @RequestMapping(value = "/game/edit", method = RequestMethod.GET)
-    public String editGameForm(Model model, @RequestParam("gameId") Integer id) {
+    public String editGameForm(Model model,
+                               @ModelAttribute("myGame") ValidGame myGame,
+                               @RequestParam("id") Integer id) {
         if (id == null || id <= 0) {
             return "/error";
         }
-        model.addAttribute("myGame", new ValidGame());
+        //model.addAttribute("myGame", new ValidGame());
 
         if (rights.isLogged()) {
             GameEntity game = gameDAO.getGameById(id);
             HrajUserEntity user = rights.getLoggedUser();
 
-            if (game != null &&
-                    (rights.hasRightsToEditGame(user, game))) {
+            if (game != null && (rights.hasRightsToEditGame(user, game))) {
+                myGame.setTextareas(game);
                 model.addAttribute("game", game);
                 model.addAttribute("date", game.getDateAsYMD());
                 model.addAttribute("time", game.getTimeAsHM());
@@ -213,7 +212,7 @@ public class GameController {
      */
     @RequestMapping(value = "/game/edit", method = RequestMethod.POST)
     public String editGame(
-            @ModelAttribute("gameId") Integer id,
+            @RequestParam("id") Integer id,
             @ModelAttribute("myGame") ValidGame myGame,
             @RequestParam("imageFile") CommonsMultipartFile[] imageFile,
             HttpServletRequest request,

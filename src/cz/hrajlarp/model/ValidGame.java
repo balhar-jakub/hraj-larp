@@ -76,18 +76,20 @@ public class ValidGame {
             matcher = pattern.matcher(this.time);
             if(!matcher.matches()) errors.rejectValue("time", "time.wrongFormatException", "Musíte zadat čas ve formátu HH:MM");
         }
-        
-        if(registrationStarted == null || registrationStarted.isEmpty()){
-        	Date now = Calendar.getInstance().getTime();
-        	registrationStarted = dfRegStart.format(now);
-        } else {
-        	try {
-        		Date startRegDate = new Date(dfRegStart.parse(registrationStarted).getTime());
-        		if(startRegDate.after(bDate)) 
-        			errors.rejectValue("registrationStarted", "startRegDate must be before bDate", "Datum povolení registrace musí být nižší než datum konání");
-        	}catch (ParseException e){
-        		errors.rejectValue("registrationStarted", "registrationStarted.wrongFormatException", "Datum a čas musí být ve formátu YYYY-MM-DD HH:MM");
-        	}
+        if (bDate != null){
+            if(registrationStarted == null || registrationStarted.isEmpty()){
+                Date now = Calendar.getInstance().getTime();
+                registrationStarted = dfRegStart.format(now);
+            } else {
+                try {
+                    Date startRegDate = new Date(dfRegStart.parse(registrationStarted).getTime());
+                    if(startRegDate.after(bDate)){
+                            errors.rejectValue("registrationStarted", "startRegDate must be before bDate", "Datum povolení registrace musí být nižší než datum konání");
+                    }
+                }catch (ParseException e){
+                    errors.rejectValue("registrationStarted", "registrationStarted.wrongFormatException", "Datum a čas musí být ve formátu YYYY-MM-DD HH:MM");
+                }
+            }
         }
     }
 
@@ -313,5 +315,14 @@ public class ValidGame {
 
     public void setReplacementsText(String replacementsText) {
         this.replacementsText = replacementsText;
+    }
+
+    public void setTextareas(GameEntity game) {
+        setAnotation(game.getAnotation());
+        setAboutGame(game.getAboutGame());
+        setInfo(game.getInfo());
+        setPlace(game.getPlace());
+        setOrdinaryPlayerText(game.getOrdinaryPlayerText());
+        setReplacementsText(game.getReplacementsText());
     }
 }
