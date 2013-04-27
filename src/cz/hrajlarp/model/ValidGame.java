@@ -28,6 +28,7 @@ public class ValidGame {
     private String anotation;
     private String author;
     private String image;
+    private String defaultImage;
     private int addedBy;
     private String menRole;
     private String womenRole;
@@ -45,6 +46,7 @@ public class ValidGame {
     private Pattern pattern;
     private Matcher matcher;
     private static final String TIME_24H = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
+    private static final String DEFAULT_IMAGE = "/img/upload//gameName_1367071900576.jpg";  // set as you need
 
     /**
      * Validation method for add game form and edit game form
@@ -103,7 +105,8 @@ public class ValidGame {
             registrationStartedTime = "12:00";
         Date regStartedDate = DateUtils.stringsToDate(
                 registrationStartedDate.toString(), registrationStartedTime);
-        if(regStartedDate.after(bDate))
+        if(regStartedDate == null || regStartedDate.after(bDate)
+                && errors.getFieldError("registrationStartedDate.wrongFormatException") == null)
             errors.rejectValue("registrationStartedDate",
                     "startRegDate must be before bDate",
                     "Datum povolení registrace musí být dřívější než datum konání");
@@ -168,6 +171,52 @@ public class ValidGame {
         return game;
     }
 
+    public ValidGame(){ }
+
+    public ValidGame(GameEntity entity){
+
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm");
+
+        if (entity.getTime() == null || entity.getTime().isEmpty())
+            setTime(sdf2.format(entity.getDate()));
+        else setTime(entity.getTime());
+
+        setDate(sdf1.format(entity.getDate()));
+
+        if (entity.getRegistrationStartedTime() == null
+                || entity.getRegistrationStartedTime().isEmpty())
+            setRegistrationStartedTime(sdf2.format(entity.getRegistrationStartedDate()));
+        else setRegistrationStartedTime(entity.getRegistrationStartedTime());
+
+        setRegistrationStartedDate(sdf1.format(entity.getRegistrationStartedDate()));
+
+        setAboutGame(entity.getAboutGame());
+        setAddedBy(entity.getAddedBy());
+        setAnotation(entity.getAnotation());
+        setAuthor(entity.getAuthor());
+        setImage(entity.getImage());
+        setInfo(entity.getInfo());
+        setLarpDb(entity.getLarpDb());
+
+        if(entity.getBothRole() == null) setBothRole("0");
+        else setBothRole("" + entity.getBothRole());
+        if(entity.getMenRole() == null) setMenRole("0");
+        else setMenRole("" + entity.getMenRole());
+        if(entity.getWomenRole() == null) setWomenRole("0");
+        else setWomenRole("" + entity.getWomenRole());
+
+        setName(entity.getName());
+        setPlace(entity.getPlace());
+        setShortText(entity.getShortText());
+        setWeb(entity.getWeb());
+        setOrdinaryPlayerText(entity.getOrdinaryPlayerText());
+        setReplacementsText(entity.getReplacementsText());
+
+        if(entity.getId() != null)
+            setId(entity.getId());
+    }
+
 
     public String getLarpDb() {
         return larpDb;
@@ -215,6 +264,16 @@ public class ValidGame {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getDefaultImage() {
+        if(defaultImage == null)
+            return DEFAULT_IMAGE;
+        return defaultImage;
+    }
+
+    public void setDefaultImage(String defaultImage) {
+        this.defaultImage = defaultImage;
     }
 
     public int getAddedBy() {

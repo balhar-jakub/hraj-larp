@@ -2,6 +2,13 @@
 <%@ taglib prefix='form' uri='http://www.springframework.org/tags/form' %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <form:form method="post" action="add" enctype="multipart/form-data" commandName="myGame">
+
+    <c:if test="${not empty copied}">
+        <h3>Nyní můžete přidat kopii původní hry, nezapoměňte ji upravit</h3>
+        Nejdůležitější je nastavení datumů hry a počty hráčů.
+        <form:input type="hidden" value="${myGame.image}" name="defaultImage" path="defaultImage"/>
+    </c:if>
+
     <div>
         <label for="name">Jméno hry:*</label>
         <form:errors path="name" />

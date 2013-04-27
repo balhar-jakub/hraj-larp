@@ -66,14 +66,15 @@ public class GameController {
             HttpServletRequest request,
             BindingResult r
     ) {
-
-        HrajUserEntity user = rights.getLoggedUser();
         if (rights.isLogged()) {
+            HrajUserEntity user = rights.getLoggedUser();
             if (imageFile != null && imageFile.length > 0 && !imageFile[0].getOriginalFilename().equals("")) { //there is at least one image file
                 String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
                 myGame.setImage(image);
-            } else {
-                myGame.setImage("");
+            } else{
+                if(myGame.getImage() == null){
+                    myGame.setImage(myGame.getDefaultImage());
+                }
             }
             myGame.setAddedBy(rights.getLoggedUser().getId());
             myGame.validate(r);
@@ -87,7 +88,6 @@ public class GameController {
                 game.setConfirmed(false);
             }
             gameDAO.addGame(game);
-
 
             UserIsEditorEntity userIsEditorEntity = new UserIsEditorEntity();
             userIsEditorEntity.setGameId(game.getId());
@@ -107,7 +107,8 @@ public class GameController {
     @RequestMapping(value = "/game/add", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
     public String addGameShow(ModelMap model) {
         if (rights.isLogged()) {
-            model.addAttribute("myGame", new GameEntity());
+            if(!model.containsKey("myGame") || model.get("myGame") == null)
+                model.addAttribute("myGame", new GameEntity());
             return "game/add";
         } else {
             return "/error";
@@ -323,6 +324,34 @@ public class GameController {
         }
         return "redirect:/game/detail";
     }
+
+    /**
+     * Method gets game by given ID and sends its copy into game/add form
+     * @param model
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/game/copy", method = RequestMethod.POST)
+    public String copy(Model model, @RequestParam("gameId") Integer id) {
+
+        if (id == null || id <= 0) {
+            return "/error";
+        }
+        GameEntity game = gameDAO.getGameById(id);
+
+        if(game == null)
+            return "/error";
+
+        GameEntity copiedGame = game.cloneGame();
+        copiedGame.setId(null);
+        copiedGame.setAddedBy(rights.getLoggedUser().getId());
+
+        ValidGame validGame = new ValidGame(copiedGame);
+        model.addAttribute("myGame", validGame);
+        model.addAttribute("copied", true);
+        return "game/add";
+    }
+
 
     /**
      * This method saves image file from form

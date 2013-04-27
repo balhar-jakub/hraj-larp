@@ -1,6 +1,7 @@
 <%@ taglib prefix='form' uri='http://www.springframework.org/tags/form' %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <form:form method="post" action="edit?gameId=${game.id}" enctype="multipart/form-data" commandName="myGame">
     <div>
         <label for="name">Jméno hry:*</label>
@@ -106,4 +107,8 @@
     </div>
     <input type="hidden" name="gameId" value=${game.id}>
     <input type="submit" value="Ulož změny">
+</form:form>
+
+<form:form action="/game/copy?gameId=${game.id}" method="POST" enctype="multipart/form-data">
+    <input type="submit" value="Kopírovat hru"/>
 </form:form>
