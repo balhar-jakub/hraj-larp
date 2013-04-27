@@ -17,6 +17,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.text.SimpleDateFormat;
 
 
 /**
@@ -190,6 +191,12 @@ public class GameController {
                 model.addAttribute("game", game);
                 model.addAttribute("date", game.getDateAsYMD());
                 model.addAttribute("time", game.getTimeAsHM());
+                model.addAttribute("registrationStartedDate",
+                        new SimpleDateFormat("yyyy-MM-dd").format(
+                                game.getRegistrationStartedDate()));
+                model.addAttribute("registrationStartedTime",
+                        new SimpleDateFormat("HH:mm").format(
+                                game.getRegistrationStartedDate()));
                 return "game/edit";
             } else {
                 return "admin/norights";

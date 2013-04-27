@@ -77,9 +77,14 @@
         <form:textarea id="place" path="place"/>
     </div>
     <div>
-        <label for="registrationStarted">Datum a čas začátku přihlašování do hry(YYYY-mm-dd hh:mm):</label>
-        <form:input type="text" id="registrationStarted" path="registrationStarted" />
-        <form:errors path="registrationStarted" />
+        <label for="registrationStartedDate">Datum začátku přihlašování do hry (YYYY-mm-dd):*</label>
+        <form:errors path="registrationStartedDate" />
+        <form:input type="text" id="registrationStartedDate" path="registrationStartedDate" value="${game.registrationStartedDate}"/>
+    </div>
+    <div>
+        <label for="registrationStartedTime">Čas začátku přihlašování do hry (HH:MM):</label>
+        <form:errors path="registrationStartedTime" />
+        <form:input type="text" id="registrationStartedTime" path="registrationStartedTime" value="${game.registrationStartedTime}"/>
     </div>
     <div>
         <label for="ordinaryPlayerText">Mail pro přihlášeného hráče:</label>

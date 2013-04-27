@@ -38,7 +38,8 @@ public class ValidGame {
     private String aboutGame;
     private String web;
     private String larpDb;
-    private String registrationStarted;
+    private String registrationStartedDate;
+    private String registrationStartedTime;
     private String ordinaryPlayerText;
     private String replacementsText;
     private Pattern pattern;
@@ -59,8 +60,6 @@ public class ValidGame {
         validateInteger(this.bothRole, "bothRole", errors);
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        DateFormat dfRegStart = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        dfRegStart.setLenient(false);
         
         Date bDate = null;
         if(this.date != null && !this.date.isEmpty())
@@ -76,19 +75,38 @@ public class ValidGame {
             matcher = pattern.matcher(this.time);
             if(!matcher.matches()) errors.rejectValue("time", "time.wrongFormatException", "Musíte zadat čas ve formátu HH:MM");
         }
-        
-        if(registrationStarted == null || registrationStarted.isEmpty()){
-        	Date now = Calendar.getInstance().getTime();
-        	registrationStarted = dfRegStart.format(now);
-        } else {
-        	try {
-        		Date startRegDate = new Date(dfRegStart.parse(registrationStarted).getTime());
-        		if(startRegDate.after(bDate)) 
-        			errors.rejectValue("registrationStarted", "startRegDate must be before bDate", "Datum povolení registrace musí být nižší než datum konání");
-        	}catch (ParseException e){
-        		errors.rejectValue("registrationStarted", "registrationStarted.wrongFormatException", "Datum a čas musí být ve formátu YYYY-MM-DD HH:MM");
-        	}
+
+        Date regDate = null;
+        if(this.registrationStartedDate != null && !this.registrationStartedDate.isEmpty())
+        try {
+            regDate = new Date(df.parse(this.registrationStartedDate).getTime());
+            if(regDate.after(bDate))
+        			errors.rejectValue("registrationStartedDate",
+                            "startRegDate must be before bDate",
+                            "Datum povolení registrace musí být dřívější než datum konání");
         }
+        catch (ParseException e){
+            errors.rejectValue("registrationStartedDate",
+                    "registrationStartedDate.wrongFormatException",
+                    "Musíte zadat datum ve formátu YYYY-MM-DD");
+        }
+
+        if (this.registrationStartedTime != null && !this.registrationStartedTime.isEmpty()){
+            pattern = Pattern.compile(TIME_24H);
+            matcher = pattern.matcher(this.registrationStartedTime);
+            if(!matcher.matches()) errors.rejectValue("registrationStartedTime",
+                    "registrationStartedTime.wrongFormatException",
+                    "Musíte zadat čas ve formátu HH:MM");
+        }
+
+        if (this.registrationStartedTime == null || this.registrationStartedTime.isEmpty())
+            registrationStartedTime = "12:00";
+        Date regStartedDate = DateUtils.stringsToDate(
+                registrationStartedDate.toString(), registrationStartedTime);
+        if(regStartedDate.after(bDate))
+            errors.rejectValue("registrationStartedDate",
+                    "startRegDate must be before bDate",
+                    "Datum povolení registrace musí být dřívější než datum konání");
     }
 
     /**
@@ -119,14 +137,10 @@ public class ValidGame {
         if (time.isEmpty()) time = "12:00";
         game.setDate(new Timestamp(DateUtils.stringsToDate(date.toString(), time).getTime()));
 
-        SimpleDateFormat datetimeFormatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        Date regStartDate;
-		try {
-			regStartDate = datetimeFormatter1.parse(registrationStarted);
-			game.setRegistrationStarted(new Timestamp(regStartDate.getTime()));
-		} catch (ParseException e) {
-			System.out.println("Error in timestamp converting ValidGame.java.");
-		}
+        if (registrationStartedTime.isEmpty()) registrationStartedTime = "12:00";
+        Date regStartedDate = DateUtils.stringsToDate(
+                registrationStartedDate.toString(), registrationStartedTime);
+        game.setRegistrationStartedDate(new Timestamp(regStartedDate.getTime()));
 
         game.setAboutGame(aboutGame);
         game.setAddedBy(addedBy);
@@ -148,6 +162,8 @@ public class ValidGame {
         game.setWeb(web);
         game.setOrdinaryPlayerText(ordinaryPlayerText);
         game.setReplacementsText(replacementsText);
+
+        game.setId(id);
 
         return game;
     }
@@ -291,12 +307,20 @@ public class ValidGame {
         return time;
     }
     
-    public String getRegistrationStarted() {
-        return registrationStarted;
+    public String getRegistrationStartedDate() {
+        return registrationStartedDate;
     }
 
-    public void setRegistrationStarted(String registrationStarted) {
-        this.registrationStarted = registrationStarted;
+    public void setRegistrationStartedDate(String registrationStartedDate) {
+        this.registrationStartedDate = registrationStartedDate;
+    }
+
+    public String getRegistrationStartedTime() {
+        return registrationStartedTime;
+    }
+
+    public void setRegistrationStartedTime(String registrationStartedTime) {
+        this.registrationStartedTime = registrationStartedTime;
     }
     
     public String getOrdinaryPlayerText() {

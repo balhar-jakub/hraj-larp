@@ -237,17 +237,29 @@ public class GameEntity {
         this.larpDb = larpDb;
     }
 
-    private Timestamp registrationStarted;
+    private Timestamp registrationStartedDate;
 
     @Column(name = "registration_started")
     @Basic
-    public Timestamp getRegistrationStarted() {
-        return registrationStarted;
+    public Timestamp getRegistrationStartedDate() {
+        return registrationStartedDate;
     }
 
-    public void setRegistrationStarted(Timestamp registrationStarted) {
-        this.registrationStarted = registrationStarted;
+    public void setRegistrationStartedDate(Timestamp registrationStartedDate) {
+        this.registrationStartedDate = registrationStartedDate;
     }
+
+    private String registrationStartedTime;
+
+    @Transient
+    public String getRegistrationStartedTime() {
+        return registrationStartedTime;
+    }
+
+    public void setRegistrationStartedTime(String registrationStartedTime) {
+        this.registrationStartedTime = registrationStartedTime;
+    }
+
 
     private String ordinaryPlayerText;
 
@@ -308,11 +320,12 @@ public class GameEntity {
         if (shortText != null ? !shortText.equals(that.shortText) : that.shortText != null) return false;
         if (web != null ? !web.equals(that.web) : that.web != null) return false;
         if (womenRole != null ? !womenRole.equals(that.womenRole) : that.womenRole != null) return false;
-        if (registrationStarted != null ? !registrationStarted.equals(that.registrationStarted) : that.registrationStarted != null) return false;
+        if (registrationStartedDate != null ? !registrationStartedDate.equals(that.registrationStartedDate) : that.registrationStartedDate != null) return false;
         if (ordinaryPlayerText != null ? !ordinaryPlayerText.equals(that.ordinaryPlayerText) : that.ordinaryPlayerText != null) return false;
         if (replacementsText != null ? !replacementsText.equals(that.replacementsText) : that.replacementsText != null) return false;
         if (action != null ? !action.equals(that.action) : that.action != null) return false;
-
+        if (time != null ? !time.equals(that.time) : that.time != null) return false;
+        if (registrationStartedTime != null ? !registrationStartedTime.equals(that.registrationStartedTime) : that.registrationStartedTime != null) return false;
         return true;
     }
 
@@ -334,10 +347,12 @@ public class GameEntity {
         result = 31 * result + (aboutGame != null ? aboutGame.hashCode() : 0);
         result = 31 * result + (web != null ? web.hashCode() : 0);
         result = 31 * result + (larpDb != null ? larpDb.hashCode() : 0);
-        result = 31 * result + (registrationStarted != null ? registrationStarted.hashCode() : 0);
+        result = 31 * result + (registrationStartedDate != null ? registrationStartedDate.hashCode() : 0);
         result = 31 * result + (ordinaryPlayerText != null ? ordinaryPlayerText.hashCode() : 0);
         result = 31 * result + (replacementsText != null ? replacementsText.hashCode() : 0);
         result = 31 * result + (action != null ? action.hashCode() : 0);
+        result = 31 * result + (time != null ? time.hashCode() : 0);
+        result = 31 * result + (registrationStartedTime != null ? registrationStartedTime.hashCode() : 0);
 
         return result;
     }
@@ -400,7 +415,7 @@ public class GameEntity {
 
     @Transient
     public String getTimeAsHM(){
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");    // day name
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         return sdf.format(getDate());
     }
 
@@ -421,7 +436,7 @@ public class GameEntity {
     @Transient
     public String getRegistrationStartedDMYHM() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-        return sdf.format(getRegistrationStarted());
+        return sdf.format(getRegistrationStartedDate());
     }
 
     @Transient
@@ -758,7 +773,7 @@ public class GameEntity {
 
     @Transient
     public boolean registrationStartsInFuture() {
-        return registrationStarted.after(new Date());
+        return registrationStartedDate.after(new Date());
     }
 
     @Transient
