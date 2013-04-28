@@ -1,6 +1,7 @@
 package cz.hrajlarp.model;
 
 import cz.hrajlarp.utils.DateUtils;
+import cz.hrajlarp.utils.FileUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
@@ -28,7 +29,7 @@ public class ValidGame {
     private String anotation;
     private String author;
     private String image;
-    private String defaultImage;
+    private String originalImage;    // used while copying games - filled with original game image
     private int addedBy;
     private String menRole;
     private String womenRole;
@@ -46,7 +47,7 @@ public class ValidGame {
     private Pattern pattern;
     private Matcher matcher;
     private static final String TIME_24H = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
-    private static final String DEFAULT_IMAGE = "/img/upload//gameName_1367071900576.jpg";  // set as you need
+    private static final String DEFAULT_IMAGE = "/img//defaultImage.jpg";
 
     /**
      * Validation method for add game form and edit game form
@@ -57,6 +58,7 @@ public class ValidGame {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "anotation", "anotation.required","Musíte zadat popis hry!");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "author", "name.required","Musíte zadat autora hry!");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "date", "name.required","Musíte zadat datum akce!");
+        //ValidationUtils.rejectIfEmptyOrWhitespace(errors, "place", "name.required","Musíte zadat místo konání akce!");
         validateInteger(this.menRole, "menRole", errors);
         validateInteger(this.womenRole, "womenRole", errors);
         validateInteger(this.bothRole, "bothRole", errors);
@@ -78,14 +80,9 @@ public class ValidGame {
             if(!matcher.matches()) errors.rejectValue("time", "time.wrongFormatException", "Musíte zadat čas ve formátu HH:MM");
         }
 
-        Date regDate = null;
         if(this.registrationStartedDate != null && !this.registrationStartedDate.isEmpty())
         try {
-            regDate = new Date(df.parse(this.registrationStartedDate).getTime());
-            if(regDate.after(bDate))
-        			errors.rejectValue("registrationStartedDate",
-                            "startRegDate must be before bDate",
-                            "Datum povolení registrace musí být dřívější než datum konání");
+            new Date(df.parse(this.registrationStartedDate).getTime());
         }
         catch (ParseException e){
             errors.rejectValue("registrationStartedDate",
@@ -103,13 +100,27 @@ public class ValidGame {
 
         if (this.registrationStartedTime == null || this.registrationStartedTime.isEmpty())
             registrationStartedTime = "12:00";
-        Date regStartedDate = DateUtils.stringsToDate(
-                registrationStartedDate.toString(), registrationStartedTime);
-        if(regStartedDate == null || regStartedDate.after(bDate)
-                && errors.getFieldError("registrationStartedDate.wrongFormatException") == null)
+
+        Date regStartedDate = DateUtils.stringsToDate(registrationStartedDate, registrationStartedTime);
+        if(regStartedDate == null || regStartedDate.after(bDate))
             errors.rejectValue("registrationStartedDate",
                     "startRegDate must be before bDate",
-                    "Datum povolení registrace musí být dřívější než datum konání");
+                    " Datum povolení registrace musí být dřívější než datum konání");
+    }
+
+    public void validateDateIsFuture(Errors errors){
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        if(this.date != null && !this.date.isEmpty())
+        try {
+            Date bDate = new Date(df.parse(this.date).getTime());
+            if (bDate.before(new Date()))
+                errors.rejectValue("date",
+                        "bDate must be in future",
+                        "Nelze vytvářet hru s datem v minulosti");
+        }
+        catch (ParseException e){
+            errors.rejectValue("date", "date.wrongFormatException", "Musíte zadat datum ve formátu YYYY-MM-DD");
+        }
     }
 
     /**
@@ -266,14 +277,14 @@ public class ValidGame {
         this.image = image;
     }
 
-    public String getDefaultImage() {
-        if(defaultImage == null)
+    public String getOriginalImage() {
+        if(originalImage == null || originalImage.isEmpty())
             return DEFAULT_IMAGE;
-        return defaultImage;
+        return originalImage;
     }
 
-    public void setDefaultImage(String defaultImage) {
-        this.defaultImage = defaultImage;
+    public void setOriginalImage(String originalImage) {
+        this.originalImage = originalImage;
     }
 
     public int getAddedBy() {

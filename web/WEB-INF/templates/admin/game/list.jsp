@@ -3,7 +3,7 @@
 <div class="band white clearfix">
 
     <div class="text">
-        <h1>Kalendář larpů</h1>
+        <h1>Administrace larpů</h1>
     </div>
 
     <ul class="nav nav-tabs">

@@ -64,7 +64,8 @@ public class GameController {
             @ModelAttribute("myGame") ValidGame myGame,
             @RequestParam("imageFile") CommonsMultipartFile[] imageFile,
             HttpServletRequest request,
-            BindingResult r
+            BindingResult r,
+            Model model
     ) {
         if (rights.isLogged()) {
             HrajUserEntity user = rights.getLoggedUser();
@@ -73,21 +74,24 @@ public class GameController {
                 myGame.setImage(image);
             } else{
                 if(myGame.getImage() == null){
-                    myGame.setImage(myGame.getDefaultImage());
+                    myGame.setImage(myGame.getOriginalImage());
                 }
             }
             myGame.setAddedBy(rights.getLoggedUser().getId());
             myGame.validate(r);
+            myGame.validateDateIsFuture(r);
 
             if (r.hasErrors()) return "game/add";
 
             GameEntity game = myGame.getGameEntity();
-            if (rights.isAdministrator(user)) {
+            if (rights.canAddGameDirectly(user)) {
                 game.setConfirmed(true);
+                model.addAttribute("confirmed", true);
             } else {
                 game.setConfirmed(false);
             }
             gameDAO.addGame(game);
+            model.addAttribute("gameId", game.getId());
 
             UserIsEditorEntity userIsEditorEntity = new UserIsEditorEntity();
             userIsEditorEntity.setGameId(game.getId());
@@ -158,6 +162,10 @@ public class GameController {
                 if (logged) {
                     model.addAttribute("substitute", userAttendedGameDAO.isSubstitute(game.getId(), user.getId()));
                 }
+
+                if(rights.hasRightsToEditGame(user, game)){
+                    model.addAttribute("canEdit", true);
+                }
             }
             model.addAttribute("game", game);
             return "game/detail";
@@ -198,6 +206,7 @@ public class GameController {
                 model.addAttribute("registrationStartedTime",
                         new SimpleDateFormat("HH:mm").format(
                                 game.getRegistrationStartedDate()));
+
                 return "game/edit";
             } else {
                 return "admin/norights";
@@ -217,6 +226,7 @@ public class GameController {
      * @param imageFile
      * @param request
      * @param r
+     * @param model
      * @return
      */
     @RequestMapping(value = "/game/edit", method = RequestMethod.POST)
@@ -225,7 +235,8 @@ public class GameController {
             @ModelAttribute("myGame") ValidGame myGame,
             @RequestParam("imageFile") CommonsMultipartFile[] imageFile,
             HttpServletRequest request,
-            BindingResult r
+            BindingResult r,
+            Model model
     ) {
 
         if (rights.isLogged()) {
@@ -255,7 +266,15 @@ public class GameController {
                 if(game.differsInPlayers(gameOld)) {
                     game.rerollLoggedUsers(userAttendedGameDAO, mailService);
                 }
+
+                if(rights.isAdministrator(user) && !gameDAO.getGameById(id).getConfirmed()){
+                    game.setConfirmed(true);
+                    model.addAttribute("confirmedNow", true);
+                }
+
                 gameDAO.editGame(game);
+
+                model.addAttribute("gameId", game.getId());
                 return "/game/edited";
             }
         }

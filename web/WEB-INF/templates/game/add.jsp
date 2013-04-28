@@ -6,7 +6,7 @@
     <c:if test="${not empty copied}">
         <h3>Nyní můžete přidat kopii původní hry, nezapoměňte ji upravit</h3>
         Nejdůležitější je nastavení datumů hry a počty hráčů.
-        <form:input type="hidden" value="${myGame.image}" name="defaultImage" path="defaultImage"/>
+        <form:input type="hidden" value="${myGame.image}" name="originalImage" path="originalImage"/>
     </c:if>
 
     <div>
