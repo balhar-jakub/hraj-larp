@@ -133,7 +133,7 @@
 
         <c:if test="${not empty canEdit}">
             <div class="siderow">
-                <a href="/game/edit?gameId=${game.id}"><h4>Editace hry</h4></a>
+                <a href="/game/edit?id=${game.id}"><h4>Editace hry</h4></a>
             </div>
         </c:if>
     </div>

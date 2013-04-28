@@ -185,11 +185,13 @@ public class GameController {
      * @return
      */
     @RequestMapping(value = "/game/edit", method = RequestMethod.GET)
-    public String editGameForm(Model model, @RequestParam("gameId") Integer id) {
+    public String editGameForm(Model model,
+                               @ModelAttribute("myGame") ValidGame myGame,
+    						   @RequestParam("id") Integer id) {
         if (id == null || id <= 0) {
             return "/error";
         }
-        model.addAttribute("myGame", new ValidGame());
+        //model.addAttribute("myGame", new ValidGame());
 
         if (rights.isLogged()) {
             GameEntity game = gameDAO.getGameById(id);
@@ -197,6 +199,7 @@ public class GameController {
 
             if (game != null &&
                     (rights.hasRightsToEditGame(user, game))) {
+                myGame.setTextareas(game);
                 model.addAttribute("game", game);
                 model.addAttribute("date", game.getDateAsYMD());
                 model.addAttribute("time", game.getTimeAsHM());
@@ -231,7 +234,7 @@ public class GameController {
      */
     @RequestMapping(value = "/game/edit", method = RequestMethod.POST)
     public String editGame(
-            @ModelAttribute("gameId") Integer id,
+            @ModelAttribute("id") Integer id,
             @ModelAttribute("myGame") ValidGame myGame,
             @RequestParam("imageFile") CommonsMultipartFile[] imageFile,
             HttpServletRequest request,

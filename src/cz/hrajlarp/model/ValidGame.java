@@ -1,7 +1,6 @@
 package cz.hrajlarp.model;
 
 import cz.hrajlarp.utils.DateUtils;
-import cz.hrajlarp.utils.FileUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
@@ -120,6 +119,7 @@ public class ValidGame {
         }
         catch (ParseException e){
             errors.rejectValue("date", "date.wrongFormatException", "Musíte zadat datum ve formátu YYYY-MM-DD");
+
         }
     }
 
@@ -407,5 +407,14 @@ public class ValidGame {
 
     public void setReplacementsText(String replacementsText) {
         this.replacementsText = replacementsText;
+    }
+
+    public void setTextareas(GameEntity game) {
+        setAnotation(game.getAnotation());
+        setAboutGame(game.getAboutGame());
+        setInfo(game.getInfo());
+        setPlace(game.getPlace());
+        setOrdinaryPlayerText(game.getOrdinaryPlayerText());
+        setReplacementsText(game.getReplacementsText());
     }
 }
