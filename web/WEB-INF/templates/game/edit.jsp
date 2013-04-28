@@ -1,7 +1,7 @@
 <%@ taglib prefix='form' uri='http://www.springframework.org/tags/form' %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<form:form method="post" action="edit" enctype="multipart/form-data" commandName="myGame">
+<form:form method="post" action="edit?gameId=${game.id}" enctype="multipart/form-data" commandName="myGame">
     <form:hidden path="id" value="${game.id}"/>
     <div>
         <label for="name">Jméno hry:*</label>
@@ -86,9 +86,14 @@
         <form:textarea path="place" id="place" cols="20" rows="3" />
     </div>
     <div>
-        <label for="registrationStarted">Datum a čas začátku přihlašování do hry(YYYY-mm-dd hh:mm):</label>
-        <form:input type="text" id="registrationStarted" path="registrationStarted" value="${game.registrationStarted}" />
-        <form:errors path="registrationStarted" />
+        <label for="registrationStartedDate">Datum začátku přihlašování do hry (YYYY-mm-dd):*</label>
+        <form:errors path="registrationStartedDate" />
+        <form:input type="text" id="registrationStartedDate" path="registrationStartedDate" value="${registrationStartedDate}"/>
+    </div>
+    <div>
+        <label for="registrationStartedTime">Čas začátku přihlašování do hry (HH:MM):</label>
+        <form:errors path="registrationStartedTime" />
+        <form:input type="text" id="registrationStartedTime" path="registrationStartedTime" value="${registrationStartedTime}"/>
     </div>
     <div>
         <label for="ordinaryPlayerText">Mail pro přihlášeného hráče:</label>
@@ -101,4 +106,8 @@
         <form:errors path="replacementsText" />
     </div>
     <input type="submit" value="Ulož změny">
+</form:form>
+
+<form:form action="/game/copy?gameId=${game.id}" method="POST" enctype="multipart/form-data">
+    <input type="submit" value="Kopírovat hru"/>
 </form:form>

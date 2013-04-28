@@ -8,12 +8,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.text.SimpleDateFormat;
 
 
 /**
@@ -60,30 +64,34 @@ public class GameController {
             @ModelAttribute("myGame") ValidGame myGame,
             @RequestParam("imageFile") CommonsMultipartFile[] imageFile,
             HttpServletRequest request,
-            BindingResult r
+            BindingResult r,
+            Model model
     ) {
-
-        HrajUserEntity user = rights.getLoggedUser();
         if (rights.isLogged()) {
+            HrajUserEntity user = rights.getLoggedUser();
             if (imageFile != null && imageFile.length > 0 && !imageFile[0].getOriginalFilename().equals("")) { //there is at least one image file
                 String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
                 myGame.setImage(image);
-            } else {
-                myGame.setImage("");
+            } else{
+                if(myGame.getImage() == null){
+                    myGame.setImage(myGame.getOriginalImage());
+                }
             }
             myGame.setAddedBy(rights.getLoggedUser().getId());
             myGame.validate(r);
+            myGame.validateDateIsFuture(r);
 
             if (r.hasErrors()) return "game/add";
 
             GameEntity game = myGame.getGameEntity();
-            if (rights.isAdministrator(user)) {
+            if (rights.canAddGameDirectly(user)) {
                 game.setConfirmed(true);
+                model.addAttribute("confirmed", true);
             } else {
                 game.setConfirmed(false);
             }
             gameDAO.addGame(game);
-
+            model.addAttribute("gameId", game.getId());
 
             UserIsEditorEntity userIsEditorEntity = new UserIsEditorEntity();
             userIsEditorEntity.setGameId(game.getId());
@@ -103,7 +111,8 @@ public class GameController {
     @RequestMapping(value = "/game/add", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
     public String addGameShow(ModelMap model) {
         if (rights.isLogged()) {
-            model.addAttribute("myGame", new GameEntity());
+            if(!model.containsKey("myGame") || model.get("myGame") == null)
+                model.addAttribute("myGame", new GameEntity());
             return "game/add";
         } else {
             return "/error";
@@ -153,6 +162,10 @@ public class GameController {
                 if (logged) {
                     model.addAttribute("substitute", userAttendedGameDAO.isSubstitute(game.getId(), user.getId()));
                 }
+
+                if(rights.hasRightsToEditGame(user, game)){
+                    model.addAttribute("canEdit", true);
+                }
             }
             model.addAttribute("game", game);
             return "game/detail";
@@ -174,7 +187,7 @@ public class GameController {
     @RequestMapping(value = "/game/edit", method = RequestMethod.GET)
     public String editGameForm(Model model,
                                @ModelAttribute("myGame") ValidGame myGame,
-                               @RequestParam("id") Integer id) {
+    						   @RequestParam("id") Integer id) {
         if (id == null || id <= 0) {
             return "/error";
         }
@@ -184,11 +197,19 @@ public class GameController {
             GameEntity game = gameDAO.getGameById(id);
             HrajUserEntity user = rights.getLoggedUser();
 
-            if (game != null && (rights.hasRightsToEditGame(user, game))) {
+            if (game != null &&
+                    (rights.hasRightsToEditGame(user, game))) {
                 myGame.setTextareas(game);
                 model.addAttribute("game", game);
                 model.addAttribute("date", game.getDateAsYMD());
                 model.addAttribute("time", game.getTimeAsHM());
+                model.addAttribute("registrationStartedDate",
+                        new SimpleDateFormat("yyyy-MM-dd").format(
+                                game.getRegistrationStartedDate()));
+                model.addAttribute("registrationStartedTime",
+                        new SimpleDateFormat("HH:mm").format(
+                                game.getRegistrationStartedDate()));
+
                 return "game/edit";
             } else {
                 return "admin/norights";
@@ -208,15 +229,17 @@ public class GameController {
      * @param imageFile
      * @param request
      * @param r
+     * @param model
      * @return
      */
     @RequestMapping(value = "/game/edit", method = RequestMethod.POST)
     public String editGame(
-            @RequestParam("id") Integer id,
+            @ModelAttribute("id") Integer id,
             @ModelAttribute("myGame") ValidGame myGame,
             @RequestParam("imageFile") CommonsMultipartFile[] imageFile,
             HttpServletRequest request,
-            BindingResult r
+            BindingResult r,
+            Model model
     ) {
 
         if (rights.isLogged()) {
@@ -246,7 +269,15 @@ public class GameController {
                 if(game.differsInPlayers(gameOld)) {
                     game.rerollLoggedUsers(userAttendedGameDAO, mailService);
                 }
+
+                if(rights.isAdministrator(user) && !gameDAO.getGameById(id).getConfirmed()){
+                    game.setConfirmed(true);
+                    model.addAttribute("confirmedNow", true);
+                }
+
                 gameDAO.editGame(game);
+
+                model.addAttribute("gameId", game.getId());
                 return "/game/edited";
             }
         }
@@ -315,6 +346,34 @@ public class GameController {
         }
         return "redirect:/game/detail";
     }
+
+    /**
+     * Method gets game by given ID and sends its copy into game/add form
+     * @param model
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/game/copy", method = RequestMethod.POST)
+    public String copy(Model model, @RequestParam("gameId") Integer id) {
+
+        if (id == null || id <= 0) {
+            return "/error";
+        }
+        GameEntity game = gameDAO.getGameById(id);
+
+        if(game == null)
+            return "/error";
+
+        GameEntity copiedGame = game.cloneGame();
+        copiedGame.setId(null);
+        copiedGame.setAddedBy(rights.getLoggedUser().getId());
+
+        ValidGame validGame = new ValidGame(copiedGame);
+        model.addAttribute("myGame", validGame);
+        model.addAttribute("copied", true);
+        return "game/add";
+    }
+
 
     /**
      * This method saves image file from form
