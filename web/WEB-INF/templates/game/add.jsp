@@ -105,6 +105,10 @@
         value="" escapeXml="true" />
         <form:errors path="replacementsText" />
     </div>
-
+	<div>
+        <label style="float: left;" for="mailProhibition">Nechci odesílat maily o této hře: </label>
+        <form:checkbox path="mailProhibition" id="mailProhibition" />
+        <form:errors path="mailProhibition" />
+    </div>
     <input type="submit" value="Přidej hru">
 </form:form>

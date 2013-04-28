@@ -43,6 +43,7 @@ public class ValidGame {
     private String registrationStartedTime;
     private String ordinaryPlayerText;
     private String replacementsText;
+    private Boolean mailProhibition;
     private Pattern pattern;
     private Matcher matcher;
     private static final String TIME_24H = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
@@ -176,7 +177,8 @@ public class ValidGame {
         game.setWeb(web);
         game.setOrdinaryPlayerText(ordinaryPlayerText);
         game.setReplacementsText(replacementsText);
-
+        game.setMailProhibition(mailProhibition);
+        
         game.setId(id);
 
         return game;
@@ -223,7 +225,8 @@ public class ValidGame {
         setWeb(entity.getWeb());
         setOrdinaryPlayerText(entity.getOrdinaryPlayerText());
         setReplacementsText(entity.getReplacementsText());
-
+        setMailProhibition(entity.getMailProhibition());
+        
         if(entity.getId() != null)
             setId(entity.getId());
     }
@@ -407,6 +410,14 @@ public class ValidGame {
 
     public void setReplacementsText(String replacementsText) {
         this.replacementsText = replacementsText;
+    }
+    
+    public Boolean getMailProhibition() {
+        return mailProhibition;
+    }
+
+    public void setMailProhibition(Boolean mailProhibition) {
+        this.mailProhibition = mailProhibition;
     }
 
     public void setTextareas(GameEntity game) {

@@ -220,42 +220,6 @@ public class AdminController {
             return "/admin/norights";
         }
     }
-    
-    @RequestMapping(value = "/admin/game/mail/{gameId}")
-    public String editMailText(Model model, @PathVariable("gameId") Integer gameId,
-                               RedirectAttributes redirectAttributes) {
-        GameEntity game = gameDAO.getGameById(gameId);
-        HrajUserEntity user = rights.getLoggedUser();
-
-        if (rights.hasRightsToEditGame(user, game)){
-        	model.addAttribute("editMailForm", new GameEntity());
-            model.addAttribute("game", game);
-            
-            return "admin/game/editmail";
-        } else {
-            model.addAttribute("path", "/admin/game/mail/" + String.valueOf(gameId));
-            return "/admin/norights";
-        }
-    }
-    
-    @RequestMapping(value="/admin/game/editmail", method = RequestMethod.POST)
-    public String submitMail(Model model, @ModelAttribute("editMailForm") GameEntity game) {
-        HrajUserEntity user = rights.getLoggedUser();
-        if (rights.hasRightsToEditGame(user, game)){
-            Integer Id = game.getId();
-        	String opt = game.getOrdinaryPlayerText();
-        	String rt = game.getReplacementsText();
-            GameEntity g = gameDAO.getGameById(Id);
-            g.setOrdinaryPlayerText(opt);
-            g.setReplacementsText(rt);
-            gameDAO.editGame(g);
-        	
-            return "admin/game/list";
-        } else {
-            model.addAttribute("path", "/admin/game/editmail/" + String.valueOf(game.getId()));
-            return "/admin/norights";
-        }
-    }
 
     @RequestMapping(value = "/admin/game/actions", method= RequestMethod.GET)
     public String actionsShow(Model model,

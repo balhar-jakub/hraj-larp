@@ -3,6 +3,7 @@ package cz.hrajlarp.utils;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -34,5 +35,20 @@ public class DateUtils {
             System.out.println("Error in timestamp converting DateUtils.java.");
         }
         return date;
+    }
+    
+    public static boolean isLessThanDayToReg(Timestamp regStart) {
+    	Date now = Calendar.getInstance().getTime();
+		if(now.after(getDayAgoDate(regStart)))
+			return true;
+		else 
+			return false;
+    }
+    
+    public static Timestamp getDayAgoDate(Timestamp original) {
+    	Calendar c = Calendar.getInstance();
+    	c.setTime(original);
+		c.add(Calendar.DAY_OF_MONTH, -1);
+		return new Timestamp(c.getTime().getTime());
     }
 }

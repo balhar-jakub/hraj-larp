@@ -1,5 +1,7 @@
 package cz.hrajlarp.model;
 
+import java.util.List;
+
 import com.sun.org.apache.bcel.internal.generic.RETURN;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -79,6 +81,17 @@ public class UserIsEditorDAO {
             session.beginTransaction();
             session.delete(record);
             session.getTransaction().commit();
+        }
+        finally { session.close(); }
+    }
+    
+    @Transactional(readOnly=true)
+    public List<Integer> getEditorIds(GameEntity game){
+        Session session = sessionFactory.openSession();
+        try {
+            Query query = session.createQuery("select ue.userId from UserIsEditorEntity ue where gameId= :gameId");
+            query.setParameter("gameId", game.getId());
+            return query.list();
         }
         finally { session.close(); }
     }

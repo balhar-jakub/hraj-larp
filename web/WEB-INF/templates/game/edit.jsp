@@ -105,6 +105,11 @@
         <form:textarea path="replacementsText" id="replacementsText" cols="20" rows="3" />
         <form:errors path="replacementsText" />
     </div>
+    <div>
+        <label style="float: left;" for="mailProhibition">Nechci odesílat maily o této hře: </label>
+        <form:checkbox path="mailProhibition" id="mailProhibition"/>
+        <form:errors path="mailProhibition"/>
+    </div>
     <input type="submit" value="Ulož změny">
 </form:form>
 

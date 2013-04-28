@@ -167,6 +167,7 @@ public class UserAttendedGameEntity {
     @Transient
     public void notifyByMail(MailService mailService) {
         //To change body of created methods use File | Settings | File Templates.
+    	if(getAttendedGame().getMailProhibition()) return;
         if(!isSubstitute()){
             mailService.sendMsgSignedAsRegular(getUserAttended(), getAttendedGame(), this);
         } else {
@@ -177,7 +178,8 @@ public class UserAttendedGameEntity {
     @Transient
     public void notifyChangedByMail(MailService mailService) {
         if(!isSubstitute()) {
-            mailService.sendMsgChangedToActor(getUserAttended(), getAttendedGame());
+        	mailService.sendMsgChangedToActor(getUserAttended(), getAttendedGame());
+            mailService.sendMsgToEditors(getUserAttended(), getAttendedGame());
         } else {
             mailService.sendMsgChangedToReplacement(getUserAttended(), getAttendedGame());
         }
