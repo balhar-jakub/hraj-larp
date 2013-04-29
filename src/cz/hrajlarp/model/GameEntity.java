@@ -296,7 +296,19 @@ public class GameEntity {
     public void setAction(String action) {
         this.action = action;
     }
+    
+    private Boolean mailProhibition;
 
+    @Column(name = "mail_prohibition")
+    @Basic
+    public Boolean getMailProhibition() {
+        return mailProhibition;
+    }
+
+    public void setMailProhibition(Boolean mailProhibition) {
+        this.mailProhibition = mailProhibition;
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -340,6 +352,8 @@ public class GameEntity {
         if (time != null ? !time.equals(that.time) : that.time != null) return false;
         if (web != null ? !web.equals(that.web) : that.web != null) return false;
         if (womenRole != null ? !womenRole.equals(that.womenRole) : that.womenRole != null) return false;
+        if (mailProhibition != null ? !mailProhibition.equals(that.mailProhibition) : that.mailProhibition != null)
+            return false;
 
         return true;
     }
@@ -369,6 +383,7 @@ public class GameEntity {
         result = 31 * result + (ordinaryPlayerText != null ? ordinaryPlayerText.hashCode() : 0);
         result = 31 * result + (replacementsText != null ? replacementsText.hashCode() : 0);
         result = 31 * result + (action != null ? action.hashCode() : 0);
+        result = 31 * result + (mailProhibition != null ? mailProhibition.hashCode() : 0);
         result = 31 * result + (gameEntities != null ? gameEntities.hashCode() : 0);
         result = 31 * result + (editedByUsers != null ? editedByUsers.hashCode() : 0);
         result = 31 * result + (festival ? 1 : 0);

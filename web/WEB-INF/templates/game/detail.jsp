@@ -76,6 +76,14 @@
 	            	</c:when>
 		            <c:otherwise>
 		            	Přihlašování do hry je možné až od ${regStart}
+		            	<c:choose>
+		                     <c:when test="${showNotifRegStart}">
+		                     	<form method="post" action="regNotifyForm" >
+		                  			<input type="hidden" name="gameId" value="${game.id}">
+		                          	<input type="submit" value="Chci informovat den před zahájením přihlašování na hru.">
+		                        </form>
+		                     </c:when>
+		                </c:choose>
 		           </c:otherwise>
 		       </c:choose>   
            </c:otherwise>

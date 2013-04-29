@@ -43,14 +43,14 @@
         <property name="password" value="5e5icha" />
 -->
 
-<!--
-        <property name="url" value="jdbc:postgresql://localhost:5432/hrajlarp?characterEncoding=UTF-8" />
+
+        <!-- <property name="url" value="jdbc:postgresql://localhost:5432/hrajlarp?characterEncoding=UTF-8" />
         <property name="username" value="postgres" />
-        <property name="password" value="incorrect" />
--->
-        <property name="url" value="jdbc:postgresql://194.8.253.136/sutrhraj?characterEncoding=utf-8" />
+        <property name="password" value="incorrect" /> -->
+
+        <!-- <property name="url" value="jdbc:postgresql://194.8.253.136/sutrhraj?characterEncoding=utf-8" />
         <property name="username" value="sutr" />
-        <property name="password" value="sutrDb" />
+        <property name="password" value="sutrDb" /> -->
 <!-->
         <property name="url" value="jdbc:postgresql://194.8.253.136/pasekhraj?characterEncoding=utf-8" />
         <property name="username" value="pasek" />
@@ -111,6 +111,7 @@
         <bean class="cz.hrajlarp.utils.HrajInterceptor" />
     </mvc:interceptors>
 
-    <task:annotation-driven scheduler="taskScheduler"/>
+    <task:executor id="executor" pool-size="2"/>
     <task:scheduler id="taskScheduler" pool-size="2"/>
+    <task:annotation-driven scheduler="taskScheduler" executor="executor"/>
 </beans>

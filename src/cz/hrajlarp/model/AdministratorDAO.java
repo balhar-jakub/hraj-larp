@@ -1,6 +1,9 @@
 package cz.hrajlarp.model;
 
 
+import java.util.List;
+
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +42,16 @@ public class AdministratorDAO {
             session.beginTransaction();
             session.save(entity);
             session.getTransaction().commit();
+        }
+        finally { session.close(); }
+    }
+    
+    @Transactional(readOnly=true)
+    public List<Integer> getAdministratorIds(){
+        Session session = sessionFactory.openSession();
+        try {
+            Query query = session.createQuery("select ae.id from AdministratorEntity ae");
+            return query.list();
         }
         finally { session.close(); }
     }

@@ -1,6 +1,7 @@
 package cz.hrajlarp.controller;
 
 import cz.hrajlarp.model.*;
+import cz.hrajlarp.utils.DateUtils;
 import cz.hrajlarp.utils.FileUtils;
 import cz.hrajlarp.utils.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,9 @@ public class GameController {
 
     @Autowired
     private MailService mailService;
+    
+    @Autowired
+    PreRegNotificationDAO preRegNotificationDAO;
 
     /**
      * on submit method for add game form
@@ -146,25 +150,28 @@ public class GameController {
                 model.addAttribute("isFuture", true);
             }
 
-            model.addAttribute("regStart", game.getRegistrationStartedDMYHM());
-            if (game.registrationStartsInFuture()) {
-                model.addAttribute("regStarted", false);
-            } else {
-                model.addAttribute("regStarted", true);
-            }
-
             if (rights.isLogged()) {
-                HrajUserEntity user = rights.getLoggedUser();
+            	HrajUserEntity user = rights.getLoggedUser();
+            	
+	            model.addAttribute("regStart", game.getRegistrationStartedDMYHM());
+	            
+	            if (game.registrationStartsInFuture()) {
+	                model.addAttribute("regStarted", false);
+	                if (preRegNotificationDAO.isSubscribedForPreReg(user, game) || DateUtils.isLessThanDayToReg(game.getRegistrationStartedDate()))
+	                	model.addAttribute("showNotifRegStart", false);
+	                else{
+	                	model.addAttribute("showNotifRegStart", true);
+	                }
+	            } else {
+	                model.addAttribute("regStarted", true);
+	            }
+
                 model.addAttribute("logged", true);
                 boolean logged = userAttendedGameDAO.isLogged(game.getId(), user.getId());
                 model.addAttribute("loggedInGame", logged);
                 model.addAttribute("isFull", !game.isAvailableToUser(userAttendedGameDAO, user));
                 if (logged) {
                     model.addAttribute("substitute", userAttendedGameDAO.isSubstitute(game.getId(), user.getId()));
-                }
-
-                if(rights.hasRightsToEditGame(user, game)){
-                    model.addAttribute("canEdit", true);
                 }
             }
             model.addAttribute("game", game);
@@ -412,5 +419,24 @@ public class GameController {
             System.out.println("Cant upload file!");
             return null;
         }
+    }
+    
+    @RequestMapping(value = "/game/regNotifyForm", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+    public String regNotify(@ModelAttribute("gameId") int gameId) {
+        if (rights.isLogged()) {
+            HrajUserEntity user = rights.getLoggedUser();
+            PreRegNotificationEntity regNotify = new PreRegNotificationEntity();
+            if (gameId > 0) {
+	            GameEntity game = gameDAO.getGameById(gameId);
+	            regNotify.setGameId(gameId);
+	            regNotify.setUserId(user.getId());
+	            regNotify.setNotifyDate(DateUtils.getDayAgoDate(game.getRegistrationStartedDate()));
+	            
+	            preRegNotificationDAO.addPreRegNotification(regNotify);
+            }
+        } else {
+            return "/error";
+        }
+        return "redirect:/game/detail";
     }
 }
