@@ -237,17 +237,29 @@ public class GameEntity {
         this.larpDb = larpDb;
     }
 
-    private Timestamp registrationStarted;
+    private Timestamp registrationStartedDate;
 
     @Column(name = "registration_started")
     @Basic
-    public Timestamp getRegistrationStarted() {
-        return registrationStarted;
+    public Timestamp getRegistrationStartedDate() {
+        return registrationStartedDate;
     }
 
-    public void setRegistrationStarted(Timestamp registrationStarted) {
-        this.registrationStarted = registrationStarted;
+    public void setRegistrationStartedDate(Timestamp registrationStartedDate) {
+        this.registrationStartedDate = registrationStartedDate;
     }
+
+    private String registrationStartedTime;
+
+    @Transient
+    public String getRegistrationStartedTime() {
+        return registrationStartedTime;
+    }
+
+    public void setRegistrationStartedTime(String registrationStartedTime) {
+        this.registrationStartedTime = registrationStartedTime;
+    }
+
 
     private String ordinaryPlayerText;
 
@@ -288,30 +300,46 @@ public class GameEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof GameEntity)) return false;
 
         GameEntity that = (GameEntity) o;
 
+        if (bothFreeRoles != that.bothFreeRoles) return false;
+        if (festival != that.festival) return false;
+        if (menFreeRoles != that.menFreeRoles) return false;
+        if (menSubstitutes != that.menSubstitutes) return false;
+        if (womenFreeRoles != that.womenFreeRoles) return false;
+        if (womenSubstitutes != that.womenSubstitutes) return false;
         if (aboutGame != null ? !aboutGame.equals(that.aboutGame) : that.aboutGame != null) return false;
+        if (action != null ? !action.equals(that.action) : that.action != null) return false;
         if (addedBy != null ? !addedBy.equals(that.addedBy) : that.addedBy != null) return false;
         if (anotation != null ? !anotation.equals(that.anotation) : that.anotation != null) return false;
         if (author != null ? !author.equals(that.author) : that.author != null) return false;
         if (bothRole != null ? !bothRole.equals(that.bothRole) : that.bothRole != null) return false;
+        if (confirmed != null ? !confirmed.equals(that.confirmed) : that.confirmed != null) return false;
         if (date != null ? !date.equals(that.date) : that.date != null) return false;
+        if (editedByUsers != null ? !editedByUsers.equals(that.editedByUsers) : that.editedByUsers != null)
+            return false;
+        if (gameEntities != null ? !gameEntities.equals(that.gameEntities) : that.gameEntities != null) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (image != null ? !image.equals(that.image) : that.image != null) return false;
         if (info != null ? !info.equals(that.info) : that.info != null) return false;
         if (larpDb != null ? !larpDb.equals(that.larpDb) : that.larpDb != null) return false;
         if (menRole != null ? !menRole.equals(that.menRole) : that.menRole != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (ordinaryPlayerText != null ? !ordinaryPlayerText.equals(that.ordinaryPlayerText) : that.ordinaryPlayerText != null)
+            return false;
         if (place != null ? !place.equals(that.place) : that.place != null) return false;
+        if (registrationStartedDate != null ? !registrationStartedDate.equals(that.registrationStartedDate) : that.registrationStartedDate != null)
+            return false;
+        if (registrationStartedTime != null ? !registrationStartedTime.equals(that.registrationStartedTime) : that.registrationStartedTime != null)
+            return false;
+        if (replacementsText != null ? !replacementsText.equals(that.replacementsText) : that.replacementsText != null)
+            return false;
         if (shortText != null ? !shortText.equals(that.shortText) : that.shortText != null) return false;
+        if (time != null ? !time.equals(that.time) : that.time != null) return false;
         if (web != null ? !web.equals(that.web) : that.web != null) return false;
         if (womenRole != null ? !womenRole.equals(that.womenRole) : that.womenRole != null) return false;
-        if (registrationStarted != null ? !registrationStarted.equals(that.registrationStarted) : that.registrationStarted != null) return false;
-        if (ordinaryPlayerText != null ? !ordinaryPlayerText.equals(that.ordinaryPlayerText) : that.ordinaryPlayerText != null) return false;
-        if (replacementsText != null ? !replacementsText.equals(that.replacementsText) : that.replacementsText != null) return false;
-        if (action != null ? !action.equals(that.action) : that.action != null) return false;
 
         return true;
     }
@@ -321,8 +349,10 @@ public class GameEntity {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (date != null ? date.hashCode() : 0);
+        result = 31 * result + (time != null ? time.hashCode() : 0);
         result = 31 * result + (anotation != null ? anotation.hashCode() : 0);
         result = 31 * result + (author != null ? author.hashCode() : 0);
+        result = 31 * result + (confirmed != null ? confirmed.hashCode() : 0);
         result = 31 * result + (image != null ? image.hashCode() : 0);
         result = 31 * result + (addedBy != null ? addedBy.hashCode() : 0);
         result = 31 * result + (menRole != null ? menRole.hashCode() : 0);
@@ -334,11 +364,19 @@ public class GameEntity {
         result = 31 * result + (aboutGame != null ? aboutGame.hashCode() : 0);
         result = 31 * result + (web != null ? web.hashCode() : 0);
         result = 31 * result + (larpDb != null ? larpDb.hashCode() : 0);
-        result = 31 * result + (registrationStarted != null ? registrationStarted.hashCode() : 0);
+        result = 31 * result + (registrationStartedDate != null ? registrationStartedDate.hashCode() : 0);
+        result = 31 * result + (registrationStartedTime != null ? registrationStartedTime.hashCode() : 0);
         result = 31 * result + (ordinaryPlayerText != null ? ordinaryPlayerText.hashCode() : 0);
         result = 31 * result + (replacementsText != null ? replacementsText.hashCode() : 0);
         result = 31 * result + (action != null ? action.hashCode() : 0);
-
+        result = 31 * result + (gameEntities != null ? gameEntities.hashCode() : 0);
+        result = 31 * result + (editedByUsers != null ? editedByUsers.hashCode() : 0);
+        result = 31 * result + (festival ? 1 : 0);
+        result = 31 * result + menFreeRoles;
+        result = 31 * result + womenFreeRoles;
+        result = 31 * result + bothFreeRoles;
+        result = 31 * result + menSubstitutes;
+        result = 31 * result + womenSubstitutes;
         return result;
     }
 
@@ -400,7 +438,7 @@ public class GameEntity {
 
     @Transient
     public String getTimeAsHM(){
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");    // day name
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         return sdf.format(getDate());
     }
 
@@ -421,7 +459,7 @@ public class GameEntity {
     @Transient
     public String getRegistrationStartedDMYHM() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-        return sdf.format(getRegistrationStarted());
+        return sdf.format(getRegistrationStartedDate());
     }
 
     @Transient
@@ -447,7 +485,7 @@ public class GameEntity {
         List<HrajUserEntity> assignedUsers = userAttendedGameDAO.getUsersByGameIdNoSubstitutes(getId());
         List<HrajUserEntity> substitutes = userAttendedGameDAO.getSubstituteUsersByGameId(getId());
 
-        countPlayers(assignedUsers,substitutes);
+        countPlayers(assignedUsers, substitutes);
     }
 
     @Transient
@@ -758,7 +796,7 @@ public class GameEntity {
 
     @Transient
     public boolean registrationStartsInFuture() {
-        return registrationStarted.after(new Date());
+        return registrationStartedDate.after(new Date());
     }
 
     @Transient
@@ -769,5 +807,42 @@ public class GameEntity {
     @Transient
     public void setMenSubstitutes(int menSubstitutes) {
         this.menSubstitutes = menSubstitutes;
+    }
+
+    @Transient
+    public GameEntity cloneGame() {
+        GameEntity clone = new GameEntity();
+        clone.id = this.id;
+        clone.addedBy = this.addedBy;
+        clone.aboutGame = this.aboutGame;
+        clone.action = this.action;
+        clone.anotation = this.anotation;
+        clone.author = this.author;
+        clone.date = this.date;
+        clone.web = this.web;
+        clone.confirmed = this.confirmed;
+        clone.bothRole = this.bothRole;
+        clone.menRole = this.menRole;
+        clone.womenRole = this.womenRole;
+        clone.festival = this.festival;
+        clone.bothFreeRoles = this.bothFreeRoles;
+        clone.menFreeRoles = this.menFreeRoles;
+        clone.womenFreeRoles = this.womenFreeRoles;
+        clone.image = this.image;
+        clone.info = this.info;
+        clone.larpDb = this.larpDb;
+        clone.name = this.name;
+        clone.place = this.place;
+        clone.registrationStartedDate = this.registrationStartedDate;
+        clone.registrationStartedTime = this.registrationStartedTime;
+        clone.shortText = this.shortText;
+        clone.time = this.time;
+        clone.menSubstitutes = this.menSubstitutes;
+        clone.womenSubstitutes = this.womenSubstitutes;
+        clone.ordinaryPlayerText = this.ordinaryPlayerText;
+        clone.replacementsText = this.replacementsText;
+        clone.editedByUsers = new HashMap<Object, UserIsEditorEntity>();
+        clone.gameEntities = new HashMap<Object, UserAttendedGameEntity>();
+        return clone;
     }
 }

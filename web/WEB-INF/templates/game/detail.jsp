@@ -130,6 +130,12 @@
                 <a href="${game.web}">${game.web}</a>
             </div>
         </c:if>
+
+        <c:if test="${not empty canEdit}">
+            <div class="siderow">
+                <a href="/game/edit?id=${game.id}"><h4>Editace hry</h4></a>
+            </div>
+        </c:if>
     </div>
 
     <div class="text left">

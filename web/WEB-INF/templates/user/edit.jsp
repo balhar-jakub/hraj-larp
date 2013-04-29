@@ -38,12 +38,6 @@
         <form:input path="phone" id="phone" value="${user.phone}"/>
         <form:errors path="phone"/>
     </div>
-
-    <div>
-        <form:radiobutton path="genderForm" id="genderForm" value="M"/> Muž
-        <form:radiobutton path="genderForm" id="genderForm" value="F"/> Žena
-        <form:errors path="genderForm"/>
-    </div>
     <div>
         <label style="float: left;" for="mailInformation">Chci dostávat na email informace: </label>
         <form:checkbox path="mailInformation" id="mailInformation"/>

@@ -1,7 +1,8 @@
 <%@ taglib prefix='form' uri='http://www.springframework.org/tags/form' %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<form:form method="post" action="edit?id=${game.id}" enctype="multipart/form-data" commandName="myGame">
+<form:form method="post" action="edit?gameId=${game.id}" enctype="multipart/form-data" commandName="myGame">
+    <form:hidden path="id" value="${game.id}"/>
     <div>
         <label for="name">Jméno hry:*</label>
         <form:errors path="name"/>
@@ -11,7 +12,7 @@
     <div>
         <label for="anotation">Popis hry:*</label>
         <form:errors path="anotation"/>
-        <textarea id="anotation" name="anotation">${game.anotation}</textarea>
+        <form:textarea path="anotation" id="anotation" cols="20" rows="3" />
     </div>
     <div>
         <label for="shortText">Typ hry:</label>
@@ -32,7 +33,7 @@
     <div>
         <label for="aboutGame">O hře:</label>
         <form:errors path="aboutGame"/>
-        <textarea id="aboutGame" name="aboutGame">${game.aboutGame}</textarea>
+        <form:textarea path="aboutGame" id="aboutGame" cols="20" rows="3" />
     </div>
     <div>
         <label for="author">Autor:*</label>
@@ -77,28 +78,36 @@
     <div>
         <label for="info">Upoutávka:</label>
         <form:errors path="info"/>
-        <textarea id="info" name="info">${game.info}</textarea>
+        <form:textarea path="info" id="info" cols="20" rows="3" />
     </div>
     <div>
         <label for="place">Místo:</label>
         <form:errors path="place"/>
-        <textarea id="place" name="place">${game.place}</textarea>
+        <form:textarea path="place" id="place" cols="20" rows="3" />
     </div>
     <div>
-        <label for="registrationStarted">Datum a čas začátku přihlašování do hry(YYYY-mm-dd hh:mm):</label>
-        <form:input type="text" id="registrationStarted" path="registrationStarted" value="${game.registrationStarted}" />
-        <form:errors path="registrationStarted" />
+        <label for="registrationStartedDate">Datum začátku přihlašování do hry (YYYY-mm-dd):*</label>
+        <form:errors path="registrationStartedDate" />
+        <form:input type="text" id="registrationStartedDate" path="registrationStartedDate" value="${registrationStartedDate}"/>
+    </div>
+    <div>
+        <label for="registrationStartedTime">Čas začátku přihlašování do hry (HH:MM):</label>
+        <form:errors path="registrationStartedTime" />
+        <form:input type="text" id="registrationStartedTime" path="registrationStartedTime" value="${registrationStartedTime}"/>
     </div>
     <div>
         <label for="ordinaryPlayerText">Mail pro přihlášeného hráče:</label>
-        <textarea id="ordinaryPlayerText" name="ordinaryPlayerText">${game.ordinaryPlayerText}</textarea>
+        <form:textarea path="ordinaryPlayerText" id="ordinaryPlayerText" cols="20" rows="3" />
         <form:errors path="ordinaryPlayerText" />
     </div>
     <div>
         <label for="replacementsText">Mail pro náhradu:</label>
-        <textarea id="replacementsText" name="replacementsText">${game.replacementsText}</textarea>
+        <form:textarea path="replacementsText" id="replacementsText" cols="20" rows="3" />
         <form:errors path="replacementsText" />
     </div>
-    <input type="hidden" name="gameId" value=${game.id}>
     <input type="submit" value="Ulož změny">
+</form:form>
+
+<form:form action="/game/copy?gameId=${game.id}" method="POST" enctype="multipart/form-data">
+    <input type="submit" value="Kopírovat hru"/>
 </form:form>
