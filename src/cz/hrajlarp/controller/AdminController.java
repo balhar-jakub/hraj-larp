@@ -118,6 +118,7 @@ public class AdminController {
             model.addAttribute("formerGames", formerGamesResult);
             model.addAttribute("unvalidatedGames", invalidGames);
             model.addAttribute("isLogged", true);
+            model.addAttribute("isAdmin", rights.isAdministrator(user));
             return "/admin/game/list";
         } else {
             model.addAttribute("path", "/admin/game/list");

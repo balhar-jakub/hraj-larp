@@ -6,6 +6,12 @@
         <h1>Administrace larpů</h1>
     </div>
 
+    <c:if test="${requestScope.isAdmin}">
+        <div class="text">
+            <a href="/admin/game/actions"><h2>Správa akcí</h2></a>
+        </div>
+    </c:if>
+
     <ul class="nav nav-tabs">
         <li class="active"><a class="tabAnchor" id="tab" href="#tab1" data-toggle="tab">Nadcházející termíny</a></li>
         <li><a class="tabAnchor" href="#tab2" data-toggle="tab">Minulé termíny</a></li>
@@ -19,7 +25,7 @@
                     <c:forEach items="${requestScope.futureGames}" var="game">
                         <div class="clearfix den"><h2 class="datum"><span>${game.dateAsDM}</span>${game.dateAsDayName}</h2></div>
                         <div class="termin clearfix">
-                            <h3><a href="/game/edit?gameId=${game.id}" tabindex="-1">${game.name}</a></h3>
+                            <h3><a href="/game/edit?id=${game.id}" tabindex="-1">${game.name}</a></h3>
                             <div class="grid4">
                                 <div>
                                     <p>${game.info}</p>

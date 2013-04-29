@@ -277,7 +277,7 @@ public class GameController {
                     game.rerollLoggedUsers(userAttendedGameDAO, mailService);
                 }
 
-                if(rights.isAdministrator(user) && !gameDAO.getGameById(id).getConfirmed()){
+                if(rights.isAdministrator(user)){
                     game.setConfirmed(true);
                     model.addAttribute("confirmedNow", true);
                 }
