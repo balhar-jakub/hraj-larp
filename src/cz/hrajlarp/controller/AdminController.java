@@ -142,7 +142,8 @@ public class AdminController {
             for(UserAttendedGameEntity uage : records){
                 userAttendedGameDAO.deleteUserAttendedGame(uage);
             }
-            UserIsEditorEntity editor = (UserIsEditorEntity)userIsEditorDAO.getUserIsEditor(user, game);
+            HrajUserEntity author = userDAO.getUserById(game.getAddedBy());
+            UserIsEditorEntity editor = (UserIsEditorEntity)userIsEditorDAO.getUserIsEditor(author, game);
             if (editor != null) userIsEditorDAO.deleteUserIsEditor(editor);
             gameDAO.deleteGame(game);
             return "/admin/game/deleted";
@@ -246,20 +247,22 @@ public class AdminController {
     @RequestMapping(value = "/admin/game/addAction", method= RequestMethod.POST)
     public String addAction(Model model,
                             @RequestParam("actionText") String newAction,
-                            @RequestParam("gameText") Integer gameId) {
+                            @RequestParam("gameText") List<Integer> gameId) {
         HrajUserEntity user = rights.getLoggedUser();
 
         if (rights.isAdministrator(user)){
-            GameEntity game = gameDAO.getGameById(gameId);
-            if (game != null && !newAction.isEmpty()){
-                game.setAction(newAction);
-                gameDAO.editGame(game);
-                String succesMessage = "succes";
-                model.addAttribute("succesMessage", succesMessage);
-            }
-            else {
-                String succesMessage = "error";
-                model.addAttribute("succesMessage", succesMessage);
+            for (int i = 0; i < gameId.size(); i++){
+                GameEntity game = gameDAO.getGameById(gameId.get(i));
+                if (game != null && !newAction.isEmpty()){
+                    game.setAction(newAction);
+                    gameDAO.editGame(game);
+                    String succesMessage = "succes";
+                    model.addAttribute("succesMessage", succesMessage);
+                }
+                else {
+                    String succesMessage = "error";
+                    model.addAttribute("succesMessage", succesMessage);
+                }
             }
             return "redirect:/admin/game/actions";
         } else {

@@ -16,7 +16,7 @@
     </div>
     <div>
         <label for="gameText">Pro hru:</label>
-        <select id="gameText" name="gameText">
+        <select multiple id="gameText" name="gameText">
            <c:forEach var="g" items="${games}">
                 <option value="${g.id}" >${g.name}</option>
             </c:forEach>
@@ -37,7 +37,7 @@
     </div>
     <div>
         <label for="gameText">Pro hru:</label>
-        <select id="gameText" name="gameText">
+        <select multiple id="gameText" name="gameText">
            <c:forEach var="g" items="${games}">
                 <option value="${g.id}" >${g.name}</option>
             </c:forEach>

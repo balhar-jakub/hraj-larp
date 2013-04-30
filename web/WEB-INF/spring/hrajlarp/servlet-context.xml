@@ -37,11 +37,11 @@
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
 
-
+<!--
         <property name="url" value="jdbc:postgresql://194.8.253.136/hrajlarp" />
         <property name="username" value="hrajlarp" />
         <property name="password" value="5e5icha" />
-
+-->
 <!--
         <property name="url" value="jdbc:postgresql://localhost:5432/hrajlarp?characterEncoding=UTF-8" />
         <property name="username" value="postgres" />
@@ -50,11 +50,11 @@
         <property name="username" value="sutr" />
         <property name="password" value="sutrDb" />
 -->
-        <!-->
+
                 <property name="url" value="jdbc:postgresql://194.8.253.136/pasekhraj?characterEncoding=utf-8" />
                 <property name="username" value="pasek" />
                 <property name="password" value="pasekDb" />
-        -->
+
 		<property name="initialSize" value="10" />
         <property name="maxActive" value="50" />
     </bean>

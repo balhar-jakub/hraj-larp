@@ -21,16 +21,16 @@
             <td>${player.userAttended.genderTextual}</td>
             <td>${player.payedTextual}</td>
             <td>
-                <button type="submit" formaction="/admin/game/logout/${gameId}/${player.userAttended.id}">Odhlásit</button>
+                <button type="submit" class="printButton" formaction="/admin/game/logout/${gameId}/${player.userAttended.id}">Odhlásit</button>
             </td>
             <td>
                 <c:if test="${not player.automatic}">
                     <c:choose>
                         <c:when test="${not empty player.payed and player.payed}">
-                            <button type="submit" formaction="/admin/user/payed/${gameId}/${player.userAttended.id}">Zrušit zaplacení</button>
+                            <button type="submit" class="printButton" formaction="/admin/user/payed/${gameId}/${player.userAttended.id}">Zrušit zaplacení</button>
                         </c:when>
                         <c:otherwise>
-                            <button type="submit" formaction="/admin/user/payed/${gameId}/${player.userAttended.id}">Zaplatil</button>
+                            <button type="submit" class="printButton" formaction="/admin/user/payed/${gameId}/${player.userAttended.id}">Zaplatil</button>
                         </c:otherwise>
                     </c:choose>
                 </c:if>
@@ -47,16 +47,16 @@
                 <td>${substitute.userAttended.genderTextual}</td>
                 <td>${substitute.payedTextual}</td>
                 <td>
-                    <button type="submit" formaction="/admin/game/logout/${gameId}/${substitute.userAttended.id}">Odhlásit</button>
+                    <button type="submit" class="printButton" formaction="/admin/game/logout/${gameId}/${substitute.userAttended.id}">Odhlásit</button>
                 </td>
                 <td>
                     <c:if test="${not substitute.automatic}">
                         <c:choose>
                             <c:when test="${not empty substitute.payed and substitute.payed}">
-                                <button type="submit" formaction="/admin/user/payed/${gameId}/${substitute.userAttended.id}">Zrušit zaplacení</button>
+                                <button type="submit" class="printButton" formaction="/admin/user/payed/${gameId}/${substitute.userAttended.id}">Zrušit zaplacení</button>
                             </c:when>
                             <c:otherwise>
-                                <button type="submit" formaction="/admin/user/payed/${gameId}/${substitute.userAttended.id}">Zaplatil</button>
+                                <button type="submit" class="printButton" formaction="/admin/user/payed/${gameId}/${substitute.userAttended.id}">Zaplatil</button>
                             </c:otherwise>
                         </c:choose>
                     </c:if>

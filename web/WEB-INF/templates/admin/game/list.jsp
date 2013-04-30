@@ -8,6 +8,7 @@
 
     <c:if test="${requestScope.isAdmin}">
         <div class="text">
+            <a href="/game/add"><h2>Přidej hru</h2></a>
             <a href="/admin/game/actions"><h2>Správa akcí</h2></a>
         </div>
     </c:if>
