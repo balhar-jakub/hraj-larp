@@ -73,6 +73,7 @@ public class GameController {
     ) {
         if (rights.isLogged()) {
             HrajUserEntity user = rights.getLoggedUser();
+            if (!user.getActivated()) return "/error";
             if (imageFile != null && imageFile.length > 0 && !imageFile[0].getOriginalFilename().equals("")) { //there is at least one image file
                 String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
                 myGame.setImage(image);
@@ -256,9 +257,9 @@ public class GameController {
 
             GameEntity gameOld = gameDAO.getGameById(id);
             HrajUserEntity user = rights.getLoggedUser();
-
+            if (!user.getActivated()) return "/error";
             if (gameOld != null && rights.hasRightsToEditGame(user, gameOld)) {
-
+            	
                 if (imageFile != null && imageFile.length > 0 && !imageFile[0].getOriginalFilename().equals("")) { //there is at least one image file
                     String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
                     myGame.setImage(image);
@@ -306,6 +307,7 @@ public class GameController {
             HrajUserEntity user = rights.getLoggedUser();
 
             if (gameId > 0) {
+            	if (!user.getActivated()) return "/error";
                 GameEntity game = gameDAO.getGameById(gameId);
                 if (game != null && game.isInFuture()) {
                     try {
@@ -336,7 +338,7 @@ public class GameController {
 
         if (rights.isLogged()) {
             int userId = rights.getLoggedUser().getId();
-
+            
             GameEntity game = gameDAO.getGameById(gameId);
             HrajUserEntity oldUser = userDAO.getUserById(userId);
             if (game != null && game.isInFuture()) {

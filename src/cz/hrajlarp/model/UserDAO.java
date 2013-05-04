@@ -102,4 +102,18 @@ public class UserDAO {
         }
         finally { session.close(); }
     }
+    
+    @Transactional(readOnly=true)
+    public HrajUserEntity getUserToActivate(String activationLink){
+        if(activationLink == null || activationLink.isEmpty()) return null;
+
+        Session session = sessionFactory.openSession();
+        try{
+            Query query = session.createQuery("from HrajUserEntity where activation_link= :activationLink ");
+            query.setParameter("activationLink", activationLink);
+            System.out.println("executing: " + query.getQueryString());
+            return (HrajUserEntity) query.uniqueResult();
+        }
+        finally { session.close(); }
+    }
 }

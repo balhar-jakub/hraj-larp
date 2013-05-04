@@ -187,4 +187,72 @@ public class MailService {
             System.err.println(e.getMessage());            
         }
     }
+    
+    public void notifyAdminUserLoggedOff(HrajUserEntity loggedOffUser, GameEntity game, boolean payed){
+    	SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
+    	List<Integer> adminIds = administratorDAO.getAdministratorIds();
+    	
+    	for(Integer adminId: adminIds){
+    		HrajUserEntity reciever = userDAO.getUserById(adminId);
+    		StringBuilder sb = new StringBuilder("Info o změně stavu uživatele:\n\n"
+					+ "Uživatel: " + loggedOffUser.getName() + " " + loggedOffUser.getLastName() + "\n"
+					+ "Login: " + loggedOffUser.getUserName() + "\n\n"
+	                + "Tento hráč se právě odhlásil ze hry "
+	                + game.getName() +", která proběhne " + game.getDateAsDMY() +".\n");
+    		if (payed)
+    			sb.append("Hráč již zaplatil za účast ve hře.\n");
+    		else
+    			sb.append("Hráč nezaplatil za účast ve hře.\n");
+    		
+    		message.setTo(reciever.getEmail());
+    		String text = sb.toString();
+            message.setText(text);
+            System.out.println("Sending message:\n" + message.getText() + "\n"
+            					+"TO: "+ reciever.getUserName()+"\n");
+            try{
+                this.mailSender.send(message);
+            }
+            catch(MailException e) {
+                System.err.println(e.getMessage());            
+            }
+    		
+    	}
+    }
+    
+    public void notifyAdminOnGameDeletion(String msg){
+    	SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
+    	List<Integer> adminIds = administratorDAO.getAdministratorIds();
+    	
+    	for(Integer adminId: adminIds){
+    		HrajUserEntity reciever = userDAO.getUserById(adminId);
+    		message.setTo(reciever.getEmail());
+    		message.setText(msg);
+            System.out.println("Sending message:\n" + message.getText() + "\n"
+            					+"TO: "+ reciever.getUserName()+"\n");
+            try{
+                this.mailSender.send(message);
+            }
+            catch(MailException e) {
+                System.err.println(e.getMessage());            
+            }
+    	}
+    }
+    
+    public void sendActivation (HrajUserEntity u) {
+
+        SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
+        message.setTo(u.getEmail());
+        message.setText(
+        		 "Toto je zpráva pro ověření e-mailové adresy, kterou jste zadal/a na hrajlarp.cz.\n\n"
+        				 + "Pro plnou aktivaci Vašeho účtu klepněte na následující link:\n"
+        				 + "http://hrajlarp.cz/user/activation/" + u.getActivationLink() + "\n\n"
+        	             + "HRAJ LARP");
+        System.out.println("Sending message:\n" + message.getText() + "\n");
+        try{
+            this.mailSender.send(message);
+        }
+        catch(MailException e) {
+            System.err.println(e.getMessage());            
+        }
+    }
 }

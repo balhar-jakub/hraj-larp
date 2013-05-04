@@ -1,10 +1,12 @@
 package cz.hrajlarp.controller;
 
+import cz.hrajlarp.model.GameEntity;
 import cz.hrajlarp.model.HrajUserEntity;
 import cz.hrajlarp.model.UserAttendedGameDAO;
 import cz.hrajlarp.model.UserAttendedGameEntity;
 import cz.hrajlarp.model.UserDAO;
 import cz.hrajlarp.utils.HashString;
+import cz.hrajlarp.utils.MailService;
 import cz.hrajlarp.utils.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,6 +36,9 @@ public class UserController {
 
     @Autowired
     private UserAttendedGameDAO userAttendedGameDAO;
+    
+    @Autowired
+    private MailService mailService;
 
     /**
      * Redirects to new user registration page.
@@ -61,14 +67,19 @@ public class UserController {
         if (result.hasErrors()) return "user/add";
 
         try {
-            String hashPass = new HashString().digest(user.getPassword());
+        	HashString hs = new HashString();
+            String hashPass = hs.digest(user.getPassword());
             user.setPassword(hashPass);
+            user.setActivationLink(hs.digestWithSalt(user.getEmail(), hs.generateSalt(8)));
         } catch (Exception e) {
             return "user/failed";
         }
-
+        
+        user.setActivated(false);
         userDAO.addUser(user);
-        model.addAttribute("info", "Registrace proběhla úspěšně. Prosím přihlašte se.");
+        mailService.sendActivation(user);
+        model.addAttribute("info", "Registrace proběhla úspěšně. Na zadanou e-mailovou adresu byl odeslán ověřovací mail." +
+        		"Zkontrolujte si prosím Vaši schránku. Můžete se přihlásit ke svému účtu. Uživatel s neověřenou adresou má omezené možnosti.");
         return "user/login";
     }
 
@@ -104,11 +115,11 @@ public class UserController {
      * If everything is ok, saves data into db, else redirects back to edit page.
      */
     @RequestMapping(value = "/user/update", method = RequestMethod.POST)
-    public String update(@ModelAttribute("userForm") HrajUserEntity user, BindingResult result) {
+    public String update(@ModelAttribute("userForm") HrajUserEntity user, BindingResult result,Model model) {
 
         new UserValidator().validateEditedProfile(user, result);
         if (result.hasErrors()) return "user/edit";
-
+        user.setGender(userDAO.getUserById(user.getId()).getGender());
         try {
             if (user.getPassword() == null || user.getPassword().trim().equals("")) {
                 user.setPassword(user.getOldPassword());
@@ -119,8 +130,25 @@ public class UserController {
         } catch (Exception e) {
             return "user/failed";
         }
-
+        
+        if(!userDAO.getUserById(user.getId()).getEmail().equals(user.getEmail())){//mail address edited
+        	try {
+            	HashString hs = new HashString();
+                user.setActivationLink(hs.digestWithSalt(user.getEmail(), hs.generateSalt(8)));
+            } catch (Exception e) {
+                return "user/failed";
+            }
+        	user.setActivated(false);
+        	mailService.sendActivation(user);
+        	model.addAttribute("mailEdited", true);
+        }else{
+        	HrajUserEntity oldUserData = userDAO.getUserById(user.getId());
+        	user.setActivated(oldUserData.getActivated());
+        	user.setActivationLink(oldUserData.getActivationLink());
+        }
+        
         userDAO.editUser(user);
+        
         return "user/success";
     }
 
@@ -162,6 +190,17 @@ public class UserController {
     public String failed(Model model) {
         model.addAttribute("info", "Zadané jméno nebo heslo neexistuje. Zkuste to znovu.");
         return "user/login";
+    }
+    
+    @RequestMapping(value = "/user/activation/{activationLink}", method= RequestMethod.GET)
+    public String activation(Model model, @PathVariable("activationLink") String activationLink) {
+    	HrajUserEntity u = userDAO.getUserToActivate(activationLink);
+    	if (u!=null){ 
+    		u.setActivated(true);
+	    	userDAO.editUser(u);
+	        return "/user/activated";
+    	}else
+    		return "/user/failed";
     }
 
 }

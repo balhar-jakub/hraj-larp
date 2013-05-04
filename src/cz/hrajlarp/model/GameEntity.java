@@ -653,8 +653,10 @@ public class GameEntity {
             UserAttendedGameDAO userAttendedGameDAO,
             HrajUserEntity oldUser) {
         boolean wasSubstitute = userAttendedGameDAO.isSubstitute(getId(), oldUser.getId());
+        Boolean b =userAttendedGameDAO.getLogged(getId(), oldUser.getId()).getPayed();
+        boolean payed = (b==null)?false:b;
+        
         logOutUserFromGame(userAttendedGameDAO, oldUser.getId());
-
         try {
             countPlayers(userAttendedGameDAO);   //count new free roles count
         } catch (Exception e) {
@@ -664,6 +666,7 @@ public class GameEntity {
 
         /* if logged out user was not just a substitute, some of pSubstitutes should replace him */
         if (!wasSubstitute) {
+        	mailService.notifyAdminUserLoggedOff(oldUser, this, payed);
             UserAttendedGameEntity player = userAttendedGameDAO.
                     getFirstSubstitutedUAG(getId(), oldUser.getGender());  //get first substitute according to gender
             if (player != null) {

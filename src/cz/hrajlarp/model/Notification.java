@@ -45,7 +45,6 @@ public class Notification {
     @Scheduled(cron="1 0 * * * *")
     @Transient
     public void sendRegStartNotification() {
-    	System.out.println("HELLO sendRegStartNotification");
         List<PreRegNotificationEntity> allPreRegs = preRegNotificationDAO.getAllPreRegNotifications();
         Date now = Calendar.getInstance().getTime();
         for(PreRegNotificationEntity preReg: allPreRegs) {

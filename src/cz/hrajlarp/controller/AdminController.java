@@ -139,9 +139,15 @@ public class AdminController {
 
         if (game!=null && rights.hasRightsToEditGame(user, game)){
             List<UserAttendedGameEntity> records = userAttendedGameDAO.getRecordsByGameId(id);
+            StringBuilder sb = new StringBuilder("Došlo ke zrušení hry " + game.getName() + ". Hra byla naplánovaná na " 
+            		+ game.getDateAsDMY()+ "\n\nSeznam přihlášených hráčů:\n");
             for(UserAttendedGameEntity uage : records){
+            	HrajUserEntity u = userDAO.getUserById(uage.getUserId());
+            	sb.append("JMÉNO: " + u.getName() +" "+ u.getLastName() + "\t LOGIN: "+u.getUserName()
+            			+ "\t PLATIL: "+ uage.getPayedTextual() +"\n");
                 userAttendedGameDAO.deleteUserAttendedGame(uage);
             }
+            mailService.notifyAdminOnGameDeletion(sb.toString());
             HrajUserEntity author = userDAO.getUserById(game.getAddedBy());
             UserIsEditorEntity editor = (UserIsEditorEntity)userIsEditorDAO.getUserIsEditor(author, game);
             if (editor != null) userIsEditorDAO.deleteUserIsEditor(editor);
