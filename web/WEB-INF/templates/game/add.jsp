@@ -2,6 +2,13 @@
 <%@ taglib prefix='form' uri='http://www.springframework.org/tags/form' %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <form:form method="post" action="add" enctype="multipart/form-data" commandName="myGame">
+
+    <c:if test="${not empty copied}">
+        <h3>Nyní můžete přidat kopii původní hry, nezapoměňte ji upravit</h3>
+        Nejdůležitější je nastavení datumů hry a počty hráčů.
+        <form:input type="hidden" value="${myGame.image}" name="originalImage" path="originalImage"/>
+    </c:if>
+
     <div>
         <label for="name">Jméno hry:*</label>
         <form:errors path="name" />
@@ -42,7 +49,7 @@
         <form:input type="text" id="time" path="time" value="${game.time}"/>
     </div>
     <div>
-        <label for="imageFile">Nahrajte obrázek:*</label>
+        <label for="imageFile">Nahrajte obrázek:</label>
         <input type="file" name="imageFile">
         <form:errors path="image" />
     </div>
@@ -76,6 +83,32 @@
         <form:errors path="place" />
         <form:textarea id="place" path="place"/>
     </div>
-
+    <div>
+        <label for="registrationStartedDate">Datum začátku přihlašování do hry (YYYY-mm-dd):*</label>
+        <form:errors path="registrationStartedDate" />
+        <form:input type="text" id="registrationStartedDate" path="registrationStartedDate" value="${game.registrationStartedDate}"/>
+    </div>
+    <div>
+        <label for="registrationStartedTime">Čas začátku přihlašování do hry (HH:MM):</label>
+        <form:errors path="registrationStartedTime" />
+        <form:input type="text" id="registrationStartedTime" path="registrationStartedTime" value="${game.registrationStartedTime}"/>
+    </div>
+    <div>
+        <label for="ordinaryPlayerText">Mail pro přihlášeného hráče:</label>
+        <form:textarea id="ordinaryPlayerText" path="ordinaryPlayerText" 
+        value="" escapeXml="true" />
+        <form:errors path="ordinaryPlayerText" />
+    </div>
+    <div>
+        <label for="replacementsText">Mail pro náhradu:</label>
+        <form:textarea id="replacementsText" path="replacementsText" 
+        value="" escapeXml="true" />
+        <form:errors path="replacementsText" />
+    </div>
+	<div>
+        <label style="float: left;" for="mailProhibition">Nechci odesílat maily o této hře: </label>
+        <form:checkbox path="mailProhibition" id="mailProhibition" />
+        <form:errors path="mailProhibition" />
+    </div>
     <input type="submit" value="Přidej hru">
 </form:form>

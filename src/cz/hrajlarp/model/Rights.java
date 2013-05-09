@@ -27,11 +27,15 @@ public class Rights {
     private AdministratorDAO administratorDAO;
 
     @Autowired
+    private AuthorizedEditorDAO authorizedEditorDAO;
+
+    @Autowired
     private UserDAO userDAO;
 
     public static enum Role {
         ADMINISTRATOR,      // set editors and assign games to editors, is also EDITOR
         EDITOR,             // can edit assigned games, is also USER_LOGGED
+        AUTHORIZED_EDITOR,  // user has rights to add game without permission of administrator
         USER_LOGGED,        // user logged in, can subscribe or unsubscribe himself from games, is also USER_ANONYMOUS
         USER_ANONYMOUS      // no user is logged in, can view standard accessible pages
     }
@@ -49,6 +53,9 @@ public class Rights {
 
         if(administratorDAO.isAdministrator(user))
             return Role.ADMINISTRATOR;
+
+        if(authorizedEditorDAO.isAuthorizedEditor(user))
+            return Role.AUTHORIZED_EDITOR;
 
         if(userIsEditorDAO.isEditor(user))
             return Role.EDITOR;
@@ -86,13 +93,27 @@ public class Rights {
     }
 
     /**
-     * Test if given user is editor (in the database)
+     * Test if given user is editor (in the database) not in relation to game
      * @param user tested user
-     * @return true, if user is editor (administrator is also editor)
+     * @return true, if user is editor (administrator
+     * and authorized editor is also an editor)
      */
     public boolean isEditor(HrajUserEntity user){
         Role userRole = getUserRole(user);
-        return userRole == Role.ADMINISTRATOR || userRole == Role.EDITOR;
+        return userRole == Role.ADMINISTRATOR || userRole == Role.EDITOR
+                || userRole == Role.AUTHORIZED_EDITOR;
+    }
+
+    /**
+     * Test if given user is authorized editor (in the database)
+     * or administrator not in relation to game
+     * @param user tested user
+     * @return true, if user is authorized editor or administrator
+     */
+    public boolean canAddGameDirectly(HrajUserEntity user){
+        Role userRole = getUserRole(user);
+        return userRole == Role.ADMINISTRATOR
+                || userRole == Role.AUTHORIZED_EDITOR;
     }
 
     /**
@@ -131,6 +152,6 @@ public class Rights {
      * @return true, if user has permission to edit game
      */
     public boolean hasRightsToEditGame(HrajUserEntity user, GameEntity game){
-        return userIsEditorDAO.isEditorOfGame(user, game);
+         return userIsEditorDAO.isEditorOfGame(user, game) || isAdministrator(user);
     }
 }

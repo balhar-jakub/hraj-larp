@@ -1,17 +1,13 @@
 package cz.hrajlarp.model;
 
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
 import org.hibernate.metadata.ClassMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -78,6 +74,22 @@ public class UserAttendedGameDAO {
         finally { session.close(); }
     }
 
+    @Transactional(readOnly = false)
+    public boolean isLogged(int gameId, int userId){
+        UserAttendedGameEntity uage = new UserAttendedGameEntity();
+        uage.setGameId(gameId);
+        uage.setUserId(userId);
+        return isLogged(uage);
+    }
+
+    @Transactional(readOnly = false)
+    public boolean isSubstitute(int gameId, int userId){
+        UserAttendedGameEntity uage = new UserAttendedGameEntity();
+        uage.setGameId(gameId);
+        uage.setUserId(userId);
+        return isSubstitute(uage);
+    }
+
     /**
      * This method return boolean, saying if selected player has record in UserAttendedTable for selected game.
      * It's not important if user is substitute or not.
@@ -90,11 +102,23 @@ public class UserAttendedGameDAO {
 
         Session session = sessionFactory.openSession();
         try{
-            Query query = session.createQuery("from UserAttendedGameEntity where game_id= :gameId and user_id= :userId ");
+            Query query = session.createQuery("from UserAttendedGameEntity where gameId= :gameId and userId= :userId ");
             query.setParameter("gameId", uage.getGameId());
             query.setParameter("userId", uage.getUserId());
             UserAttendedGameEntity entity = (UserAttendedGameEntity) query.uniqueResult();
             return (entity != null);
+        }
+        finally { session.close(); }
+    }
+
+    public UserAttendedGameEntity getLogged(Integer gameId, Integer userId){
+        Session session = sessionFactory.openSession();
+        try{
+            Query query = session.createQuery("from UserAttendedGameEntity where gameId= :gameId and userId= :userId ");
+            query.setParameter("gameId", gameId);
+            query.setParameter("userId", userId);
+            UserAttendedGameEntity entity = (UserAttendedGameEntity) query.uniqueResult();
+            return entity;
         }
         finally { session.close(); }
     }
@@ -110,7 +134,26 @@ public class UserAttendedGameDAO {
 
         Session session = sessionFactory.openSession();
         try{
-            Query query = session.createQuery("from UserAttendedGameEntity where game_id= :gameId and user_id= :userId and substitute = true ");
+            Query query = session.createQuery("from UserAttendedGameEntity where gameId= :gameId and userId= :userId and substitute = true ");
+            query.setParameter("gameId", uage.getGameId());
+            query.setParameter("userId", uage.getUserId());
+            return (query.uniqueResult()!=null);
+        }
+        finally { session.close(); }
+    }
+
+    /**
+     * This method return boolean saying if selected user in selected game is subsitute or not.
+     * @param uage
+     * @return true if user is substitute
+     */
+    @Transactional(readOnly=false)
+    public boolean isRegular(UserAttendedGameEntity uage) {
+        if(uage.getGameId() <= 0 || uage.getUserId() <= 0) return true;
+
+        Session session = sessionFactory.openSession();
+        try{
+            Query query = session.createQuery("from UserAttendedGameEntity where gameId= :gameId and userId= :userId and substitute = false ");
             query.setParameter("gameId", uage.getGameId());
             query.setParameter("userId", uage.getUserId());
             return (query.uniqueResult()!=null);
@@ -123,15 +166,14 @@ public class UserAttendedGameDAO {
      * @param gameId game identifier
      * @return list of users
      */
-    @Deprecated /* holds no information about substitutes, takes all users */
     @Transactional(readOnly = true)
-    public List getUsersByGameId(int gameId){
+    public List<UserAttendedGameEntity> getAllPlayersOfGame(int gameId){
 
         if(gameId <= 0) return null;
 
         Session session = sessionFactory.openSession();
         try{
-            Query query = session.createQuery("select distinct uag.userAttended from UserAttendedGameEntity uag where uag.gameId in (:gameId)");
+            Query query = session.createQuery("from UserAttendedGameEntity where gameId in (:gameId) order by added desc");
             query.setParameter("gameId", gameId);
             return query.list();
         }
@@ -159,6 +201,21 @@ public class UserAttendedGameDAO {
         finally { session.close(); }
     }
 
+    @Transactional(readOnly = true)
+    public List<UserAttendedGameEntity> getPlayers(int gameId, boolean substitute){
+        if(gameId <= 0) return null;
+
+        Session session = sessionFactory.openSession();
+        try{
+            Query query = session.createQuery("from UserAttendedGameEntity where gameId in (:gameId) " +
+                    "and substitute = :substitute");
+            query.setParameter("gameId", gameId);
+            query.setParameter("substitute", substitute);
+            return query.list();
+        }
+        finally { session.close(); }
+    }
+
     /**
      * Method gets from database all users signed up
      * as substitutes for game with given id.
@@ -181,6 +238,13 @@ public class UserAttendedGameDAO {
         finally { session.close(); }
     }
 
+    public Long getNextVariableSymbol(){
+        Session session = sessionFactory.openSession();
+        Query query = session.createSQLQuery("select nextval('hraj_user_attended_game_seq')");
+        Long key = ((BigInteger) query.uniqueResult()).longValue();
+        return key;
+    }
+
     /**
      * Gets games available to user from given list.
      * Excludes games, where user is already signed in.
@@ -200,20 +264,14 @@ public class UserAttendedGameDAO {
             Transaction transaction = session.beginTransaction();
             List<GameEntity> availableGames = new ArrayList<GameEntity>();
             for (GameEntity game : games) {
+                try{
+                    game.countPlayers(this); // fills game info: counts of signed users
+                }catch(Exception e){
+                    e.printStackTrace();
+                    /* TODO handle error and fix data in the database */
+                }
 
-                Query query = session.createQuery("select distinct uag.userAttended from UserAttendedGameEntity uag" +
-                    " where uag.gameId in (:gameId) and uag.substitute = false");
-                query.setParameter("gameId", game.getId());
-                List signed = query.list();
-
-                query = session.createQuery("select distinct uag.userAttended from UserAttendedGameEntity uag" +
-                                    " where uag.gameId in (:gameId) and uag.substitute = true");
-                query.setParameter("gameId", game.getId());
-                List substitutes = query.list();
-
-                game.setAssignedUsers(signed, substitutes); // fills game info: counts of signed users
-
-                if (game.isAvailableToUser(loggedUser)) {
+                if (game.isAvailableToUser(this, loggedUser)) {
                     availableGames.add(game);
                 }
             }
@@ -296,7 +354,7 @@ public class UserAttendedGameDAO {
                  if (query.list()!= null && !query.list().isEmpty()) return (UserAttendedGameEntity) query.list().get(0);
                  else return null;
              } else {
-                 Query query = session.createQuery("from UserAttendedGameEntity where game_id= :gameId and substitute = true order by added asc");
+                 Query query = session.createQuery("from UserAttendedGameEntity where gameId= :gameId and substitute = true order by added asc");
                  query.setParameter("gameId", gameId);
                  if (query.list()!= null && !query.list().isEmpty()) return (UserAttendedGameEntity) query.list().get(0);
                  else return null;
@@ -316,6 +374,55 @@ public class UserAttendedGameDAO {
             session.beginTransaction();
             session.update(uage);
             session.getTransaction().commit();
+        }
+        finally { session.close(); }
+    }
+
+    public List<UserAttendedGameEntity> getAllFuture() {
+        Session session = sessionFactory.openSession();
+        try{
+            Transaction transaction = session.beginTransaction();
+
+            Query query = session.createQuery(
+                    "select userAttendedGame from UserAttendedGameEntity as userAttendedGame " +
+                            " join userAttendedGame.attendedGame as game " +
+                            " with date(game.date) - date(current_date()) = 2");
+            List<UserAttendedGameEntity> result = query.list();
+            transaction.commit();
+            return result;
+        }
+        finally { session.close(); }
+    }
+
+    public UserAttendedGameEntity getByVS(String vs) {
+        Session session = sessionFactory.openSession();
+        try{
+            Transaction transaction = session.beginTransaction();
+
+            Query query = session.createQuery(
+                    "from UserAttendedGameEntity where variableSymbol = :varSymbol");
+            query.setParameter("varSymbol", vs);
+            UserAttendedGameEntity result = (UserAttendedGameEntity) query.uniqueResult();
+            transaction.commit();
+            return result;
+        }
+        finally { session.close(); }
+    }
+
+    /**
+     * Finds all records where game id is id.
+     * @param id game id
+     * @return list of all records where game id is id.
+     */
+    @Transactional(readOnly = false)
+    public List<UserAttendedGameEntity> getRecordsByGameId(Integer id) {
+        if(id <= 0) return null;
+
+        Session session = sessionFactory.openSession();
+        try{
+            Query query = session.createQuery("from UserAttendedGameEntity where game_id= :id ");
+            query.setParameter("id", id);
+            return query.list();
         }
         finally { session.close(); }
     }

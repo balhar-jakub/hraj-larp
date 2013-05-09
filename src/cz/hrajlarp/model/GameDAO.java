@@ -174,4 +174,29 @@ public class GameDAO {
         }
         finally { session.close(); }
     }
+
+        /**
+     * Delete method for GameEntity table.
+     * @param record object for delete.
+     */
+    @Transactional(readOnly=false)
+    public void deleteGame(GameEntity record) {
+        Session session = sessionFactory.openSession();
+        try{
+            session.beginTransaction();
+            session.delete(record);
+            session.getTransaction().commit();
+        }
+        finally { session.close(); }
+    }
+
+    @Transactional(readOnly=true)
+    public List<String> getAllActions() {
+        Session session = sessionFactory.openSession();
+        try{
+            Query query = session.createQuery("Select distinct action from GameEntity");
+            return query.list();
+        }
+        finally { session.close(); }
+    }
 }

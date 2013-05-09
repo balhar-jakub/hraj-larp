@@ -20,7 +20,17 @@ public class MailServiceTest {
     }
 
     @Test
-    public void testSendMessage() throws Exception {
+    public void sendMsgChangedToActor() throws Exception {
+
+    }
+    
+    @Test
+    public void sendMsgSignedAsRegular() throws Exception {
+
+    }
+    
+    @Test
+    public void sendMsgSignedAsReplacement() throws Exception {
 
     }
 }

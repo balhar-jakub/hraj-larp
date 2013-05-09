@@ -60,23 +60,38 @@
                 </form>
             </c:when>
             <c:otherwise>
-              <form method="post" action="logInGame">
-                  <input type="hidden" name="gameId" value="${game.id}">
-                  <c:choose>
-                      <c:when test="${game.full}">
-                          <input type="submit" value="Přihlásit se jako náhradník.">
-                      </c:when>
-                      <c:otherwise>
-                          <input type="submit" value="Přihlásit se na hru.">
-                      </c:otherwise>
-                  </c:choose>
-              </form>
+	            <c:choose>
+	            	<c:when test="${regStarted}">
+	            		<form method="post" action="logInGame">
+		                  <input type="hidden" name="gameId" value="${game.id}">
+		                  <c:choose>
+		                      <c:when test="${isFull}">
+		                          <input type="submit" value="Přihlásit se jako náhradník.">
+		                      </c:when>
+		                      <c:otherwise>
+		                          <input type="submit" value="Přihlásit se na hru.">
+		                      </c:otherwise>
+		                  </c:choose>
+		              </form>
+	            	</c:when>
+		            <c:otherwise>
+		            	Přihlašování do hry je možné až od ${regStart}
+		            	<c:choose>
+		                     <c:when test="${showNotifRegStart}">
+		                     	<form method="post" action="regNotifyForm" >
+		                  			<input type="hidden" name="gameId" value="${game.id}">
+		                          	<input type="submit" value="Chci informovat den před zahájením přihlašování na hru.">
+		                        </form>
+		                     </c:when>
+		                </c:choose>
+		           </c:otherwise>
+		       </c:choose>   
            </c:otherwise>
-          </c:choose>
-      </c:when>
-      <c:otherwise>
-          <span> Pro přihlášení na hru se přihlašte nebo registrujte. </span>
-      </c:otherwise>
+    	</c:choose>
+    </c:when>
+    <c:otherwise>
+      	<span> Pro přihlášení na hru se přihlašte nebo registrujte. </span>
+    </c:otherwise>
     </c:choose>
         </span>
         </div>
@@ -104,14 +119,6 @@
                     <td>${game.womenFreeRoles}</td>
                     <td>${game.bothFreeRoles}</td>
                 </tr>
-                <!--
-                <tr>
-                    <td>Zatím přihlášeno</td>
-                    <td>${game.menAssignedRoles}</td>
-                    <td>${game.womenAssignedRoles}</td>
-                    <td></td>
-                </tr>
-                -->
                 <tr>
                     <td>Náhradníci</td>
                     <td>${game.menSubstitutes}</td>
@@ -129,6 +136,12 @@
             <div class="siderow">
                 <h4>Web Larpu</h4>
                 <a href="${game.web}">${game.web}</a>
+            </div>
+        </c:if>
+
+        <c:if test="${not empty canEdit}">
+            <div class="siderow">
+                <a href="/game/edit?id=${game.id}"><h4>Editace hry</h4></a>
             </div>
         </c:if>
     </div>
@@ -149,5 +162,9 @@
                 <p>${game.shortText}</p>
             </c:otherwise>
         </c:choose>
+        <c:if test="${not empty game.action}">
+            <h3>Akce:</h3>
+            <p>${game.action}</p>
+        </c:if>
     </div>
 </div>

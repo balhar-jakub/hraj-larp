@@ -1,5 +1,7 @@
 package cz.hrajlarp.model;
 
+import cz.hrajlarp.utils.MailService;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -66,6 +68,45 @@ public class UserAttendedGameEntity {
         this.added = added;
     }
 
+    private Boolean payed;
+
+    @Column(name="payed")
+    @Basic
+    public Boolean getPayed(){
+        return payed;
+    }
+
+    public void setPayed(Boolean payed){
+        this.payed = payed;
+    }
+
+    private Boolean automatic;
+
+    @Column(name="automatic")
+    @Basic
+    public Boolean getAutomatic() {
+        if(automatic == null) {
+            automatic = false;
+        }
+        return automatic ;
+    }
+
+    public void setAutomatic(Boolean automatic) {
+        this.automatic = automatic;
+    }
+
+    private String variableSymbol;
+
+    @Column(name="variable_symbol")
+    @Basic
+    public String getVariableSymbol(){
+        return variableSymbol;
+    }
+
+    public void setVariableSymbol(String variableSymbol){
+        this.variableSymbol = variableSymbol;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -121,5 +162,38 @@ public class UserAttendedGameEntity {
 
     public void setSubstituteText(String substituteText) {
         this.substituteText = substituteText;
+    }
+
+    @Transient
+    public void notifyByMail(MailService mailService) {
+        //To change body of created methods use File | Settings | File Templates.
+    	if(getAttendedGame().getMailProhibition()) return;
+        if(!isSubstitute()){
+            mailService.sendMsgSignedAsRegular(getUserAttended(), getAttendedGame(), this);
+        } else {
+            mailService.sendMsgSignedAsReplacement(getUserAttended(), getAttendedGame());
+        }
+    }
+
+    @Transient
+    public void notifyChangedByMail(MailService mailService) {
+        if(!isSubstitute()) {
+        	mailService.sendMsgChangedToActor(getUserAttended(), getAttendedGame());
+            mailService.sendMsgToEditors(getUserAttended(), getAttendedGame());
+        } else {
+            mailService.sendMsgChangedToReplacement(getUserAttended(), getAttendedGame());
+        }
+    }
+
+    private String payedTextual;
+
+    @Transient
+    public String getPayedTextual(){
+        return (payed != null && payed) ? "Ano" : "";
+    }
+
+    @Transient
+    public void setPayedTextual(String payedTextual){
+        this.payedTextual = payedTextual;
     }
 }

@@ -1,6 +1,7 @@
 Alter table game add column confirmed boolean;
 Alter table game add column replacements_text text;
 Alter table game add column ordinary_player_text text;
+Alter table game add column action text;
 
 
 create table user_is_editor (

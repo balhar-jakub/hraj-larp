@@ -122,6 +122,30 @@ public class HrajUserEntity {
     public void setMailInformation(Boolean mailInformation) {
         this.mailInformation = mailInformation;
     }
+    
+    private Boolean activated;
+
+    @Column(name = "activated")
+    @Basic
+    public Boolean getActivated() {
+        return activated;
+    }
+
+    public void setActivated(Boolean activated) {
+        this.activated = activated;
+    }
+    
+    private String activationLink;
+
+    @Column(name = "activation_link")
+    @Basic
+    public String getActivationLink() {
+        return activationLink;
+    }
+
+    public void setActivationLink(String activationLink) {
+        this.activationLink = activationLink;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -140,6 +164,8 @@ public class HrajUserEntity {
         if (password != null ? !password.equals(that.password) : that.password != null) return false;
         if (phone != null ? !phone.equals(that.phone) : that.phone != null) return false;
         if (userName != null ? !userName.equals(that.userName) : that.userName != null) return false;
+        if (activationLink != null ? !activationLink.equals(that.activationLink) : that.activationLink != null) return false;
+        if (activated != null ? !activated.equals(that.activated) : that.activated != null) return false;
 
         return true;
     }
@@ -155,6 +181,8 @@ public class HrajUserEntity {
         result = 31 * result + (phone != null ? phone.hashCode() : 0);
         result = 31 * result + (gender != null ? gender.hashCode() : 0);
         result = 31 * result + (mailInformation != null ? mailInformation.hashCode() : 0);
+        result = 31 * result + (activationLink != null ? activationLink.hashCode() : 0);
+        result = 31 * result + (activated != null ? activated.hashCode() : 0);
         return result;
     }
 

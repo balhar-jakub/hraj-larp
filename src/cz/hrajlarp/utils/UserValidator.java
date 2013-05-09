@@ -33,7 +33,7 @@ public class UserValidator implements Validator{
             errors.rejectValue("password", "notmatch.password",
                     "Heslo neodpovídá kontrolnímu údaji");
         }
-
+        
         if(user.getGenderForm()==null){
             errors.rejectValue("genderForm", "genderForm.required",
                     "Musíte zadat Muž/Žena");
@@ -63,25 +63,13 @@ public class UserValidator implements Validator{
 
         HrajUserEntity user = (HrajUserEntity)userToValidate;
 
-        if (user.getPassword().trim()!=null && !user.getPassword().trim().equals("")){
+        if (user.getPassword()!=null && !user.getPassword().trim().equals("")){
 	        if(!user.getPassword().equals(user.getPasswordAgain())){
 	            errors.rejectValue("password", "notmatch.password",
 	                    "Heslo neodpovídá kontrolnímu údaji");
 	        }
         }
-
-        if(user.getGenderForm()==null){
-            errors.rejectValue("genderForm", "genderForm.required",
-                    "Musíte zadat Muž/Žena");
-        } else {
-            if (user.getGenderForm().trim().equals("M"))
-                user.setGender(new Integer(0));
-            else if (user.getGenderForm().trim().equals("F"))
-                user.setGender(new Integer(1));
-            else errors.rejectValue("genderForm", "genderForm.required",
-                        "Musíte zadat Muž/Žena");
-        }
-
+        
     }
 
     @Override
