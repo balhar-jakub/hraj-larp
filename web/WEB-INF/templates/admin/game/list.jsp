@@ -10,6 +10,7 @@
         <div class="text">
             <a href="/game/add"><h2>Přidej hru</h2></a>
             <a href="/admin/game/actions"><h2>Správa akcí</h2></a>
+            <a href="/admin/rights/edit"><h2>Správa uživatelských práv</h2></a>
         </div>
     </c:if>
 
@@ -26,17 +27,18 @@
                     <c:forEach items="${requestScope.futureGames}" var="game">
                         <div class="clearfix den"><h2 class="datum"><span>${game.dateAsDM}</span>${game.dateAsDayName}</h2></div>
                         <div class="termin clearfix">
-                            <h3><a href="/game/edit?id=${game.id}" tabindex="-1">${game.name}</a></h3>
+                            <h3><a href="/game/edit?gameId=${game.id}" tabindex="-1">${game.name}</a></h3>
                             <div class="grid4">
                                 <div>
                                     <p>${game.info}</p>
                                     <a href="/admin/game/players/${game.id}" class="biglink">Hráči</a>
+                                    <a href="/admin/game/editors/${game.id}" class="biglink">Editoři</a>
                                     <input type="button" value="Smazat hru" onclick="location.href='/admin/game/confirmation/${game.id}'">
                                 </div>
                             </div>
                         </div>
                         <div class="grid2 square1">
-                            <a href="/game/detail?gameId=${game.id}" tabindex="-1"><img src="${game.image}" alt="${game.name}"/></a>
+                            <a href="/game/edit?gameId=${game.id}" tabindex="-1"><img src="${game.image}" alt="${game.name}"/></a>
                         </div>
                     </c:forEach>
                 </c:if>
@@ -48,15 +50,16 @@
                 <c:forEach items="${requestScope.formerGames}" var="game">
                     <div class="clearfix den"><h2 class="datum"><span>${game.dateAsDM}</span>${game.dateAsDayName}</h2></div>
                     <div class="termin clearfix">
-                        <h3><a href="/game/detail?gameId=${game.id}" tabindex="-1">${game.name}</a></h3>
+                        <h3><a href="/game/edit?gameId=${game.id}" tabindex="-1">${game.name}</a></h3>
                         <div class="grid4">
                             <div>
                                 <p>${game.info}</p>
                                 <a href="/admin/game/players/${game.id}" class="biglink">Hráči</a>
+                                <a href="/admin/game/editors/${game.id}" class="biglink">Editoři</a>
                             </div>
                         </div>
                         <div class="grid2 square1">
-                            <a href="/game/detail?gameId=${game.id}" tabindex="-1"><img src="${game.image}" alt="${game.name}"/></a>
+                            <a href="/game/edit?gameId=${game.id}" tabindex="-1"><img src="${game.image}" alt="${game.name}"/></a>
                         </div>
                     </div>
                 </c:forEach>
@@ -68,7 +71,7 @@
                 <c:forEach items="${requestScope.unvalidatedGames}" var="game">
                     <div class="clearfix den"><h2 class="datum"><span>${game.dateAsDM}</span>${game.dateAsDayName}</h2></div>
                     <div class="termin clearfix">
-                        <h3><a href="/game/detail?gameId=${game.id}" tabindex="-1">${game.name}</a></h3>
+                        <h3><a href="/game/edit?gameId=${game.id}" tabindex="-1">${game.name}</a></h3>
                         <div class="grid4">
                             <div>
                                 <p>${game.info}</p>
@@ -76,7 +79,7 @@
                             </div>
                         </div>
                         <div class="grid2 square1">
-                            <a href="/game/detail?gameId=${game.id}" tabindex="-1"><img src="${game.image}" alt="${game.name}"/></a>
+                            <a href="/game/edit?gameId=${game.id}" tabindex="-1"><img src="${game.image}" alt="${game.name}"/></a>
                         </div>
                     </div>
                 </c:forEach>

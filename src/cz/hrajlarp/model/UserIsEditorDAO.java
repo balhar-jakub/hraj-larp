@@ -95,4 +95,22 @@ public class UserIsEditorDAO {
         }
         finally { session.close(); }
     }
+
+    
+    /**
+     * @param gameId
+     * @return list of editors by given game
+     */
+    @Transactional(readOnly = true)
+    public List<HrajUserEntity> getEditorsByGameId(int gameId){
+        Session session = sessionFactory.openSession();
+        try {
+            Query query = session.createQuery("select user " +
+                    "from HrajUserEntity user, UserIsEditorEntity uie " +
+                    "where uie.gameId=:gameId and user.id = uie.userId");
+            query.setParameter("gameId", gameId);
+            return query.list();
+        }
+        finally { session.close(); }
+    }
 }

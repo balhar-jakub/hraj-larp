@@ -55,4 +55,17 @@ public class AdministratorDAO {
         }
         finally { session.close(); }
     }
+
+    @Transactional(readOnly = false)
+    public void removeAdministratorRights(int userId){
+        AdministratorEntity entity = new AdministratorEntity();
+        entity.setId(userId);
+        Session session = sessionFactory.openSession();
+        try {
+            session.beginTransaction();
+            session.delete(entity);
+            session.getTransaction().commit();
+        }
+        finally { session.close(); }
+    }
 }

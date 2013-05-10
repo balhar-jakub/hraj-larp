@@ -38,6 +38,12 @@ public class AdminController {
     @Autowired
     private Rights rights;
 
+    @Autowired
+    private AdministratorDAO administratorDAO;
+
+    @Autowired
+    private AuthorizedEditorDAO authorizedEditorDAO;
+
     @RequestMapping(value = "/admin/game/players/{id}", method= RequestMethod.GET)
     public String gamePlayers(Model model, @PathVariable("id") Integer id) {
         HrajUserEntity user = rights.getLoggedUser();
@@ -275,5 +281,215 @@ public class AdminController {
             model.addAttribute("path", "/admin/game/actions/");
             return "/admin/norights";
         }
+    }
+
+
+    @RequestMapping(value = "/admin/game/editors/{id}", method= RequestMethod.GET)
+    public String gameEditors(Model model, @PathVariable("id") Integer id) {
+
+        if (rights.isLoggedAdministrator()){
+            List<HrajUserEntity> editors = userIsEditorDAO.getEditorsByGameId(id);
+
+            List<HrajUserEntity> allUsers = userDAO.listUsers();
+            List<HrajUserEntity> notEditors = new ArrayList<HrajUserEntity>();
+            for (HrajUserEntity user : allUsers){
+                if(!editors.contains(user))
+                    notEditors.add(user);
+            }
+
+            model.addAttribute("gameId",id);
+            model.addAttribute("editors", editors);
+            model.addAttribute("notEditors", notEditors);
+            model.addAttribute("isLogged", true);
+            return "/admin/game/editors";
+        } else {
+            model.addAttribute("path", "/admin/game/editors/" + String.valueOf(id));
+            return "/admin/norights";
+        }
+    }
+
+    @RequestMapping(value = "/admin/game/editors/add/{gameId}", method= RequestMethod.POST)
+    public String gameEditorAdd(Model model,
+                                @RequestParam(value = "futureEditors", required = false) List<Integer> editorsIds,
+                                @PathVariable("gameId") Integer gameId,
+                                RedirectAttributes redirectAttributes){
+
+        redirectAttributes.addAttribute("id",gameId);
+
+        if(editorsIds == null)
+            return "redirect:/admin/game/editors/{id}";
+
+        for (Integer userId : editorsIds) {
+            UserIsEditorEntity userIsEditorEntity = new UserIsEditorEntity();
+            userIsEditorEntity.setUserId(userId);
+            userIsEditorEntity.setGameId(gameId);
+            userIsEditorDAO.addUserIsEditor(userIsEditorEntity);
+        }
+        return "redirect:/admin/game/editors/{id}";
+    }
+
+    @RequestMapping(value = "/admin/game/editors/remove/{gameId}/{userId}", method= RequestMethod.POST)
+    public String gameEditorRemove(Model model,
+                               @PathVariable("gameId") Integer gameId,
+                               @PathVariable("userId") Integer userId,
+                               RedirectAttributes redirectAttributes){
+
+        UserIsEditorEntity userIsEditorEntity = new UserIsEditorEntity();
+        userIsEditorEntity.setUserId(userId);
+        userIsEditorEntity.setGameId(gameId);
+        userIsEditorDAO.deleteUserIsEditor(userIsEditorEntity);
+
+        redirectAttributes.addAttribute("id",gameId);
+        return "redirect:/admin/game/editors/{id}";
+    }
+
+
+    @RequestMapping(value = "/admin/rights/edit", method= RequestMethod.GET)
+    public String rightsEdit(Model model) {
+
+        if (rights.isLoggedAdministrator()){
+            List<Integer> allAdmins = administratorDAO.getAdministratorIds();
+            List<Integer> allEditors = authorizedEditorDAO.listAuthorizedEditors();
+
+            List<HrajUserEntity> allUsers = userDAO.listUsers();
+
+            List<HrajUserEntity> admins = new ArrayList<HrajUserEntity>();
+            List<HrajUserEntity> notAdmins = new ArrayList<HrajUserEntity>();
+
+            List<HrajUserEntity> authEditors = new ArrayList<HrajUserEntity>();
+            List<HrajUserEntity> notAuthEditors = new ArrayList<HrajUserEntity>();
+
+            for (HrajUserEntity user : allUsers){
+                if(allAdmins.contains(user.getId()))
+                    admins.add(user);
+                else
+                    notAdmins.add(user);
+
+                if(allEditors.contains(user.getId()))
+                    authEditors.add(user);
+                else
+                    notAuthEditors.add(user);
+            }
+
+            model.addAttribute("admins", admins);
+            model.addAttribute("futureAdmins", notAdmins);
+            model.addAttribute("authEditors", authEditors);
+            model.addAttribute("futureAuthorized", notAuthEditors);
+
+            return "admin/rights/edit";
+        }
+        model.addAttribute("path", "/admin/rights/edit/");
+        return "/admin/norights";
+    }
+
+    @RequestMapping(value = "/admin/rights/admins/add", method= RequestMethod.POST)
+    public String addAdminsRights(Model model,
+                                @RequestParam(value = "users", required = false) List<Integer> adminsIds){
+
+        if(adminsIds == null)
+            return "redirect:/admin/rights/edit";
+
+        for (Integer userId : adminsIds) {
+            administratorDAO.setAdministrator(userId);
+        }
+        return "redirect:/admin/rights/edit";
+    }
+
+    @RequestMapping(value = "/admin/rights/admins/remove/{userId}", method= RequestMethod.POST)
+    public String removeAdminsRights(Model model,
+                               @PathVariable("userId") Integer userId){
+
+        if(administratorDAO.getAdministratorIds().size() <= 1)
+        return "/admin/rights/error";
+
+        administratorDAO.removeAdministratorRights(userId);
+        return "redirect:/admin/rights/edit";
+    }
+
+    @RequestMapping(value = "/admin/rights/autheditors/add", method= RequestMethod.POST)
+    public String addAuthEditorRights(Model model,
+                                @RequestParam(value = "users", required = false) List<Integer> editorIds){
+
+        if(editorIds == null)
+            return "redirect:/admin/rights/edit";
+
+        for (Integer userId : editorIds) {
+            authorizedEditorDAO.setAuthorizedEntity(userId);
+        }
+        return "redirect:/admin/rights/edit";
+    }
+
+    @RequestMapping(value = "/admin/rights/autheditors/remove/{userId}", method= RequestMethod.POST)
+    public String removeAuthEditorRights(Model model,
+                               @PathVariable("userId") Integer userId){
+
+        authorizedEditorDAO.removeAuthorizedEntityRights(userId);
+        return "redirect:/admin/rights/edit";
+    }
+
+
+
+    @RequestMapping(value = "/admin/rights/admins/add/confirm", method= RequestMethod.POST)
+    public String addAdminsRightsConfirm(Model model,
+                                @RequestParam(value = "futureAdmins", required = false) List<Integer> adminsIds){
+        if(adminsIds == null)
+            return "redirect:/admin/rights/edit";
+
+        List<HrajUserEntity> futureAdmins = new ArrayList<HrajUserEntity>();
+        for (Integer userId : adminsIds){
+            futureAdmins.add(userDAO.getUserById(userId));
+        }
+        model.addAttribute("users", futureAdmins);
+        model.addAttribute("title", "Přidat právo administrátora");
+        model.addAttribute("description", "Administrátor má právo schvalovat hry, " +
+                "přidávat a odebírat práva dalším administrátorům, přidávat a odebírat práva osvědčeným editorům " +
+                "a přidávat a odebírat práva editorům dané hry. V jeho pravomoci je také odhlašovat hráče ze hry " +
+                "a schvalovat platby účastníků her. Skutečně si přejete výše uvedeným osobám přidat právo administrátora?");
+        model.addAttribute("confirmLink", "/admin/rights/admins/add");
+        return "admin/rights/confirmation";
+    }
+
+    @RequestMapping(value = "/admin/rights/autheditors/add/confirm", method= RequestMethod.POST)
+    public String addAuthEditorRightsConfirm(Model model,
+                                @RequestParam(value = "futureAuthorized", required = false) List<Integer> editorIds){
+        if(editorIds == null)
+            return "redirect:/admin/rights/edit";
+
+        List<HrajUserEntity> futureAuthEditors = new ArrayList<HrajUserEntity>();
+        for (Integer userId : editorIds){
+            futureAuthEditors.add(userDAO.getUserById(userId));
+        }
+        model.addAttribute("users", futureAuthEditors);
+        model.addAttribute("title", "Přidat právo osvědčeného editora");
+        model.addAttribute("description", "Osvědčený editor má právo vkládat hry přímo " +
+                "do kalendáře akcí bez nutnosti schválení hry některým z administrátorů. " +
+                "Skutečně si přejete výše uvedeným osobám přidat právo osvědčeného editora?");
+        model.addAttribute("confirmLink", "/admin/rights/autheditors/add");
+        return "admin/rights/confirmation";
+    }
+
+    @RequestMapping(value = "/admin/rights/admins/remove/confirm/{userId}", method= RequestMethod.POST)
+    public String removeAdminsRightsConfirm(Model model,
+                               @PathVariable("userId") Integer userId){
+
+        List<HrajUserEntity> userList = new ArrayList<HrajUserEntity>();
+        userList.add(userDAO.getUserById(userId));
+        model.addAttribute("users", userList);
+        model.addAttribute("title", "Odebrat právo administrátora");
+        model.addAttribute("description", "Skutečně má být této osobě odebráno právo administrátora?");
+        model.addAttribute("confirmLink", ("/admin/rights/admins/remove/" + userId));
+        return "admin/rights/confirmation";
+    }
+
+    @RequestMapping(value = "/admin/rights/autheditors/remove/confirm/{userId}", method= RequestMethod.POST)
+    public String removeAuthEditorRightsConfirm(Model model,@PathVariable("userId") Integer userId){
+
+        List<HrajUserEntity> userList = new ArrayList<HrajUserEntity>(1);
+        userList.add(userDAO.getUserById(userId));
+        model.addAttribute("users", userList);
+        model.addAttribute("title", "Odebrat právo osvědčeného editora");
+        model.addAttribute("description", "Skutečně má být této osobě odebráno právo osvědčeného editora?");
+        model.addAttribute("confirmLink", ("/admin/rights/autheditors/remove/" + userId));
+        return "admin/rights/confirmation";
     }
 }

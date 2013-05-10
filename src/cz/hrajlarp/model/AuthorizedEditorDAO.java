@@ -1,10 +1,13 @@
 package cz.hrajlarp.model;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -43,7 +46,7 @@ public class AuthorizedEditorDAO {
     }
 
     @Transactional(readOnly=false)
-    public void deleteAuthorizedEntity(int userId){
+    public void removeAuthorizedEntityRights(int userId){
         AuthorizedEditorEntity entity = new AuthorizedEditorEntity();
         entity.setId(userId);
         Session session = sessionFactory.openSession();
@@ -51,6 +54,18 @@ public class AuthorizedEditorDAO {
             session.beginTransaction();
             session.delete(entity);
             session.getTransaction().commit();
+        }
+        finally { session.close(); }
+    }
+
+    /**
+     * @return list of all authorized editors stored in the DB
+     */
+    public List<Integer> listAuthorizedEditors(){
+        Session session = sessionFactory.openSession();
+        try{
+            Query query = session.createQuery("select aued.id from AuthorizedEditorEntity aued");
+            return query.list();
         }
         finally { session.close(); }
     }

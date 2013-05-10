@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Component
 public class UserDAO {
 
@@ -113,6 +115,18 @@ public class UserDAO {
             query.setParameter("activationLink", activationLink);
             System.out.println("executing: " + query.getQueryString());
             return (HrajUserEntity) query.uniqueResult();
+        }
+        finally { session.close(); }
+    }
+    
+    /**
+     * @return list of all users stored in the DB
+     */
+    public List<HrajUserEntity> listUsers(){
+        Session session = sessionFactory.openSession();
+        try{
+            Query query = session.createQuery("from HrajUserEntity");
+            return query.list();
         }
         finally { session.close(); }
     }
