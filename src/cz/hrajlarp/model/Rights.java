@@ -154,4 +154,13 @@ public class Rights {
     public boolean hasRightsToEditGame(HrajUserEntity user, GameEntity game){
          return userIsEditorDAO.isEditorOfGame(user, game) || isAdministrator(user);
     }
+
+
+    /**
+     * Method returns true, if logged user is administrator, false otherwise
+     * @return false only if some user is logged and has administrators rights
+     */
+    public boolean isLoggedAdministrator(){
+        return isAdministrator(getLoggedUser());
+    }
 }
