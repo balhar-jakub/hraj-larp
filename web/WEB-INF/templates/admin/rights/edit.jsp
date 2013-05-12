@@ -19,6 +19,7 @@
                <table class="players">
                   <tr class="first">
                      <td>Jméno hráče</td>
+                     <td>Přezdívka</td>
                      <td>Telefon</td>
                      <td>Email</td>
                      <td>Pohlaví</td>
@@ -27,6 +28,7 @@
                   <c:forEach items="${requestScope.authEditors}" var="user">
                      <tr>
                          <td>${user.name} ${user.lastName}</td>
+                         <td>${user.userName}</td>
                          <td>${user.phone}</td>
                          <td>${user.email}</td>
                          <td>${user.genderTextual}</td>
@@ -37,15 +39,20 @@
                   </c:forEach>
                </table>
             </form>
+            </c:if>
 
             <h2>Přidat uživateli práva osvědčeného editora</h2>
+            <c:if test="${empty futureAuthorized}">
+                V současné době není dostupný žádný uživatel, který by mohl získat práva osvědčeného editora.
+            </c:if>
+            <c:if test="${not empty futureAuthorized}">
             <form method="post">
                 <select multiple size="8" id="futureAuthorized" name="futureAuthorized">
                     <c:forEach var="user" items="${requestScope.futureAuthorized}">
-                        <option value="${user.id}" >
-                            <c:out value="${user.name} ${user.lastName}, (${user.genderTextual}), ${user.email}" />
+                    <option value="${user.id}" >
+                            <c:out value="${user.name} ${user.lastName}, ${user.userName}, (${user.genderTextual}), ${user.email}" />
                         </option>
-                    </c:forEach>
+                </c:forEach>
                 </select>
                 <button type="submit" formaction="/admin/rights/autheditors/add/confirm/">Pověřit</button>
             </form>
@@ -58,6 +65,7 @@
               <table class="players">
                   <tr class="first">
                      <td>Jméno hráče</td>
+                     <td>Přezdívka</td>
                      <td>Telefon</td>
                      <td>Email</td>
                      <td>Pohlaví</td>
@@ -66,6 +74,7 @@
                   <c:forEach items="${requestScope.admins}" var="admin">
                      <tr>
                          <td>${admin.name} ${admin.lastName}</td>
+                         <td>${admin.userName}</td>
                          <td>${admin.phone}</td>
                          <td>${admin.email}</td>
                          <td>${admin.genderTextual}</td>
@@ -78,15 +87,20 @@
             </form>
 
             <h2>Pověřit uživatele rolí administrátora</h2>
+            <c:if test="${empty futureAdmins}">
+                V současné době není dostupný žádný uživatel, který by mohl získat administrátorská práva.
+            </c:if>
+            <c:if test="${not empty futureAdmins}">
             <form method="post">
                 <select multiple size="8" id="futureAdmins" name="futureAdmins">
                     <c:forEach var="user" items="${requestScope.futureAdmins}">
                         <option value="${user.id}" >
-                            <c:out value="${user.name} ${user.lastName}, (${user.genderTextual}), ${user.email}" />
+                            <c:out value="${user.name} ${user.lastName}, ${user.userName}, (${user.genderTextual}), ${user.email}" />
                         </option>
                     </c:forEach>
                 </select>
                 <button type="submit" formaction="/admin/rights/admins/add/confirm/">Pověřit</button>
             </form>
+            </c:if>
         </div>
 </div>

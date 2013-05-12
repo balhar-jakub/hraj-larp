@@ -8,6 +8,7 @@
     <table class="players">
         <tr class="first">
             <td>Jméno hráče</td>
+            <td>Přezdívka</td>
             <td>Telefon</td>
             <td>Email</td>
             <td>Pohlaví</td>
@@ -15,6 +16,7 @@
         <c:forEach items="${requestScope.users}" var="user">
             <tr>
                 <td>${user.name} ${user.lastName}</td>
+                <td>${user.userName}</td>
                 <td>${user.phone}</td>
                 <td>${user.email}</td>
                 <td>${user.genderTextual}</td>

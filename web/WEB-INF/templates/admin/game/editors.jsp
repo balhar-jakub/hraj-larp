@@ -12,6 +12,7 @@
 <table class="players">
     <tr class="first">
         <td>Jméno hráče</td>
+        <td>Přezdívka</td>
         <td>Telefon</td>
         <td>Email</td>
         <td>Pohlaví</td>
@@ -20,6 +21,7 @@
     <c:forEach items="${requestScope.editors}" var="editor">
         <tr>
             <td>${editor.name} ${editor.lastName}</td>
+            <td>${editor.userName}</td>
             <td>${editor.phone}</td>
             <td>${editor.email}</td>
             <td>${editor.genderTextual}</td>
@@ -37,7 +39,7 @@
         <select multiple size="8" id="futureEditors" name="futureEditors">
            <c:forEach var="editor" items="${requestScope.notEditors}">
                 <option value="${editor.id}" >
-                    <c:out value="${editor.name} ${editor.lastName}, (${editor.genderTextual}), ${editor.email}" />
+                    <c:out value="${editor.name} ${editor.lastName}, ${editor.userName}, (${editor.genderTextual}), ${editor.email}" />
                 </option>
            </c:forEach>
         </select>
