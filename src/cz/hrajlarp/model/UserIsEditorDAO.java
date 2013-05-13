@@ -54,7 +54,6 @@ public class UserIsEditorDAO {
         finally { session.close(); }
     }
 
-
     /**
      * This method adds new UserIsEditor record into database
      * @param record
