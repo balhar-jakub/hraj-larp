@@ -154,9 +154,13 @@ public class AdminController {
                 userAttendedGameDAO.deleteUserAttendedGame(uage);
             }
             mailService.notifyAdminOnGameDeletion(sb.toString());
-            HrajUserEntity author = userDAO.getUserById(game.getAddedBy());
-            UserIsEditorEntity editor = (UserIsEditorEntity)userIsEditorDAO.getUserIsEditor(author, game);
-            if (editor != null) userIsEditorDAO.deleteUserIsEditor(editor);
+            List<HrajUserEntity> editors = userIsEditorDAO.getEditorsByGameId(game.getId());
+            if (editors != null) {
+                for(HrajUserEntity editor : editors){
+                    UserIsEditorEntity userIsEditor = (UserIsEditorEntity)userIsEditorDAO.getUserIsEditor(editor, game);
+                    userIsEditorDAO.deleteUserIsEditor(userIsEditor);
+                }
+            }
             gameDAO.deleteGame(game);
             return "/admin/game/deleted";
         } else {
