@@ -7,7 +7,7 @@ public class HashString {
 
     public String digest(String password)throws Exception {
 
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        MessageDigest digest = MessageDigest.getInstance("MD5");
         digest.update(password.getBytes("UTF-8"));
 
         byte byteArr[] = digest.digest();
@@ -20,7 +20,7 @@ public class HashString {
     
     public String digestWithSalt(String password, String salt)throws Exception {
 
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        MessageDigest digest = MessageDigest.getInstance("MD-5");
         String saltedPass = salt+password;
         digest.update(saltedPass.getBytes("UTF-8"));
 

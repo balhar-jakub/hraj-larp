@@ -1,6 +1,5 @@
 package cz.hrajlarp.controller;
 
-import cz.hrajlarp.model.GameEntity;
 import cz.hrajlarp.model.HrajUserEntity;
 import cz.hrajlarp.model.UserAttendedGameDAO;
 import cz.hrajlarp.model.UserAttendedGameEntity;
@@ -14,11 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -70,7 +65,7 @@ public class UserController {
         	HashString hs = new HashString();
             String hashPass = hs.digest(user.getPassword());
             user.setPassword(hashPass);
-            user.setActivationLink(hs.digestWithSalt(user.getEmail(), hs.generateSalt(8)));
+            user.setActivationLink(hs.digest(user.getEmail()));
         } catch (Exception e) {
             return "user/failed";
         }
@@ -134,7 +129,7 @@ public class UserController {
         if(!userDAO.getUserById(user.getId()).getEmail().equals(user.getEmail())){//mail address edited
         	try {
             	HashString hs = new HashString();
-                user.setActivationLink(hs.digestWithSalt(user.getEmail(), hs.generateSalt(8)));
+                user.setActivationLink(hs.digest(user.getEmail()));
             } catch (Exception e) {
                 return "user/failed";
             }

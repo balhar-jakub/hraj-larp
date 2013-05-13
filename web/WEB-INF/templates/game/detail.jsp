@@ -31,7 +31,7 @@
             </div>
         </div>
         <div class="siderow center">
-        <span class="info">
+        <span class="info" style="width:80%;">
           <!-- If user is logged and date is correct button Přihlaš tady bude. -->
   <c:choose>
       <c:when test="${logged}">
@@ -80,7 +80,7 @@
 		                     <c:when test="${showNotifRegStart}">
 		                     	<form method="post" action="regNotifyForm" >
 		                  			<input type="hidden" name="gameId" value="${game.id}">
-		                          	<input type="submit" value="Chci informovat den před zahájením přihlašování na hru.">
+		                          	<input type="submit" style="width:100%;" value="Informovat den před začátkem přihlašování.">
 		                        </form>
 		                     </c:when>
 		                </c:choose>

@@ -18,7 +18,7 @@ http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 
 <authentication-manager>
 	<authentication-provider>
-		<password-encoder hash="sha-256" />
+		<password-encoder hash="md5" />
 		<jdbc-user-service data-source-ref="dataSource"
 			users-by-username-query=
 			"select user_name, password, '1' as enabled from hraj_user where user_name=?" 

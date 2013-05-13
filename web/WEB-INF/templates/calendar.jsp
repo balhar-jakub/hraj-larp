@@ -32,9 +32,9 @@
                                     <a href="/game/detail?gameId=${game.id}" class="biglink">podrobnosti o termínu &amp; přihlášení</a>
                                 </div>
                             </div>
-                        </div>
-                        <div class="grid2 square1">
-                            <a href="/game/detail?gameId=${game.id}" tabindex="-1"><img src="${game.image}" alt="${game.name}"/></a>
+                            <div class="grid2 square1">
+                                <a href="/game/detail?gameId=${game.id}" tabindex="-1"><img src="${game.image}" alt="${game.name}"/></a>
+                            </div>
                         </div>
                     </c:forEach>
                 </c:if>
