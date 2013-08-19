@@ -1,5 +1,8 @@
-package cz.hrajlarp.model;
+package cz.hrajlarp.model.dao;
 
+import cz.hrajlarp.model.entity.GameEntity;
+import cz.hrajlarp.model.entity.HrajUserEntity;
+import cz.hrajlarp.model.entity.UserAttendedGameEntity;
 import org.hibernate.*;
 import org.hibernate.metadata.ClassMetadata;
 import org.springframework.beans.factory.annotation.Autowired;

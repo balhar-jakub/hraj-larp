@@ -68,4 +68,9 @@
         </c:forEach>
     </c:if>
 </table>
+    <div>
+        <c:if test="${not paymentFinished}">
+            <button type="submit" class="printButton" formaction="/admin/game/finished/${gameId}">Uznat zaplacení</button>
+        </c:if>
+    </div>
 </form>

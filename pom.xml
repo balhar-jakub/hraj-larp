@@ -181,8 +181,6 @@
             <version>1.2</version>
         </dependency>
 
-
-
         <!-- LOGGING DEPENDENCIES - LOG4J -->
         <dependency>
             <groupId>log4j</groupId>

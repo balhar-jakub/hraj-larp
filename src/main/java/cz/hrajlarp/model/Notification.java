@@ -1,5 +1,12 @@
 package cz.hrajlarp.model;
 
+import cz.hrajlarp.model.dao.GameDAO;
+import cz.hrajlarp.model.dao.PreRegNotificationDAO;
+import cz.hrajlarp.model.dao.UserAttendedGameDAO;
+import cz.hrajlarp.model.dao.UserDAO;
+import cz.hrajlarp.model.entity.HrajUserEntity;
+import cz.hrajlarp.model.entity.PreRegNotificationEntity;
+import cz.hrajlarp.model.entity.UserAttendedGameEntity;
 import cz.hrajlarp.utils.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -48,12 +55,33 @@ public class Notification {
         List<PreRegNotificationEntity> allPreRegs = preRegNotificationDAO.getAllPreRegNotifications();
         Date now = Calendar.getInstance().getTime();
         for(PreRegNotificationEntity preReg: allPreRegs) {
-        	System.out.println("sendRegStartNotification: "+preReg.getGameId() +" : "+ preReg.getUserId() + " : " + preReg.getNotifyDate());
-            if(preReg.getNotifyDate() != null && preReg.getNotifyDate().before(now)) {
+        	if(preReg.getNotifyDate() != null && preReg.getNotifyDate().before(now)) {
                 mailService.sendMsgDayToRegStart(userDAO.getUserById(preReg.getUserId()), 
                 		gameDAO.getGameById(preReg.getGameId()));
                 preRegNotificationDAO.deletePreRegNotification(preReg);
             }
         }
+    }
+
+    // Send if there is no game scheduled in month
+    @Scheduled(cron="1 0 * * * *")
+    @Transient
+    public void sendNoGameNotification(){
+        // There is no game in date after today plus one month.
+        gameDAO.getFutureGames();
+    }
+
+    // Send if there is no place at game two weeks before tha game
+    @Scheduled(cron="1 0 * * * *")
+    @Transient
+    public void sendNoPlaceNotification(){
+
+    }
+
+    // Send if there is not accepted at the game detail in administration.
+    @Scheduled(cron="1 0 * * * *")
+    @Transient
+    public void sendUnfinishedAccountNotification(){
+
     }
 }

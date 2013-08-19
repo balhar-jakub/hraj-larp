@@ -1,13 +1,9 @@
-package cz.hrajlarp.model;
+package cz.hrajlarp.model.entity;
 
 import javax.persistence.*;
-import java.util.Map;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Jakub Balhar
- * Date: 6.3.13
- * Time: 23:12
+ *
  */
 @Table(name = "administrator", schema = "public", catalog = "")
 @Entity

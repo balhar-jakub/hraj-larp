@@ -1,14 +1,16 @@
 package cz.hrajlarp.model;
 
+import cz.hrajlarp.model.dao.AdministratorDAO;
+import cz.hrajlarp.model.dao.AuthorizedEditorDAO;
+import cz.hrajlarp.model.dao.UserDAO;
+import cz.hrajlarp.model.dao.UserIsEditorDAO;
+import cz.hrajlarp.model.entity.GameEntity;
+import cz.hrajlarp.model.entity.HrajUserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
-import java.security.Principal;
 
 /**
  * Created by IntelliJ IDEA.

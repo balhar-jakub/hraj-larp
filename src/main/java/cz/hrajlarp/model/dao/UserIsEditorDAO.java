@@ -1,8 +1,11 @@
-package cz.hrajlarp.model;
+package cz.hrajlarp.model.dao;
 
 import java.util.List;
 
-import com.sun.org.apache.bcel.internal.generic.RETURN;
+import cz.hrajlarp.model.entity.GameEntity;
+import cz.hrajlarp.model.entity.HrajUserEntity;
+import cz.hrajlarp.model.entity.UserGamePK;
+import cz.hrajlarp.model.entity.UserIsEditorEntity;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

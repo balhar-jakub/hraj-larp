@@ -1,5 +1,6 @@
-package cz.hrajlarp.model;
+package cz.hrajlarp.model.dao;
 
+import cz.hrajlarp.model.entity.GameEntity;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -8,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -97,6 +98,38 @@ public class GameDAO {
     }
 
     @Transactional(readOnly=true)
+    public List<GameEntity> GetGamesMonthInFuture(){
+        Session session = sessionFactory.openSession();
+        try{
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.MONTH, 1);
+            Timestamp date = new Timestamp(cal.getTimeInMillis());
+            Query finalQuery = session.createQuery("from GameEntity where date >= :date and  order by date");
+            finalQuery.setTimestamp("date", date);
+            return finalQuery.list();
+        }
+        finally {
+            session.close();
+        }
+    }
+
+    @Transactional(readOnly=true)
+    public List<GameEntity> GetGamesTwoWeeksInFuture(){
+        Session session = sessionFactory.openSession();
+        try{
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.WEEK_OF_MONTH, 2);
+            Timestamp date = new Timestamp(cal.getTimeInMillis());
+            Query finalQuery = session.createQuery("from GameEntity where date >= :date order by date");
+            finalQuery.setTimestamp("date", date);
+            return finalQuery.list();
+        }
+        finally {
+            session.close();
+        }
+    }
+
+    @Transactional(readOnly=true)
     public void getAllObjects(){
         final Session session = sessionFactory.openSession();
         try {
@@ -175,7 +208,7 @@ public class GameDAO {
         finally { session.close(); }
     }
 
-        /**
+    /**
      * Delete method for GameEntity table.
      * @param record object for delete.
      */

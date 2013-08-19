@@ -2,12 +2,12 @@ package cz.hrajlarp.utils;
 
 import java.util.List;
 
-import cz.hrajlarp.model.AdministratorDAO;
-import cz.hrajlarp.model.GameEntity;
-import cz.hrajlarp.model.HrajUserEntity;
-import cz.hrajlarp.model.UserAttendedGameEntity;
-import cz.hrajlarp.model.UserDAO;
-import cz.hrajlarp.model.UserIsEditorDAO;
+import cz.hrajlarp.model.dao.AdministratorDAO;
+import cz.hrajlarp.model.entity.GameEntity;
+import cz.hrajlarp.model.entity.HrajUserEntity;
+import cz.hrajlarp.model.entity.UserAttendedGameEntity;
+import cz.hrajlarp.model.dao.UserDAO;
+import cz.hrajlarp.model.dao.UserIsEditorDAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;

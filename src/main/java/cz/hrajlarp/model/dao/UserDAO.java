@@ -1,5 +1,6 @@
-package cz.hrajlarp.model;
+package cz.hrajlarp.model.dao;
 
+import cz.hrajlarp.model.entity.HrajUserEntity;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

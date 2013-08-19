@@ -1,4 +1,4 @@
-package cz.hrajlarp.model;
+package cz.hrajlarp.model.entity;
 
 import cz.hrajlarp.utils.MailService;
 

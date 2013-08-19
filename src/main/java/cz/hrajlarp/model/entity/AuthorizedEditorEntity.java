@@ -1,4 +1,4 @@
-package cz.hrajlarp.model;
+package cz.hrajlarp.model.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -6,11 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Matheo
- * Date: 28.4.13
- * Time: 10:58
- * To change this template use File | Settings | File Templates.
+ *
  */
 @Table(name = "authorized_editor", schema = "public", catalog = "")
 @Entity

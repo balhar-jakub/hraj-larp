@@ -1,5 +1,7 @@
 package cz.hrajlarp.model;
 
+import cz.hrajlarp.model.dao.UserAttendedGameDAO;
+import cz.hrajlarp.model.entity.UserAttendedGameEntity;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -12,10 +14,7 @@ import javax.persistence.Transient;
 import java.io.IOException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Jakub Balhar
- * Date: 24.4.13
- * Time: 19:08
+ *  It handles information from bank.
  */
 @Service
 public class Bank {

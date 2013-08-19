@@ -1,6 +1,10 @@
 package cz.hrajlarp.controller;
 
 import cz.hrajlarp.model.*;
+import cz.hrajlarp.model.dao.GameDAO;
+import cz.hrajlarp.model.dao.UserAttendedGameDAO;
+import cz.hrajlarp.model.dao.UserDAO;
+import cz.hrajlarp.model.entity.GameEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

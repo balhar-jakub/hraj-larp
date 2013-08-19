@@ -1,6 +1,6 @@
 package cz.hrajlarp.utils;
 
-import cz.hrajlarp.model.HrajUserEntity;
+import cz.hrajlarp.model.entity.HrajUserEntity;
 import cz.hrajlarp.model.Rights;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;

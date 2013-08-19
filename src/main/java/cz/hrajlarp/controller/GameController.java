@@ -1,6 +1,11 @@
 package cz.hrajlarp.controller;
 
 import cz.hrajlarp.model.*;
+import cz.hrajlarp.model.dao.*;
+import cz.hrajlarp.model.entity.GameEntity;
+import cz.hrajlarp.model.entity.HrajUserEntity;
+import cz.hrajlarp.model.entity.PreRegNotificationEntity;
+import cz.hrajlarp.model.entity.UserIsEditorEntity;
 import cz.hrajlarp.utils.DateUtils;
 import cz.hrajlarp.utils.FileUtils;
 import cz.hrajlarp.utils.MailService;

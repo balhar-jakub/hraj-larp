@@ -1,10 +1,6 @@
-package cz.hrajlarp.model;
+package cz.hrajlarp.model.entity;
 
 import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 import javax.persistence.*;
 

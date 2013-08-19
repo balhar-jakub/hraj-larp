@@ -1,7 +1,9 @@
-package cz.hrajlarp.model;
+package cz.hrajlarp.model.entity;
 
 import cz.hrajlarp.exceptions.DuplicatePlayerException;
 import cz.hrajlarp.exceptions.TooManyPlayersException;
+import cz.hrajlarp.model.Gender;
+import cz.hrajlarp.model.dao.UserAttendedGameDAO;
 import cz.hrajlarp.utils.DateUtils;
 import cz.hrajlarp.utils.MailService;
 
@@ -307,6 +309,18 @@ public class GameEntity {
 
     public void setMailProhibition(Boolean mailProhibition) {
         this.mailProhibition = mailProhibition;
+    }
+
+    private Boolean paymentFinished;
+
+    @Column(name = "payment_finished")
+    @Basic
+    public Boolean getPaymentFinished() {
+        return paymentFinished;
+    }
+
+    public void setPaymentFinished(Boolean paymentFinished) {
+        this.paymentFinished = paymentFinished;
     }
     
     @Override

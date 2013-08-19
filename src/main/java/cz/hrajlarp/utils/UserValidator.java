@@ -1,6 +1,6 @@
 package cz.hrajlarp.utils;
 
-import cz.hrajlarp.model.HrajUserEntity;
+import cz.hrajlarp.model.entity.HrajUserEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;

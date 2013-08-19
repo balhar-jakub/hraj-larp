@@ -1,6 +1,11 @@
 package cz.hrajlarp.controller;
 
 import cz.hrajlarp.model.*;
+import cz.hrajlarp.model.dao.*;
+import cz.hrajlarp.model.entity.GameEntity;
+import cz.hrajlarp.model.entity.HrajUserEntity;
+import cz.hrajlarp.model.entity.UserAttendedGameEntity;
+import cz.hrajlarp.model.entity.UserIsEditorEntity;
 import cz.hrajlarp.utils.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -56,6 +61,31 @@ public class AdminController {
                     userAttendedGameDAO.getPlayers(id, true);
 
             model.addAttribute("gameId",id);
+            model.addAttribute("paymentFinished",game.getPaymentFinished());
+            model.addAttribute("gameName", game.getName());
+            model.addAttribute("players", players);
+            model.addAttribute("substitutes", substitutes);
+            model.addAttribute("isLogged", true);
+            return "/admin/game/players";
+        } else {
+            model.addAttribute("path", "/admin/game/players/" + String.valueOf(id));
+            return "/admin/norights";
+        }
+    }
+
+    @RequestMapping(value = "/admin/game/finished/{id}", method= RequestMethod.GET)
+    public String paymentFinished(Model model, @PathVariable("id") Integer id) {
+        HrajUserEntity user = rights.getLoggedUser();
+        GameEntity game = gameDAO.getGameById(id);
+
+        if (rights.hasRightsToEditGame(user, game)){
+            List<UserAttendedGameEntity> players =
+                    userAttendedGameDAO.getPlayers(id, false);
+            List<UserAttendedGameEntity> substitutes =
+                    userAttendedGameDAO.getPlayers(id, true);
+
+            model.addAttribute("gameId",id);
+            model.addAttribute("paymentFinished",game.getPaymentFinished());
             model.addAttribute("gameName", game.getName());
             model.addAttribute("players", players);
             model.addAttribute("substitutes", substitutes);

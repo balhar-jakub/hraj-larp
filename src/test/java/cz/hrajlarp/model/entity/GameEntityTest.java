@@ -1,5 +1,7 @@
-package cz.hrajlarp.model;
+package cz.hrajlarp.model.entity;
 
+import cz.hrajlarp.model.entity.GameEntity;
+import cz.hrajlarp.model.entity.HrajUserEntity;
 import org.junit.Before;
 import org.junit.Test;
 

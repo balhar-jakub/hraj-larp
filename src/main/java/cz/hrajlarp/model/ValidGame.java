@@ -1,5 +1,6 @@
 package cz.hrajlarp.model;
 
+import cz.hrajlarp.model.entity.GameEntity;
 import cz.hrajlarp.utils.DateUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -8,7 +9,6 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
