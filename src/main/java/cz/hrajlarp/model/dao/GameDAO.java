@@ -104,8 +104,9 @@ public class GameDAO {
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.MONTH, 1);
             Timestamp date = new Timestamp(cal.getTimeInMillis());
-            Query finalQuery = session.createQuery("from GameEntity where date >= :date and  order by date");
+            Query finalQuery = session.createQuery("from GameEntity where date >= :date and shortText=:shortText order by date");
             finalQuery.setTimestamp("date", date);
+            finalQuery.setString("shortText", "Festivalová");
             return finalQuery.list();
         }
         finally {
