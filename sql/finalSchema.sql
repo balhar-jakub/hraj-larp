@@ -142,15 +142,15 @@ ALTER TABLE ONLY places_finder
 
 
 --
--- Name: places_finder; Type: TABLE; Schema: public; Owner: hrajlarp; Tablespace:
+-- Name: scheduler; Type: TABLE; Schema: public; Owner: hrajlarp; Tablespace:
 --
 
-create table first_line (
+create table scheduler (
     user_id integer not null
 );
 
-ALTER TABLE ONLY first_line
-    ADD CONSTRAINT first_line_user_id_fkey FOREIGN KEY (user_id) REFERENCES hraj_user(id);
+ALTER TABLE ONLY scheduler
+    ADD CONSTRAINT scheduler_user_id_fkey FOREIGN KEY (user_id) REFERENCES hraj_user(id);
 
 
 --

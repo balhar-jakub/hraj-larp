@@ -156,7 +156,7 @@
         <h3>Typ hry:</h3>
         <c:choose>
             <c:when test="${game.festival}">
-                <p>Festivalová hra uváděná v rámci HRAJ Larp.</p>
+                <p>Hra uváděná v rámci festivalu HRAJ LARP.</p>
             </c:when>
             <c:otherwise>
                 <p>${game.shortText}</p>

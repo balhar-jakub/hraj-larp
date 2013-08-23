@@ -61,7 +61,8 @@ public class AdminController {
                     userAttendedGameDAO.getPlayers(id, true);
 
             model.addAttribute("gameId",id);
-            model.addAttribute("paymentFinished",game.getPaymentFinished());
+            model.addAttribute("paymentFinished",
+                    game.getPaymentFinished() != null && game.getPaymentFinished());
             model.addAttribute("gameName", game.getName());
             model.addAttribute("players", players);
             model.addAttribute("substitutes", substitutes);
@@ -85,7 +86,8 @@ public class AdminController {
                     userAttendedGameDAO.getPlayers(id, true);
 
             model.addAttribute("gameId",id);
-            model.addAttribute("paymentFinished",game.getPaymentFinished());
+            model.addAttribute("paymentFinished",
+                    game.getPaymentFinished() != null && game.getPaymentFinished());
             model.addAttribute("gameName", game.getName());
             model.addAttribute("players", players);
             model.addAttribute("substitutes", substitutes);

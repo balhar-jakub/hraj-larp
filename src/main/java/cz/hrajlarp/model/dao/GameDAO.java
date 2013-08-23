@@ -4,7 +4,6 @@ import cz.hrajlarp.model.entity.GameEntity;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.metadata.ClassMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -121,8 +119,9 @@ public class GameDAO {
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.WEEK_OF_MONTH, 2);
             Timestamp date = new Timestamp(cal.getTimeInMillis());
-            Query finalQuery = session.createQuery("from GameEntity where date >= :date order by date");
+            Query finalQuery = session.createQuery("from GameEntity where date >= :date and shortText=:shortText order by date");
             finalQuery.setTimestamp("date", date);
+            finalQuery.setString("shortText", "Festivalová");
             return finalQuery.list();
         }
         finally {
@@ -131,22 +130,20 @@ public class GameDAO {
     }
 
     @Transactional(readOnly=true)
-    public void getAllObjects(){
-        final Session session = sessionFactory.openSession();
-        try {
-            System.out.println("querying all the managed entities...");
-            final Map metadataMap = sessionFactory.getAllClassMetadata();
-            for (Object key : metadataMap.keySet()) {
-                final ClassMetadata classMetadata = (ClassMetadata) metadataMap.get(key);
-                final String entityName = classMetadata.getEntityName();
-                final Query query = session.createQuery("from " + entityName);
-                System.out.println("executing: " + query.getQueryString());
-                for (Object o : query.list()) {
-                    System.out.println("  " + o);
-                }
-            }
+    public List<GameEntity> getTwoWeeksPast() {
+        Session session = sessionFactory.openSession();
+        try{
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.WEEK_OF_MONTH, -2);
+            Timestamp date = new Timestamp(cal.getTimeInMillis());
+            Query finalQuery = session.createQuery("from GameEntity where date <= :date and shortText=:shortText order by date");
+            finalQuery.setTimestamp("date", date);
+            finalQuery.setString("shortText", "Festivalová");
+            return finalQuery.list();
         }
-        finally { session.close(); }
+        finally {
+            session.close();
+        }
     }
 
     /**

@@ -1,18 +1,17 @@
 package cz.hrajlarp.utils;
 
-import java.util.List;
-
 import cz.hrajlarp.model.dao.AdministratorDAO;
+import cz.hrajlarp.model.dao.UserDAO;
+import cz.hrajlarp.model.dao.UserIsEditorDAO;
 import cz.hrajlarp.model.entity.GameEntity;
 import cz.hrajlarp.model.entity.HrajUserEntity;
 import cz.hrajlarp.model.entity.UserAttendedGameEntity;
-import cz.hrajlarp.model.dao.UserDAO;
-import cz.hrajlarp.model.dao.UserIsEditorDAO;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+
+import java.util.List;
 
 public class MailService {
 	@Autowired
@@ -253,6 +252,48 @@ public class MailService {
         }
         catch(MailException e) {
             System.err.println(e.getMessage());            
+        }
+    }
+
+    public void sendInfoAboutNoGame(String email) {
+        SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
+        message.setTo(email);
+        message.setText("" +
+                "V systému není zadaná v době měsíc od teď žádná hra, která by patřila pod festival. " +
+                "Je potřeba hru doplnit. Dokud nebude hra doplněna bude odesílán tento email každý den.");
+        try{
+            this.mailSender.send(message);
+        }
+        catch(MailException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public void sendInfoAboutNoPlace(String email, GameEntity gameEntity) {
+        SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
+        message.setTo(email);
+        String messageText = String.format("V systému u hry %s není zadané místo, ačkoliv je hra za méně než 14 dní. " +
+                "Je potřeba místo doplnit. Dokud nebude hra doplněna, bude odesílán tento email každý den.");
+        message.setText(messageText);
+        try{
+            this.mailSender.send(message);
+        }
+        catch(MailException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public void sendInfoAboutUnfinishedAccount(String email, GameEntity gameEntity) {
+        SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
+        message.setTo(email);
+        String messageText = String.format("V systému u hry %s není zaškrtnuté předané účetnictví, ačkoliv hra byla před více než 14 dny. " +
+                "Je potřeba předat účetnictví. Dokud nebude předáno, bude odesílán tento email každý den.");
+        message.setText(messageText);
+        try{
+            this.mailSender.send(message);
+        }
+        catch(MailException e) {
+            System.err.println(e.getMessage());
         }
     }
 }
