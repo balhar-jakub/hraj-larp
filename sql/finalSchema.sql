@@ -78,8 +78,7 @@ CREATE TABLE game (
     ordinary_player_text text,
     registration_started timestamp without time zone,
     action character varying(255),
-    mail_prohibition boolean DEFAULT false,
-    payment_finished boolean default false
+    mail_prohibition boolean DEFAULT false
 );
 
 
@@ -117,41 +116,6 @@ CREATE TABLE hraj_user (
 
 
 ALTER TABLE public.hraj_user OWNER TO hrajlarp;
-
---
--- Name: accountant; Type: TABLE; Schema: public; Owner: hrajlarp; Tablespace:
---
-
-create table accountant (
-    user_id integer not null
-);
-
-ALTER TABLE ONLY accountant
-    ADD CONSTRAINT accountant_user_id_fkey FOREIGN KEY (user_id) REFERENCES hraj_user(id);
-
---
--- Name: places_finder; Type: TABLE; Schema: public; Owner: hrajlarp; Tablespace:
---
-
-create table places_finder (
-    user_id integer not null
-);
-
-ALTER TABLE ONLY places_finder
-    ADD CONSTRAINT places_finder_user_id_fkey FOREIGN KEY (user_id) REFERENCES hraj_user(id);
-
-
---
--- Name: scheduler; Type: TABLE; Schema: public; Owner: hrajlarp; Tablespace:
---
-
-create table scheduler (
-    user_id integer not null
-);
-
-ALTER TABLE ONLY scheduler
-    ADD CONSTRAINT scheduler_user_id_fkey FOREIGN KEY (user_id) REFERENCES hraj_user(id);
-
 
 --
 -- Name: hraj_user_attended_game_seq; Type: SEQUENCE; Schema: public; Owner: hrajlarp

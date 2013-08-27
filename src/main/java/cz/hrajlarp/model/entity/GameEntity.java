@@ -6,6 +6,7 @@ import cz.hrajlarp.model.Gender;
 import cz.hrajlarp.model.dao.UserAttendedGameDAO;
 import cz.hrajlarp.utils.DateUtils;
 import cz.hrajlarp.utils.MailService;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -426,6 +427,7 @@ public class GameEntity {
 
     @MapKey(name = "gameId")
     @OneToMany(mappedBy = "editGame")
+    @BatchSize(size = 2)
     public Map<Object, UserIsEditorEntity> getEditedByUsers() {
         return editedByUsers;
     }

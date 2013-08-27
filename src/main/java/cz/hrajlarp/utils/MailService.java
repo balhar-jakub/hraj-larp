@@ -273,7 +273,7 @@ public class MailService {
         SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
         message.setTo(email);
         String messageText = String.format("V systému u hry %s není zadané místo, ačkoliv je hra za méně než 14 dní. " +
-                "Je potřeba místo doplnit. Dokud nebude hra doplněna, bude odesílán tento email každý den.");
+                "Je potřeba místo doplnit. Dokud nebude hra doplněna, bude odesílán tento email každý den.", gameEntity.getName());
         message.setText(messageText);
         try{
             this.mailSender.send(message);
@@ -287,7 +287,7 @@ public class MailService {
         SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
         message.setTo(email);
         String messageText = String.format("V systému u hry %s není zaškrtnuté předané účetnictví, ačkoliv hra byla před více než 14 dny. " +
-                "Je potřeba předat účetnictví. Dokud nebude předáno, bude odesílán tento email každý den.");
+                "Je potřeba předat účetnictví. Dokud nebude předáno, bude odesílán tento email každý den.", gameEntity.getName());
         message.setText(messageText);
         try{
             this.mailSender.send(message);

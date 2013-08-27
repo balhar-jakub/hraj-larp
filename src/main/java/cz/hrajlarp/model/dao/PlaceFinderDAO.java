@@ -1,8 +1,8 @@
 package cz.hrajlarp.model.dao;
 
-import cz.hrajlarp.model.entity.AccountantEntity;
 import cz.hrajlarp.model.entity.PlaceFinderEntity;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -25,14 +25,32 @@ public class PlaceFinderDAO {
 
     @Transactional(readOnly=true)
     public PlaceFinderEntity getById(Integer id){
-        Query query = sessionFactory.getCurrentSession().createQuery("from PlaceFinderEntity where id = :userId");
-        query.setInteger("userId", id);
-        return (PlaceFinderEntity) query.uniqueResult();
+        PlaceFinderEntity result = null;
+        Session session = sessionFactory.openSession();
+        try {
+            Query query = session.createQuery("from PlaceFinderEntity where id = :userId");
+            query.setInteger("userId", id);
+            result = (PlaceFinderEntity) query.uniqueResult();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return result;
     }
 
     @Transactional(readOnly=true)
     public List<PlaceFinderEntity> getAll(){
-        Query query = sessionFactory.getCurrentSession().createQuery("from PlaceFinderEntity");
-        return (List<PlaceFinderEntity>) query.list();
+        List<PlaceFinderEntity> result = null;
+        Session session = sessionFactory.openSession();
+        try {
+            Query query = session.createQuery("from PlaceFinderEntity");
+            result = query.list();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return result;
     }
 }

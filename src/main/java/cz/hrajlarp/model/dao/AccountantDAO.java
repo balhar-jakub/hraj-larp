@@ -3,6 +3,7 @@ package cz.hrajlarp.model.dao;
 import cz.hrajlarp.model.entity.AccountantEntity;
 import cz.hrajlarp.model.entity.SchedulerEntity;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -20,18 +21,24 @@ public class AccountantDAO {
 
     @Transactional(readOnly=false)
     public void saveOrUpdate(AccountantEntity toSave){
-        sessionFactory.getCurrentSession().saveOrUpdate(toSave);
+        Session session = sessionFactory.openSession();
+        session.saveOrUpdate(toSave);
+        session.close();
     }
 
     @Transactional(readOnly=true)
     public AccountantEntity getById(Integer id){
-        Query query = sessionFactory.getCurrentSession().createQuery("from AccountantEntity where id = :userId");
+        Session session = sessionFactory.openSession();
+        Query query = session.createQuery("from AccountantEntity where id = :userId");
         query.setInteger("userId", id);
-        return (AccountantEntity) query.uniqueResult();
+        AccountantEntity result = (AccountantEntity) query.uniqueResult();
+        session.close();
+        return result;
     }
 
     @Transactional(readOnly=true)
     public List<SchedulerEntity> getAll(){
+        Session session = sessionFactory.openSession();
         Query query = sessionFactory.getCurrentSession().createQuery("from AccountantEntity");
         return query.list();
     }

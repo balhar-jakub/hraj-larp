@@ -36,9 +36,12 @@
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
-        <property name="url" value="jdbc:postgresql://ec2-54-217-215-96.eu-west-1.compute.amazonaws.com:5432/d9obvfd7djku8l?username=qnnucjxpirtjpb&amp;password=n6nlIzYp-ubkDawkSEn5AICq99&amp;ssl=true&amp;sslfactory=org.postgresql.ssl.NonValidatingFactory" />
-        <property name="username" value="qnnucjxpirtjpb" />
-        <property name="password" value="n6nlIzYp-ubkDawkSEn5AICq99" />
+        <!--<property name="url" value="jdbc:postgresql://localhost/hrajlarp3" />
+        <property name="username" value="hrajlarp3" />
+        <property name="password" value="5e5icha" />-->
+        <property name="url" value="jdbc:postgresql://194.8.253.136/hrajlarp" />
+        <property name="username" value="hrajlarp" />
+        <property name="password" value="5e5icha" />
 
 		<property name="initialSize" value="2" />
         <property name="maxActive" value="10" />

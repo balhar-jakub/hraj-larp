@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -97,6 +98,7 @@ public class GameDAO {
 
     @Transactional(readOnly=true)
     public List<GameEntity> GetGamesMonthInFuture(){
+        // I need to make sure that every week at least month in future is there game that is festival.
         Session session = sessionFactory.openSession();
         try{
             Calendar cal = Calendar.getInstance();
@@ -108,7 +110,7 @@ public class GameDAO {
             return finalQuery.list();
         }
         finally {
-            session.close();
+            //session.close();
         }
     }
 
@@ -119,13 +121,15 @@ public class GameDAO {
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.WEEK_OF_MONTH, 2);
             Timestamp date = new Timestamp(cal.getTimeInMillis());
-            Query finalQuery = session.createQuery("from GameEntity where date >= :date and shortText=:shortText order by date");
+            Timestamp from = new Timestamp(new Date().getTime());
+            Query finalQuery = session.createQuery("from GameEntity where date >= :fromDate and date <= :date and shortText=:shortText order by date");
+            finalQuery.setTimestamp("fromDate", from);
             finalQuery.setTimestamp("date", date);
             finalQuery.setString("shortText", "Festivalová");
             return finalQuery.list();
         }
         finally {
-            session.close();
+            //session.close();
         }
     }
 
@@ -142,7 +146,7 @@ public class GameDAO {
             return finalQuery.list();
         }
         finally {
-            session.close();
+            //session.close();
         }
     }
 
