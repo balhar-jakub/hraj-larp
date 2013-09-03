@@ -1,7 +1,6 @@
 package cz.hrajlarp.model.dao;
 
 import cz.hrajlarp.model.entity.AccountantEntity;
-import cz.hrajlarp.model.entity.SchedulerEntity;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -37,7 +36,7 @@ public class AccountantDAO {
     }
 
     @Transactional(readOnly=true)
-    public List<SchedulerEntity> getAll(){
+    public List<AccountantEntity> getAll(){
         Session session = sessionFactory.openSession();
         Query query = sessionFactory.getCurrentSession().createQuery("from AccountantEntity");
         return query.list();

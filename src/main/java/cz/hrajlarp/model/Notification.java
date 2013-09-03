@@ -90,9 +90,9 @@ public class Notification {
         String mailText = "";
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         for(int i= 0 ; i < 4; i++){
-            if(weeks[i]){
+            if(!weeks[i]){
                 mailText += "V týdnu od " + sdf.format(starts[i].getTime()) + "do " +
-                        sdf.format(starts[i].getTime()) + " není zadaná žádná hra.";
+                        sdf.format(ends[i].getTime()) + " není zadaná žádná hra.";
             }
         }
         if(!mailText.equals("")){
@@ -129,7 +129,7 @@ public class Notification {
     }
 
     // Send if there is not accepted at the game detail in administration.
-    @Scheduled(cron="1 0 0 * * *")
+    @Scheduled(cron="0 0 * * * *")
     @Transient
     public void sendUnfinishedAccountNotification(){
         List<GameEntity> gamesWithUnfinishedAccount = gameDAO.getTwoWeeksPast();
