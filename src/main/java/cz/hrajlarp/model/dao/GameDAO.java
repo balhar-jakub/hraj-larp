@@ -98,14 +98,15 @@ public class GameDAO {
 
     @Transactional(readOnly=true)
     public List<GameEntity> GetGamesMonthInFuture(){
-        // I need to make sure that every week at least month in future is there game that is festival.
         Session session = sessionFactory.openSession();
         try{
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.MONTH, 1);
             Timestamp date = new Timestamp(cal.getTimeInMillis());
-            Query finalQuery = session.createQuery("from GameEntity where date >= :date and shortText=:shortText order by date");
+            Timestamp from = new Timestamp(new Date().getTime());
+            Query finalQuery = session.createQuery("from GameEntity where date >= :fromDate and date <= :date and shortText=:shortText order by date");
             finalQuery.setTimestamp("date", date);
+            finalQuery.setTimestamp("fromDate", from);
             finalQuery.setString("shortText", "Festivalová");
             return finalQuery.list();
         }

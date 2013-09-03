@@ -255,12 +255,10 @@ public class MailService {
         }
     }
 
-    public void sendInfoAboutNoGame(String email) {
+    public void sendInfoAboutNoGame(String email, String mailText) {
         SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
         message.setTo(email);
-        message.setText("" +
-                "V systému není zadaná v době měsíc od teď žádná hra, která by patřila pod festival. " +
-                "Je potřeba hru doplnit. Dokud nebude hra doplněna bude odesílán tento email každý den.");
+        message.setText(mailText);
         try{
             this.mailSender.send(message);
         }

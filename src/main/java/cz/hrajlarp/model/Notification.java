@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.Transient;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -33,7 +34,7 @@ public class Notification {
     @Autowired
     PlaceFinderDAO placeFinderDAO;
 
-    @Scheduled(cron="1 0 * * * *")
+    @Scheduled(cron="0 0 * * * *")
     @Transient
     public void sendBeforeGameMail() {
         List<UserAttendedGameEntity> allPlayers = userAttendedGameDAO.getAllFuture();
@@ -45,7 +46,7 @@ public class Notification {
         }
     }
     
-    @Scheduled(cron="1 0 * * * *")
+    @Scheduled(cron="0 0 * * * *")
     @Transient
     public void sendRegStartNotification() {
         List<PreRegNotificationEntity> allPreRegs = preRegNotificationDAO.getAllPreRegNotifications();
@@ -60,23 +61,58 @@ public class Notification {
     }
 
     // Send if there is no game scheduled in month
-    @Scheduled(cron="1 0 * * * *")
+    @Scheduled(cron="0 0 * * * *")
     @Transient
     public void sendNoGameNotification(){
         // There is no game in date after today plus one month.
         List<GameEntity> games = gameDAO.GetGamesMonthInFuture();
         List<SchedulerEntity> schedulers = schedulerDAO.getAll();
-        if(games.size() == 0){
+
+        boolean[] weeks = new boolean[4];
+        Calendar[] starts = new Calendar[4];
+        Calendar[] ends = new Calendar[4];
+        starts[0] = getStartOfWeek(0,Calendar.MONDAY);
+        starts[1] = getStartOfWeek(1,Calendar.MONDAY);
+        starts[2] = getStartOfWeek(2,Calendar.MONDAY);
+        starts[3] = getStartOfWeek(3,Calendar.MONDAY);
+        ends[0] = getStartOfWeek(0,Calendar.FRIDAY);
+        ends[1] = getStartOfWeek(1,Calendar.FRIDAY);
+        ends[2] = getStartOfWeek(2,Calendar.FRIDAY);
+        ends[3] = getStartOfWeek(3,Calendar.FRIDAY);
+        for(GameEntity game: games){
+            for(int i= 0 ; i < 4; i++){
+                if(game.getDate().after(starts[i].getTime()) &&
+                        game.getDate().before(ends[i].getTime())){
+                     weeks[i] = true;
+                }
+            }
+        }
+        String mailText = "";
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+        for(int i= 0 ; i < 4; i++){
+            if(weeks[i]){
+                mailText += "V týdnu od " + sdf.format(starts[i].getTime()) + "do " +
+                        sdf.format(starts[i].getTime()) + " není zadaná žádná hra.";
+            }
+        }
+        if(!mailText.equals("")){
             for(SchedulerEntity scheduler: schedulers){
-                mailService.sendInfoAboutNoGame(
-                        userDAO.getUserById(scheduler.getId()).getEmail());
+                HrajUserEntity user = userDAO.getUserById(scheduler.getId());
+                mailService.sendInfoAboutNoGame(user.getEmail(), mailText);
             }
         }
     }
 
+    private Calendar getStartOfWeek(int week, int field){
+        Calendar firstWeekStart = Calendar.getInstance();
+        firstWeekStart.set(Calendar.DAY_OF_WEEK, field);
+        firstWeekStart.add(Calendar.WEEK_OF_MONTH, week);
+        return firstWeekStart;
+    }
+
     // Send if there is no place at game two weeks before tha game
     // Every game that is due in less than two weeks must have place assigned
-    @Scheduled(cron="1 0 * * * *")
+    @Scheduled(cron="0 0 * * * *")
     @Transient
     public void sendNoPlaceNotification(){
         List<GameEntity> gamesWithoutPlace = gameDAO.GetGamesTwoWeeksInFuture();
@@ -93,7 +129,7 @@ public class Notification {
     }
 
     // Send if there is not accepted at the game detail in administration.
-    @Scheduled(cron="1 0 * * * *")
+    @Scheduled(cron="1 0 0 * * *")
     @Transient
     public void sendUnfinishedAccountNotification(){
         List<GameEntity> gamesWithUnfinishedAccount = gameDAO.getTwoWeeksPast();
