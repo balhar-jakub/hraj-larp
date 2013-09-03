@@ -14,7 +14,7 @@ public class HomeController {
         return "basics";
     }
 
-    @RequestMapping(value="/festival")
+    @RequestMapping(value={"/festival","/"})
     public String festival(){
         return "festival";
     }

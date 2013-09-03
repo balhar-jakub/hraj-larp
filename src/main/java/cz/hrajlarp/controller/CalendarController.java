@@ -1,6 +1,6 @@
 package cz.hrajlarp.controller;
 
-import cz.hrajlarp.model.*;
+import cz.hrajlarp.model.Rights;
 import cz.hrajlarp.model.dao.GameDAO;
 import cz.hrajlarp.model.dao.UserAttendedGameDAO;
 import cz.hrajlarp.model.dao.UserDAO;
@@ -40,7 +40,7 @@ public class CalendarController {
      * @param model model
      * @return String of .JSP file name mapped for view of calendar
      */
-    @RequestMapping(value = {"/kalendar","/"}, method= RequestMethod.GET)
+    @RequestMapping(value = "/kalendar", method= RequestMethod.GET)
     public String calendar(Model model) {
         System.out.println("CalendarController: Passing through..." + "/kalendar");
 
