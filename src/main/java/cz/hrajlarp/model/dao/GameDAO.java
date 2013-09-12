@@ -111,7 +111,7 @@ public class GameDAO {
             return finalQuery.list();
         }
         finally {
-            //session.close();
+            session.close();
         }
     }
 
@@ -130,7 +130,7 @@ public class GameDAO {
             return finalQuery.list();
         }
         finally {
-            //session.close();
+            session.close();
         }
     }
 
@@ -147,7 +147,7 @@ public class GameDAO {
             return finalQuery.list();
         }
         finally {
-            //session.close();
+            session.close();
         }
     }
 

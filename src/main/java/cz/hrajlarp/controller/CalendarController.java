@@ -42,8 +42,6 @@ public class CalendarController {
      */
     @RequestMapping(value = "/kalendar", method= RequestMethod.GET)
     public String calendar(Model model) {
-        System.out.println("CalendarController: Passing through..." + "/kalendar");
-
         List <GameEntity> futureGames = gameDAO.getFutureGames();
         List <GameEntity> formerGames = gameDAO.getFormerGames();
 
