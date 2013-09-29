@@ -1,6 +1,7 @@
 package cz.hrajlarp.controller;
 
-import cz.hrajlarp.model.*;
+import cz.hrajlarp.model.Rights;
+import cz.hrajlarp.model.ValidGame;
 import cz.hrajlarp.model.dao.*;
 import cz.hrajlarp.model.entity.GameEntity;
 import cz.hrajlarp.model.entity.HrajUserEntity;
@@ -318,6 +319,7 @@ public class GameController {
                     try {
                         game.loginAndMailPlayer(userAttendedGameDAO, mailService, user);
                     } catch (Exception e) {
+                        e.printStackTrace();
                         return "/error";
                     }
                 }

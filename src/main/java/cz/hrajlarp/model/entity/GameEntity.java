@@ -623,13 +623,13 @@ public class GameEntity {
             throw new TooManyPlayersException("GameEntity error: number of assigned players (" + assigned +
                     ") is above limit of game roles (game id=" + getId() + ")");
         }
-
+        /*
         if ((menFreeRoles > 0 || womenFreeRoles > 0) &&
                 (bothFreeRoles != getBothRole())) {
             // The game is not full and has substitutes
             throw new TooManyPlayersException("GameEntity error: game has substitutes even " +
                     "though it is not full yet");
-        }
+        } */
     }
 
     /**
@@ -756,6 +756,7 @@ public class GameEntity {
         UserAttendedGameEntity uage = new UserAttendedGameEntity();
         uage.setGameId(getId());
         uage.setUserId(user.getId());
+        uage.setAdded(new Timestamp(new Date().getTime()));
         if (!userAttendedGameDAO.isLogged(uage)) {  //user is not logged in this game
             countPlayers(userAttendedGameDAO);   //count new free roles count
 
