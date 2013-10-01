@@ -43,6 +43,7 @@ public class ValidGame {
     private String registrationStartedTime;
     private String ordinaryPlayerText;
     private String replacementsText;
+    private String registeredSubstitute;
     private Boolean mailProhibition;
     private Pattern pattern;
     private Matcher matcher;
@@ -178,6 +179,7 @@ public class ValidGame {
         game.setOrdinaryPlayerText(ordinaryPlayerText);
         game.setReplacementsText(replacementsText);
         game.setMailProhibition(mailProhibition);
+        game.setRegisteredSubstitute(registeredSubstitute);
         
         game.setId(id);
 
@@ -226,6 +228,7 @@ public class ValidGame {
         setOrdinaryPlayerText(entity.getOrdinaryPlayerText());
         setReplacementsText(entity.getReplacementsText());
         setMailProhibition(entity.getMailProhibition());
+        setRegisteredSubstitute(entity.getRegisteredSubstitute());
         
         if(entity.getId() != null)
             setId(entity.getId());
@@ -427,5 +430,13 @@ public class ValidGame {
         setPlace(game.getPlace());
         setOrdinaryPlayerText(game.getOrdinaryPlayerText());
         setReplacementsText(game.getReplacementsText());
+    }
+
+    public String getRegisteredSubstitute() {
+        return registeredSubstitute;
+    }
+
+    public void setRegisteredSubstitute(String registeredSubstitute) {
+        this.registeredSubstitute = registeredSubstitute;
     }
 }

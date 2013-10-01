@@ -36,13 +36,17 @@ public class MailService {
 
         SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
         message.setTo(u.getEmail());
-        message.setText(
+        if(g.getReplacementsText() != null && !g.getReplacementsText().trim().equals("")){
+            message.setText(g.getReplacementsText());
+        } else {
+            message.setText(
             "Vážený uživateli " + u.getName() + " " + u.getLastName() + ",\n\n"
                 + "tímto Vám dáváme vědět, že Vaše úloha ve hře "
                 + g.getName() +", "
                 + "se změnila z náhrady na závaznou roli. Hra se koná " + g.getDateAsDMY() +"\n"
                 + "Ověřte si prosím tuto skutečnost na stránce hrajlarp.cz\n\n"
                 + "S přáním krásného dne Váš tým HRAJ LARP");
+        }
         System.out.println("Sending message:\n" + message.getText() + "\n");
         try{
             this.mailSender.send(message);
@@ -99,8 +103,8 @@ public class MailService {
 
         SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
         message.setTo(u.getEmail());
-        if (g.getReplacementsText()!=null && !g.getReplacementsText().trim().equals("")){
-        	message.setText(g.getReplacementsText());
+        if (g.getRegisteredSubstitute()!=null && !g.getRegisteredSubstitute().trim().equals("")){
+        	message.setText(g.getRegisteredSubstitute());
         } else {
 	        message.setText(
 	        		 "Vážený uživateli " + u.getName() + " " + u.getLastName() + ",\n\n"

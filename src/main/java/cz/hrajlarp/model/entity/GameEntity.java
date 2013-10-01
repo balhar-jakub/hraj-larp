@@ -288,6 +288,18 @@ public class GameEntity {
         this.replacementsText = replacementsText;
     }
 
+    private String registeredSubstitute;
+
+    @Column(name = "registered_substitute")
+    @Basic
+    public String getRegisteredSubstitute() {
+        return registeredSubstitute;
+    }
+
+    public void setRegisteredSubstitute(String registeredSubstitute) {
+        this.registeredSubstitute = registeredSubstitute;
+    }
+
     private String action;
 
     @Column(name = "action")

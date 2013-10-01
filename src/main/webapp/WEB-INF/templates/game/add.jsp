@@ -94,16 +94,22 @@
         <form:input type="text" id="registrationStartedTime" path="registrationStartedTime" value="${game.registrationStartedTime}"/>
     </div>
     <div>
-        <label for="ordinaryPlayerText">Mail pro přihlášeného hráče:</label>
+        <label for="ordinaryPlayerText">Mail pro přihlášeného hráče(Posílá se když se hráč přihlásí jako regulerní hráč):</label>
         <form:textarea id="ordinaryPlayerText" path="ordinaryPlayerText" 
         value="" escapeXml="true" />
         <form:errors path="ordinaryPlayerText" />
     </div>
     <div>
-        <label for="replacementsText">Mail pro náhradu:</label>
+        <label for="replacementsText">Mail pro náhradu (Posílá se v okamžiku kdy se z náhradníka stane hráč):</label>
         <form:textarea id="replacementsText" path="replacementsText" 
         value="" escapeXml="true" />
         <form:errors path="replacementsText" />
+    </div>
+    <div>
+        <label for="registeredSubstitute">Mail pro náhradu (Posílá se v okamžiku kdy se hráč přihlásí jako náhrada):</label>
+        <form:textarea id="registeredSubstitute" path="registeredSubstitute"
+                       value="" escapeXml="true" />
+        <form:errors path="registeredSubstitute" />
     </div>
 	<div>
         <label style="float: left;" for="mailProhibition">Nechci odesílat maily o této hře: </label>
