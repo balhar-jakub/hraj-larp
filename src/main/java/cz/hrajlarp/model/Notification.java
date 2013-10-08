@@ -41,8 +41,10 @@ public class Notification {
         List<UserAttendedGameEntity> allPlayers = userAttendedGameDAO.getAllFuture();
         for(UserAttendedGameEntity player: allPlayers) {
             HrajUserEntity user = player.getUserAttended();
-            if(player.getPayed() == null || !player.getPayed()) {
-                mailService.sendMsgBeforeGame(user, player.getAttendedGame());
+            if(!player.isSubstitute()){
+                if(player.getPayed() == null || !player.getPayed()) {
+                    mailService.sendMsgBeforeGame(user, player.getAttendedGame());
+                }
             }
         }
     }
