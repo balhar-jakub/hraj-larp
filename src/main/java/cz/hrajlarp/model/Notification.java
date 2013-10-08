@@ -34,9 +34,10 @@ public class Notification {
     @Autowired
     PlaceFinderDAO placeFinderDAO;
 
-    @Scheduled(cron="0 0 * * * *")
+    @Scheduled(fixedRate=24*60*60*1000)
     @Transient
     public void sendBeforeGameMail() {
+        System.out.println("HRAJLARP - sendBeforeGameMail.");
         List<UserAttendedGameEntity> allPlayers = userAttendedGameDAO.getAllFuture();
         for(UserAttendedGameEntity player: allPlayers) {
             HrajUserEntity user = player.getUserAttended();
@@ -46,9 +47,10 @@ public class Notification {
         }
     }
     
-    @Scheduled(cron="0 0 * * * *")
+    @Scheduled(fixedRate=24*60*60*1000)
     @Transient
     public void sendRegStartNotification() {
+        System.out.println("HRAJLARP - sendRegStartNotification.");
         List<PreRegNotificationEntity> allPreRegs = preRegNotificationDAO.getAllPreRegNotifications();
         Date now = Calendar.getInstance().getTime();
         for(PreRegNotificationEntity preReg: allPreRegs) {
@@ -61,9 +63,10 @@ public class Notification {
     }
 
     // Send if there is no game scheduled in month
-    @Scheduled(cron="0 0 * * * *")
+    @Scheduled(fixedRate=24*60*60*1000)
     @Transient
     public void sendNoGameNotification(){
+        System.out.println("HRAJLARP - sendNoGameNotification.");
         // There is no game in date after today plus one month.
         List<GameEntity> games = gameDAO.GetGamesMonthInFuture();
         List<SchedulerEntity> schedulers = schedulerDAO.getAll();
@@ -112,9 +115,10 @@ public class Notification {
 
     // Send if there is no place at game two weeks before tha game
     // Every game that is due in less than two weeks must have place assigned
-    @Scheduled(cron="0 0 * * * *")
+    @Scheduled(fixedRate=24*60*60*1000)
     @Transient
     public void sendNoPlaceNotification(){
+        System.out.println("HRAJLARP - sendNoGameNotification.");
         List<GameEntity> gamesWithoutPlace = gameDAO.GetGamesTwoWeeksInFuture();
         List<PlaceFinderEntity> placeFinders = placeFinderDAO.getAll();
         for(GameEntity game: gamesWithoutPlace){
@@ -129,9 +133,10 @@ public class Notification {
     }
 
     // Send if there is not accepted at the game detail in administration.
-    @Scheduled(cron="0 0 * * * *")
+    @Scheduled(fixedRate=24*60*60*1000)
     @Transient
     public void sendUnfinishedAccountNotification(){
+        System.out.println("HRAJLARP - sendNoGameNotification.");
         List<GameEntity> gamesWithUnfinishedAccount = gameDAO.getTwoWeeksPast();
         for(GameEntity game: gamesWithUnfinishedAccount){
             if(game.getPaymentFinished() != null && game.getPaymentFinished()) {
