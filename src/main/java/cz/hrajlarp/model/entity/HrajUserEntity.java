@@ -2,6 +2,7 @@ package cz.hrajlarp.model.entity;
 
 import javax.persistence.*;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,6 +14,7 @@ import java.util.Map;
 @Entity
 public class HrajUserEntity {
     private Integer id;
+    private Set<UserRole> userRole;
 
 
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_key_gen")
@@ -258,5 +260,9 @@ public class HrajUserEntity {
 
     public void setEditingGames(Map<Object, UserIsEditorEntity> editingGames) {
         this.editingGames = editingGames;
+    }
+
+    public Set<UserRole> getUserRole() {
+        return userRole;
     }
 }

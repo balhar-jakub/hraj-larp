@@ -53,7 +53,7 @@ public class AdminController {
     public String gamePlayers(Model model, @PathVariable("id") Integer id) {
         HrajUserEntity user = rights.getLoggedUser();
         GameEntity game = gameDAO.getGameById(id);
-        AccountantEntity accountant = accountantDAO.getById(user.getId());
+        AccountantEntity accountant = accountantDAO.findById(user.getId());
 
         if (rights.hasRightsToEditGame(user, game)){
             List<UserAttendedGameEntity> players =
@@ -79,7 +79,7 @@ public class AdminController {
     public String paymentFinished(Model model, @PathVariable("id") Integer id) {
         HrajUserEntity user = rights.getLoggedUser();
         GameEntity game = gameDAO.getGameById(id);
-        AccountantEntity accountant = accountantDAO.getById(user.getId());
+        AccountantEntity accountant = accountantDAO.findById(user.getId());
 
         if (accountant != null) {
             game.setPaymentFinished(true);

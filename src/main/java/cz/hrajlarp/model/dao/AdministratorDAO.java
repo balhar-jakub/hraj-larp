@@ -3,6 +3,9 @@ package cz.hrajlarp.model.dao;
 
 import java.util.List;
 
+import cz.hrajlarp.api.GenericBuilder;
+import cz.hrajlarp.api.GenericHibernateDAO;
+import cz.hrajlarp.api.IBuilder;
 import cz.hrajlarp.model.entity.AdministratorEntity;
 import cz.hrajlarp.model.entity.HrajUserEntity;
 import org.hibernate.Query;
@@ -20,10 +23,11 @@ import org.springframework.transaction.annotation.Transactional;
  * To change this template use File | Settings | File Templates.
  */
 @Component
-public class AdministratorDAO {
-
-    @Autowired
-    private SessionFactory sessionFactory;
+public class AdministratorDAO extends GenericHibernateDAO<AdministratorEntity, Integer> {
+    @Override
+    public IBuilder getBuilder() {
+        return new GenericBuilder<AdministratorEntity>(AdministratorEntity.class);
+    }
 
     @Transactional(readOnly=true)
     public boolean isAdministrator(HrajUserEntity user){

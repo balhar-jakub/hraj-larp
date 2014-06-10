@@ -42,6 +42,7 @@ ALTER TABLE public.authorized_editor OWNER TO hrajlarp;
 --
 
 CREATE SEQUENCE hraj_game_id_seq
+
     START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
