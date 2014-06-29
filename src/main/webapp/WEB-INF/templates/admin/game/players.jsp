@@ -16,23 +16,23 @@
     </tr>
     <c:forEach items="${requestScope.players}" var="player">
         <tr>
-            <td>${player.userAttended.userName}</td>
-            <td>${player.userAttended.name} ${player.userAttended.lastName}</td>
-            <td>${player.userAttended.phone}</td>
-            <td>${player.userAttended.email}</td>
-            <td>${player.userAttended.genderTextual}</td>
-            <td>${player.payedTextual}</td>
+            <td>${player.userName}</td>
+            <td>${player.fullName}</td>
+            <td>${player.phone}</td>
+            <td>${player.email}</td>
+            <td>${player.gender}</td>
+            <td>${player.payedText}</td>
             <td>
-                <button type="submit" class="printButton" formaction="/admin/game/logout/${gameId}/${player.userAttended.id}">Odhlásit</button>
+                <button type="submit" class="printButton" formaction="/admin/game/logout/${gameId}/${player.id}">Odhlásit</button>
             </td>
             <td>
                 <c:if test="${not player.automatic}">
                     <c:choose>
-                        <c:when test="${not empty player.payed and player.payed}">
-                            <button type="submit" class="printButton" formaction="/admin/user/payed/${gameId}/${player.userAttended.id}">Zrušit zaplacení</button>
+                        <c:when test="${player.payed}">
+                            <button type="submit" class="printButton" formaction="/admin/user/payed/${gameId}/${player.id}">Zrušit zaplacení</button>
                         </c:when>
                         <c:otherwise>
-                            <button type="submit" class="printButton" formaction="/admin/user/payed/${gameId}/${player.userAttended.id}">Zaplatil</button>
+                            <button type="submit" class="printButton" formaction="/admin/user/payed/${gameId}/${player.id}">Zaplatil</button>
                         </c:otherwise>
                     </c:choose>
                 </c:if>
@@ -43,23 +43,23 @@
         <tr><td><b>Náhradníci:</b></td></tr>
         <c:forEach items="${requestScope.substitutes}" var="substitute">
             <tr>
-                <td>${substitute.userAttended.userName}</td>
-                <td>${substitute.userAttended.name} ${substitute.userAttended.lastName}</td>
-                <td>${substitute.userAttended.phone}</td>
-                <td>${substitute.userAttended.email}</td>
-                <td>${substitute.userAttended.genderTextual}</td>
-                <td>${substitute.payedTextual}</td>
+                <td>${substitute.userName}</td>
+                <td>${substitute.fullName}</td>
+                <td>${substitute.phone}</td>
+                <td>${substitute.email}</td>
+                <td>${substitute.gender}</td>
+                <td>${substitute.payedText}</td>
                 <td>
-                    <button type="submit" class="printButton" formaction="/admin/game/logout/${gameId}/${substitute.userAttended.id}">Odhlásit</button>
+                    <button type="submit" class="printButton" formaction="/admin/game/logout/${gameId}/${substitute.id}">Odhlásit</button>
                 </td>
                 <td>
                     <c:if test="${not substitute.automatic}">
                         <c:choose>
-                            <c:when test="${not empty substitute.payed and substitute.payed}">
-                                <button type="submit" class="printButton" formaction="/admin/user/payed/${gameId}/${substitute.userAttended.id}">Zrušit zaplacení</button>
+                            <c:when test="${substitute.payed}">
+                                <button type="submit" class="printButton" formaction="/admin/user/payed/${gameId}/${substitute.id}">Zrušit zaplacení</button>
                             </c:when>
                             <c:otherwise>
-                                <button type="submit" class="printButton" formaction="/admin/user/payed/${gameId}/${substitute.userAttended.id}">Zaplatil</button>
+                                <button type="submit" class="printButton" formaction="/admin/user/payed/${gameId}/${substitute.id}">Zaplatil</button>
                             </c:otherwise>
                         </c:choose>
                     </c:if>

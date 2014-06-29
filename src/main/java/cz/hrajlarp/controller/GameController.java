@@ -1,15 +1,15 @@
 package cz.hrajlarp.controller;
 
-import cz.hrajlarp.model.Rights;
-import cz.hrajlarp.model.ValidGame;
-import cz.hrajlarp.model.dao.*;
-import cz.hrajlarp.model.entity.GameEntity;
-import cz.hrajlarp.model.entity.HrajUserEntity;
-import cz.hrajlarp.model.entity.PreRegNotificationEntity;
-import cz.hrajlarp.model.entity.UserIsEditorEntity;
+import cz.hrajlarp.dao.GameDAO;
+import cz.hrajlarp.dao.PreRegNotificationDAO;
+import cz.hrajlarp.dao.UserAttendedGameDAO;
+import cz.hrajlarp.dao.UserIsEditorDAO;
+import cz.hrajlarp.entity.*;
+import cz.hrajlarp.service.FileService;
+import cz.hrajlarp.service.GameService;
+import cz.hrajlarp.service.RightsService;
+import cz.hrajlarp.service.ValidGame;
 import cz.hrajlarp.utils.DateUtils;
-import cz.hrajlarp.utils.FileUtils;
-import cz.hrajlarp.utils.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,34 +28,22 @@ import java.text.SimpleDateFormat;
 
 
 /**
- * Created by IntelliJ IDEA.
- * User: Jakub Balhar
- * Date: 6.3.13
- * Time: 22:09
+ *
  */
 @Controller
 public class GameController {
-
     @Autowired
     private GameDAO gameDAO;
-
-    @Autowired
-    private UserDAO userDAO;
-
     @Autowired
     private UserAttendedGameDAO userAttendedGameDAO;
-
     @Autowired
     private UserIsEditorDAO userIsEditorDAO;
-
     @Autowired
-    private Rights rights;
-
+    private RightsService rightsService;
     @Autowired
-    private MailService mailService;
-    
+    private PreRegNotificationDAO preRegNotificationDAO;
     @Autowired
-    PreRegNotificationDAO preRegNotificationDAO;
+    private GameService gameService;
 
     /**
      * on submit method for add game form
@@ -77,8 +65,8 @@ public class GameController {
             BindingResult r,
             Model model
     ) {
-        if (rights.isLogged()) {
-            HrajUserEntity user = rights.getLoggedUser();
+        if (rightsService.isLogged()) {
+            HrajUser user = rightsService.getLoggedUser();
             if (!user.getActivated()) return "/error";
             if (imageFile != null && imageFile.length > 0 && !imageFile[0].getOriginalFilename().equals("")) { //there is at least one image file
                 String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
@@ -88,26 +76,26 @@ public class GameController {
                     myGame.setImage(myGame.getOriginalImage());
                 }
             }
-            myGame.setAddedBy(rights.getLoggedUser().getId());
+            myGame.setAddedBy(rightsService.getLoggedUser().getId());
             myGame.validate(r);
             myGame.validateDateIsFuture(r);
 
             if (r.hasErrors()) return "game/add";
 
-            GameEntity game = myGame.getGameEntity();
-            if (rights.canAddGameDirectly(user)) {
+            Game game = myGame.getGameEntity();
+            if (rightsService.canAddGameDirectly(user)) {
                 game.setConfirmed(true);
                 model.addAttribute("confirmed", true);
             } else {
                 game.setConfirmed(false);
             }
-            gameDAO.addGame(game);
+            gameDAO.saveOrUpdate(game);
             model.addAttribute("gameId", game.getId());
 
-            UserIsEditorEntity userIsEditorEntity = new UserIsEditorEntity();
-            userIsEditorEntity.setGameId(game.getId());
-            userIsEditorEntity.setUserId(user.getId());
-            userIsEditorDAO.addUserIsEditor(userIsEditorEntity);
+            UserIsEditor userIsEditor = new UserIsEditor();
+            userIsEditor.setGameId(game.getId());
+            userIsEditor.setUserId(user.getId());
+            userIsEditorDAO.saveOrUpdate(userIsEditor);
 
             return "/game/added";
         } else return "/error";
@@ -116,14 +104,14 @@ public class GameController {
     /**
      * Basic view of add game form
      *
-     * @param model
-     * @return
+     * @param model Model of the page.
+     * @return Path to the jsp with information about how to add game.
      */
     @RequestMapping(value = "/game/add", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
     public String addGameShow(ModelMap model) {
-        if (rights.isLogged()) {
+        if (rightsService.isLogged()) {
             if(!model.containsKey("myGame") || model.get("myGame") == null)
-                model.addAttribute("myGame", new GameEntity());
+                model.addAttribute("myGame", new Game());
             return "game/add";
         } else {
             return "/error";
@@ -144,25 +132,18 @@ public class GameController {
             return "kalendar";
         }
 
-        GameEntity game = gameDAO.getGameById(id);
+        Game game = gameDAO.findById(id);
         if (game != null) {
-            try {
-                game.countPlayers(userAttendedGameDAO);   //count new free roles count
-            } catch (Exception e) {
-                e.printStackTrace();
-                /* TODO handle error and fix data in the database */
-            }
-
-            if (!game.isInFuture()) {
+            if (!gameService.isGameInFuture(game)) {
                 model.addAttribute("isFuture", true);
             }
 
-            if (rights.isLogged()) {
-            	HrajUserEntity user = rights.getLoggedUser();
+            if (rightsService.isLogged()) {
+            	HrajUser user = rightsService.getLoggedUser();
             	
-	            model.addAttribute("regStart", game.getRegistrationStartedDMYHM());
+	            model.addAttribute("regStart", gameService.getRegistrationStartedDMYHM(game));
 	            
-	            if (game.registrationStartsInFuture()) {
+	            if (gameService.registrationStartsInFuture(game)) {
 	                model.addAttribute("regStarted", false);
 	                if (preRegNotificationDAO.isSubscribedForPreReg(user, game) || DateUtils.isLessThanDayToReg(game.getRegistrationStartedDate()))
 	                	model.addAttribute("showNotifRegStart", false);
@@ -174,11 +155,11 @@ public class GameController {
 	            }
 
                 model.addAttribute("logged", true);
-                boolean logged = userAttendedGameDAO.isLogged(game.getId(), user.getId());
+                boolean logged = userAttendedGameDAO.isSignedAsRegular(game.getId(), user.getId());
                 model.addAttribute("loggedInGame", logged);
-                model.addAttribute("isFull", !game.isAvailableToUser(userAttendedGameDAO, user));
+                model.addAttribute("isFull", !gameService.isAvailableToUser(user, game));
                 if (logged) {
-                    model.addAttribute("substitute", userAttendedGameDAO.isSubstitute(game.getId(), user.getId()));
+                    model.addAttribute("substitute", userAttendedGameDAO.isSignedAsSubstitute(game.getId(), user.getId()));
                 }
             }
             model.addAttribute("game", game);
@@ -194,9 +175,7 @@ public class GameController {
      * Generates date and time from timestamp
      * Loads data from database to prefill form
      *
-     * @param model
-     * @param id
-     * @return
+     * @param id Id of the game, which should be edited.
      */
     @RequestMapping(value = "/game/edit", method = RequestMethod.GET)
     public String editGameForm(Model model,
@@ -207,16 +186,16 @@ public class GameController {
         }
         //model.addAttribute("myGame", new ValidGame());
 
-        if (rights.isLogged()) {
-            GameEntity game = gameDAO.getGameById(id);
-            HrajUserEntity user = rights.getLoggedUser();
+        if (rightsService.isLogged()) {
+            Game game = gameDAO.findById(id);
+            HrajUser user = rightsService.getLoggedUser();
 
             if (game != null &&
-                    (rights.hasRightsToEditGame(user, game))) {
+                    (rightsService.hasRightsToEditGame(user, game))) {
                 myGame.setTextareas(game);
                 model.addAttribute("game", game);
-                model.addAttribute("date", game.getDateAsYMD());
-                model.addAttribute("time", game.getTimeAsHM());
+                model.addAttribute("date", gameService.getDateAsYMD(game));
+                model.addAttribute("time", gameService.getTimeAsHM(game));
                 model.addAttribute("registrationStartedDate",
                         new SimpleDateFormat("yyyy-MM-dd").format(
                                 game.getRegistrationStartedDate()));
@@ -239,12 +218,6 @@ public class GameController {
      * ValidGame is stored as GameEntity and updated with Hibernate and GameDAO
      *
      * @param myGame    pseudo bean representing form variables
-     * @param id
-     * @param imageFile
-     * @param request
-     * @param r
-     * @param model
-     * @return
      */
     @RequestMapping(value = "/game/edit", method = RequestMethod.POST)
     public String editGame(
@@ -256,40 +229,40 @@ public class GameController {
             Model model
     ) {
 
-        if (rights.isLogged()) {
+        if (rightsService.isLogged()) {
             if (id == null || id <= 0) {
                 return "/error";
             }
 
-            GameEntity gameOld = gameDAO.getGameById(id);
-            HrajUserEntity user = rights.getLoggedUser();
+            Game gameOld = gameDAO.findById(id);
+            HrajUser user = rightsService.getLoggedUser();
             if (!user.getActivated()) return "/error";
-            if (gameOld != null && rights.hasRightsToEditGame(user, gameOld)) {
+            if (gameOld != null && rightsService.hasRightsToEditGame(user, gameOld)) {
             	
                 if (imageFile != null && imageFile.length > 0 && !imageFile[0].getOriginalFilename().equals("")) { //there is at least one image file
                     String image = saveFile(imageFile, request.getSession().getServletContext(), "gameName");
                     myGame.setImage(image);
                 } else {
-                    myGame.setImage(gameDAO.getGameById(id).getImage());
+                    myGame.setImage(gameDAO.findById(id).getImage());
                 }
                 myGame.validate(r);
                 if (r.hasErrors()) {
                     return "game/edit";
                 }
 
-                GameEntity game = myGame.getGameEntity();
+                Game game = myGame.getGameEntity();
                 game.setId(id);
-                game.setAddedBy(gameDAO.getGameById(id).getAddedBy());
-                if(game.differsInPlayers(gameOld)) {
-                    game.rerollLoggedUsers(userAttendedGameDAO, mailService);
+                game.setAddedBy(gameDAO.findById(id).getAddedBy());
+                if(gameService.differsInPlayers(gameOld, game)) {
+                    gameService.rerollLoggedUsers(game);
                 }
 
-                if(rights.isAdministrator(user)){
+                if(rightsService.isAdministrator(user)){
                     game.setConfirmed(true);
                     model.addAttribute("confirmedNow", true);
                 }
 
-                gameDAO.editGame(game);
+                gameDAO.saveOrUpdate(game);
 
                 model.addAttribute("gameId", game.getId());
                 return "/game/edited";
@@ -303,21 +276,20 @@ public class GameController {
      * Then is checked if this user doesnt have record in database for this game. If not, user is
      * added into database and his status is set as substitute if all possible roles are full.
      *
-     * @param gameId
      */
     @RequestMapping(value = "/game/logInGame", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
     public String logInGame(
             @ModelAttribute("gameId") int gameId
     ) {
-        if (rights.isLogged()) {
-            HrajUserEntity user = rights.getLoggedUser();
+        if (rightsService.isLogged()) {
+            HrajUser user = rightsService.getLoggedUser();
 
             if (gameId > 0) {
             	if (!user.getActivated()) return "/error";
-                GameEntity game = gameDAO.getGameById(gameId);
-                if (game != null && game.isInFuture()) {
+                Game game = gameDAO.findById(gameId);
+                if (game != null && gameService.isGameInFuture(game)) {
                     try {
-                        game.loginAndMailPlayer(userAttendedGameDAO, mailService, user);
+                        gameService.signUserAsPlayer(game, user);
                     } catch (Exception e) {
                         e.printStackTrace();
                         return "/error";
@@ -336,38 +308,26 @@ public class GameController {
      * exists in UserAttendedGame table. Then is user deleted from table. Then is checked free role according to old user gender.
      * New user is choosed from substitutes with the oldest added atribute and right gender.
      *
-     * @param gameId
      */
     @RequestMapping(value = "/game/logOutGame", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
     public String logOutGame(
             @ModelAttribute("gameId") int gameId
     ) {
+        if (rightsService.isLogged()) {
+            int userId = rightsService.getLoggedUser().getId();
+            UserAttendedGame userAttendedGame = userAttendedGameDAO.getSpecificOne(userId, gameId);
 
-        if (rights.isLogged()) {
-            int userId = rights.getLoggedUser().getId();
-            
-            GameEntity game = gameDAO.getGameById(gameId);
-            HrajUserEntity oldUser = userDAO.getUserById(userId);
-            if (game != null && game.isInFuture()) {
-                if (userAttendedGameDAO.isLogged(game.getId(), oldUser.getId())) {   //user is logged in this game
-                    game.logoutAndMailNewRegularPlayer(
-                            mailService,
-                            userAttendedGameDAO,
-                            oldUser
-                    );
-                }
+            if(userAttendedGame != null) {
+                gameService.signOutFromGame(userAttendedGame);
             }
+            return "redirect:/game/detail";
         } else {
             return "/error";
         }
-        return "redirect:/game/detail";
     }
 
     /**
      * Method gets game by given ID and sends its copy into game/add form
-     * @param model
-     * @param id
-     * @return
      */
     @RequestMapping(value = "/game/copy", method = RequestMethod.POST)
     public String copy(Model model, @RequestParam("gameId") Integer id) {
@@ -375,14 +335,13 @@ public class GameController {
         if (id == null || id <= 0) {
             return "/error";
         }
-        GameEntity game = gameDAO.getGameById(id);
+        Game game = gameDAO.findById(id);
 
         if(game == null)
             return "/error";
 
-        GameEntity copiedGame = game.cloneGame();
-        copiedGame.setId(null);
-        copiedGame.setAddedBy(rights.getLoggedUser().getId());
+        Game copiedGame = gameService.cloneGame(game);
+        copiedGame.setAddedBy(rightsService.getLoggedUser().getId());
 
         ValidGame validGame = new ValidGame(copiedGame);
         model.addAttribute("myGame", validGame);
@@ -394,10 +353,6 @@ public class GameController {
     /**
      * This method saves image file from form
      *
-     * @param imageFile
-     * @param context
-     * @param gameName
-     * @return
      */
     private String saveFile(CommonsMultipartFile[] imageFile, ServletContext context, String gameName) {
         try {
@@ -408,7 +363,7 @@ public class GameController {
                 CommonsMultipartFile cmFile = imageFile[0];  // consider only the first attached file
 
                 /* create directories if necessary */
-                boolean dirsExists = true;
+                boolean dirsExists;
                 File dir = new File(context.getRealPath("assets/img/upload/"));
                 if (!(dirsExists = dir.exists()))
                     if (!(dirsExists = dir.mkdirs()))
@@ -416,7 +371,7 @@ public class GameController {
 
                 /* copy attached file into new file on given path */
                 if (dirsExists) {
-                    String fileType = FileUtils.getFileType(cmFile.getOriginalFilename());
+                    String fileType = FileService.getFileType(cmFile.getOriginalFilename());
                     String basePath = "/" + gameName + "_" + System.currentTimeMillis() + "." + fileType;
                     path = (context.getRealPath("assets/img/upload/") + basePath);
                     cmFile.transferTo(new File(path));
@@ -432,16 +387,16 @@ public class GameController {
     
     @RequestMapping(value = "/game/regNotifyForm", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
     public String regNotify(@ModelAttribute("gameId") int gameId) {
-        if (rights.isLogged()) {
-            HrajUserEntity user = rights.getLoggedUser();
-            PreRegNotificationEntity regNotify = new PreRegNotificationEntity();
+        if (rightsService.isLogged()) {
+            HrajUser user = rightsService.getLoggedUser();
+            PreRegNotification regNotify = new PreRegNotification();
             if (gameId > 0) {
-	            GameEntity game = gameDAO.getGameById(gameId);
+	            Game game = gameDAO.findById(gameId);
 	            regNotify.setGameId(gameId);
 	            regNotify.setUserId(user.getId());
 	            regNotify.setNotifyDate(DateUtils.getDayAgoDate(game.getRegistrationStartedDate()));
 	            
-	            preRegNotificationDAO.addPreRegNotification(regNotify);
+	            preRegNotificationDAO.saveOrUpdate(regNotify);
             }
         } else {
             return "/error";

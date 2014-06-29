@@ -1,9 +1,17 @@
 package cz.hrajlarp.controller;
 
-import cz.hrajlarp.model.Rights;
-import cz.hrajlarp.model.dao.*;
-import cz.hrajlarp.model.entity.*;
-import cz.hrajlarp.utils.MailService;
+import cz.hrajlarp.dao.UserAttendedGameDAO;
+import cz.hrajlarp.dao.UserIsEditorDAO;
+import cz.hrajlarp.dto.PlayerDto;
+import cz.hrajlarp.entity.Game;
+import cz.hrajlarp.entity.HrajUser;
+import cz.hrajlarp.entity.UserAttendedGame;
+import cz.hrajlarp.entity.UserIsEditor;
+import cz.hrajlarp.service.GameService;
+import cz.hrajlarp.service.PlayerService;
+import cz.hrajlarp.service.RightsService;
+import cz.hrajlarp.service.UserService;
+import cz.hrajlarp.service.admin.GameAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,85 +22,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Jakub Balhar
- * Date: 8.4.13
- * Time: 15:54
+ *
  */
 @Controller
 public class AdminController {
-
     @Autowired
-    private GameDAO gameDAO;
-
+    private GameService gameService;
     @Autowired
-    private UserDAO userDAO;
-
+    private UserService userService;
     @Autowired
     private UserIsEditorDAO userIsEditorDAO;
-
     @Autowired
     private UserAttendedGameDAO userAttendedGameDAO;
-
     @Autowired
-    private MailService mailService;
-
+    private RightsService rightsService;
     @Autowired
-    private Rights rights;
-
+    private PlayerService playerService;
     @Autowired
-    private AdministratorDAO administratorDAO;
-
-    @Autowired
-    private AuthorizedEditorDAO authorizedEditorDAO;
-
-    @Autowired
-    private AccountantDAO accountantDAO;
-
-    @RequestMapping(value = "/admin/game/players/{id}", method= RequestMethod.GET)
-    public String gamePlayers(Model model, @PathVariable("id") Integer id) {
-        HrajUserEntity user = rights.getLoggedUser();
-        GameEntity game = gameDAO.getGameById(id);
-        AccountantEntity accountant = accountantDAO.getById(user.getId());
-
-        if (rights.hasRightsToEditGame(user, game)){
-            List<UserAttendedGameEntity> players =
-                    userAttendedGameDAO.getPlayers(id, false);
-            List<UserAttendedGameEntity> substitutes =
-                    userAttendedGameDAO.getPlayers(id, true);
-
-            model.addAttribute("gameId",id);
-            model.addAttribute("paymentFinished",
-                    accountant==null || (game.getPaymentFinished() != null && game.getPaymentFinished()));
-            model.addAttribute("gameName", game.getName());
-            model.addAttribute("players", players);
-            model.addAttribute("substitutes", substitutes);
-            model.addAttribute("isLogged", true);
-            return "/admin/game/players";
-        } else {
-            model.addAttribute("path", "/admin/game/players/" + String.valueOf(id));
-            return "/admin/norights";
-        }
-    }
+    private GameAdminService gameAdminService;
 
     @RequestMapping(value = "/admin/game/finished/{id}")
-    public String paymentFinished(Model model, @PathVariable("id") Integer id) {
-        HrajUserEntity user = rights.getLoggedUser();
-        GameEntity game = gameDAO.getGameById(id);
-        AccountantEntity accountant = accountantDAO.getById(user.getId());
+    public String paymentFinished(
+            Model model,
+            @PathVariable("id") Integer id
+    ) {
+        HrajUser user = rightsService.getLoggedUser();
+        Game game = gameService.getGameById(id);
 
-        if (accountant != null) {
+        if (user.isAccountant()) {
             game.setPaymentFinished(true);
-            gameDAO.editGame(game);
+            gameService.editGame(game);
 
-            List<UserAttendedGameEntity> players =
-                    userAttendedGameDAO.getPlayers(id, false);
-            List<UserAttendedGameEntity> substitutes =
-                    userAttendedGameDAO.getPlayers(id, true);
+            List<PlayerDto> players =
+                    playerService.getRegularPlayersOfGame(id);
+            List<PlayerDto> substitutes =
+                    playerService.getSubstitutesForGame(id);
 
             model.addAttribute("gameId",id);
-            model.addAttribute("paymentFinished",
-                    game.getPaymentFinished() != null && game.getPaymentFinished());
+            model.addAttribute("paymentFinished", game.getPaymentFinished());
             model.addAttribute("gameName", game.getName());
             model.addAttribute("players", players);
             model.addAttribute("substitutes", substitutes);
@@ -105,22 +72,24 @@ public class AdminController {
     }
 
     @RequestMapping(value="/admin/user/payed/{gameId}/{userId}")
-    public String gamePayment(Model model,
-                              @PathVariable("gameId") Integer gameId,
-                              @PathVariable("userId") Integer userId,
-                              RedirectAttributes redirectAttributes) {
-        HrajUserEntity user = rights.getLoggedUser();
-        GameEntity game = gameDAO.getGameById(gameId);
-        if (rights.hasRightsToEditGame(user, game)){
-            UserAttendedGameEntity payingPlayer = userAttendedGameDAO.getLogged(gameId, userId);
+    public String gamePayment(
+            Model model,
+            @PathVariable("gameId") Integer gameId,
+            @PathVariable("userId") Integer userId,
+            RedirectAttributes redirectAttributes
+    ) {
+        HrajUser user = rightsService.getLoggedUser();
+        Game game = gameService.getGameById(gameId);
+        if (rightsService.hasRightsToEditGame(user, game)){
+            UserAttendedGame payingPlayer = userAttendedGameDAO.getLogged(gameId, userId);
             if(payingPlayer != null){
-                if(payingPlayer.getPayed() == null || !payingPlayer.getPayed()){
+                if(!payingPlayer.getPayed()){
                     payingPlayer.setPayed(true);
                 } else {
                     payingPlayer.setPayed(false);
                 }
             }
-            userAttendedGameDAO.editUserAttendedGame(payingPlayer);
+            userAttendedGameDAO.saveOrUpdate(payingPlayer);
 
             redirectAttributes.addAttribute("id",gameId);
             return "redirect:/admin/game/players/{id}";
@@ -132,36 +101,13 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/admin/game/list", method= RequestMethod.GET)
-    public String gameList(Model model) {
-        HrajUserEntity user = rights.getLoggedUser();
+    public String gameList(
+            Model model
+    ) {
+        HrajUser user = rightsService.getLoggedUser();
 
-        if (rights.isEditor(user) || rights.isAdministrator(user)){
-            List <GameEntity> futureGames = gameDAO.getFutureGames();
-            List <GameEntity> formerGames = gameDAO.getFormerGames();
-            List <GameEntity> invalidGames = gameDAO.getInvalidGames();
-            if(!rights.isAdministrator(user)){
-                invalidGames = new ArrayList<GameEntity>();
-            }
-
-            List<GameEntity> futureGamesResult = new ArrayList<GameEntity>();
-            List<GameEntity> formerGamesResult = new ArrayList<GameEntity>();
-            // For every game, find if you have right to it.
-            for(GameEntity game: futureGames){
-                if(rights.hasRightsToEditGame(user, game)){
-                    futureGamesResult.add(game);
-                }
-            }
-            for(GameEntity game: formerGames){
-                if(rights.hasRightsToEditGame(user, game)){
-                    formerGamesResult.add(game);
-                }
-            }
-
-            model.addAttribute("futureGames", futureGamesResult);
-            model.addAttribute("formerGames", formerGamesResult);
-            model.addAttribute("unvalidatedGames", invalidGames);
-            model.addAttribute("isLogged", true);
-            model.addAttribute("isAdmin", rights.isAdministrator(user));
+        if (rightsService.isEditor(user) || rightsService.isAdministrator(user)){
+            gameAdminService.showCalendar(user, model);
             return "/admin/game/list";
         } else {
             model.addAttribute("path", "/admin/game/list");
@@ -170,35 +116,24 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/admin/game/confirmation/{id}", method = RequestMethod.GET)
-    public String deleteConfirmation(Model model, @PathVariable("id") Integer id) {
+    public String deleteConfirmation(
+            Model model,
+            @PathVariable("id") Integer id
+    ) {
         model.addAttribute("gameId", id);
         return "/admin/game/confirmation";
     }
 
     @RequestMapping(value = "/admin/game/delete/{id}", method = RequestMethod.GET)
-    public String deleteGame(Model model, @PathVariable("id") Integer id) {
-        HrajUserEntity user = rights.getLoggedUser();
-        GameEntity game = gameDAO.getGameById(id);
+    public String deleteGame(
+            Model model,
+            @PathVariable("id") Integer id
+    ) {
+        HrajUser user = rightsService.getLoggedUser();
+        Game game = gameService.getGameById(id);
 
-        if (game!=null && rights.hasRightsToEditGame(user, game)){
-            List<UserAttendedGameEntity> records = userAttendedGameDAO.getRecordsByGameId(id);
-            StringBuilder sb = new StringBuilder("Došlo ke zrušení hry " + game.getName() + ". Hra byla naplánovaná na " 
-            		+ game.getDateAsDMY()+ "\n\nSeznam přihlášených hráčů:\n");
-            for(UserAttendedGameEntity uage : records){
-            	HrajUserEntity u = userDAO.getUserById(uage.getUserId());
-            	sb.append("JMÉNO: " + u.getName() +" "+ u.getLastName() + "\t LOGIN: "+u.getUserName()
-            			+ "\t PLATIL: "+ uage.getPayedTextual() +"\n");
-                userAttendedGameDAO.deleteUserAttendedGame(uage);
-            }
-            mailService.notifyAdminOnGameDeletion(sb.toString());
-            List<HrajUserEntity> editors = userIsEditorDAO.getEditorsByGameId(game.getId());
-            if (editors != null) {
-                for(HrajUserEntity editor : editors){
-                    UserIsEditorEntity userIsEditor = (UserIsEditorEntity)userIsEditorDAO.getUserIsEditor(editor, game);
-                    userIsEditorDAO.deleteUserIsEditor(userIsEditor);
-                }
-            }
-            gameDAO.deleteGame(game);
+        if (game!=null && rightsService.hasRightsToEditGame(user, game)){
+            gameService.deleteGame(game);
             return "/admin/game/deleted";
         } else {
             model.addAttribute("path", "/admin/game/delete/" + String.valueOf(id));
@@ -207,49 +142,17 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/admin/game/logout/{gameId}/{playerId}", method= RequestMethod.POST)
-    public String logoutPlayer(Model model,
-                               @PathVariable("gameId") Integer gameId,
-                               @PathVariable("playerId") Integer playerId,
-                               RedirectAttributes redirectAttributes) {
-        HrajUserEntity user = rights.getLoggedUser();
-        GameEntity game = gameDAO.getGameById(gameId);
+    public String logoutPlayer(
+            Model model,
+            @PathVariable("gameId") Integer gameId,
+            @PathVariable("playerId") Integer playerId,
+            RedirectAttributes redirectAttributes
+    ) {
+        HrajUser user = rightsService.getLoggedUser();
+        Game game = gameService.getGameById(gameId);
 
-        if (rights.hasRightsToEditGame(user, game)){
-            HrajUserEntity oldUser = userDAO.getUserById(playerId);
-            UserAttendedGameEntity uage = new UserAttendedGameEntity();
-            uage.setGameId(gameId);
-            uage.setUserId(playerId);
-            if (userAttendedGameDAO.isLogged(uage)){   //user is logged in this game
-                boolean wasSubstitute = userAttendedGameDAO.isSubstitute(uage);
-                userAttendedGameDAO.deleteUserAttendedGame(uage);   //logout old user
-
-                try{
-                    game.countPlayers(userAttendedGameDAO);   //count new free roles count
-                }catch(Exception e){
-                    e.printStackTrace();
-                    /* TODO handle error and fix data in the database */
-                }
-
-                int gender = 2;                                   //default setting for none men or women free roles, only both roles are free
-                if (oldUser.getGender()==0) {                     //loggouted user is man
-                    if (game.getMenFreeRoles() > 0) gender = 0;   //there are free men roles
-                }
-                else {                                            //loggouted user is woman
-                    if (game.getWomenFreeRoles() > 0) gender = 1; //there are free women roles
-                }
-
-                /* if logged out user was not just a substitute, some of substitutes should replace him */
-                if(!wasSubstitute){
-                    uage = userAttendedGameDAO.getFirstSubstitutedUAG(game.getId(), gender);  //get first substitute according to gender
-                    if (uage != null) {
-                        HrajUserEntity newUser = userDAO.getUserById(uage.getUserId());
-                        uage.setUserId(newUser.getId());
-                        uage.setSubstitute(false);
-                        userAttendedGameDAO.editUserAttendedGame(uage);             //edit this substitute as ordinary player
-                        mailService.sendMsgChangedToActor(newUser, game);
-                    }
-                }
-            }
+        if (rightsService.hasRightsToEditGame(user, game)){
+            userService.logoutUser(user, game);
 
             redirectAttributes.addAttribute("id",gameId);
             return "redirect:/admin/game/players/{id}";
@@ -260,15 +163,13 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/admin/game/validate/{gameId}")
-    public String validateGame(Model model,
-                               @PathVariable("gameId") Integer gameId,
-                               RedirectAttributes redirectAttributes) {
-        HrajUserEntity user = rights.getLoggedUser();
-        if (rights.isAdministrator(user)){
-            GameEntity game = gameDAO.getGameById(gameId);
-            game.setConfirmed(true);
-            gameDAO.editGame(game);
-
+    public String validateGame(
+            Model model,
+            @PathVariable("gameId") Integer gameId
+    ) {
+        HrajUser user = rightsService.getLoggedUser();
+        if (rightsService.isAdministrator(user)){
+            gameService.approveGame(gameId);
             return "redirect:/admin/game/list";
         } else {
             model.addAttribute("path", "/admin/game/validate/" + String.valueOf(gameId));
@@ -277,14 +178,14 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/admin/game/actions", method= RequestMethod.GET)
-    public String actionsShow(Model model,
-                                @ModelAttribute("succesMessage") String succesMessage) {
-        HrajUserEntity user = rights.getLoggedUser();
-
-        if (rights.isAdministrator(user)){
-            List<String> actions = gameDAO.getAllActions();
+    public String actionsShow(
+            Model model,
+            @ModelAttribute("succesMessage") String succesMessage
+    ) {
+        if (rightsService.isLoggedAdministrator()){
+            List<String> actions = gameService.getAllActions();
             model.addAttribute("actions", actions);
-            List<GameEntity> games = gameDAO.getFutureGames();
+            List<Game> games = gameService.getFutureGames();
             model.addAttribute("games", games);
             if (!succesMessage.isEmpty()){
                 if (succesMessage.equals("succes")) model.addAttribute("succesMessage", true);
@@ -297,22 +198,30 @@ public class AdminController {
         }
     }
 
+    /**
+     * Every game can belong to some action. Example of such action is for example LarpWeekend.
+     * This method simply adds some action to given game, if user has rights to get there.
+     *
+     * @param model Model for the page
+     * @param newAction Action to be added.
+     * @param gameIds Ids of the games which should be part of this action.
+     * @return If successful returns path to the page containing info about added action.
+     */
     @RequestMapping(value = "/admin/game/addAction", method= RequestMethod.POST)
-    public String addAction(Model model,
-                            @RequestParam("actionText") String newAction,
-                            @RequestParam("gameText") List<Integer> gameId) {
-        HrajUserEntity user = rights.getLoggedUser();
-
-        if (rights.isAdministrator(user)){
-            for (int i = 0; i < gameId.size(); i++){
-                GameEntity game = gameDAO.getGameById(gameId.get(i));
-                if (game != null && !newAction.isEmpty()){
+    public String addAction(
+            Model model,
+            @RequestParam("actionText") String newAction,
+            @RequestParam("gameText") List<Integer> gameIds
+    ) {
+        if (rightsService.isLoggedAdministrator()){
+            for (Integer aGameId : gameIds) {
+                Game game = gameService.getGameById(aGameId);
+                if (game != null && !newAction.isEmpty()) {
                     game.setAction(newAction);
-                    gameDAO.editGame(game);
+                    gameService.editGame(game);
                     String succesMessage = "succes";
                     model.addAttribute("succesMessage", succesMessage);
-                }
-                else {
+                } else {
                     String succesMessage = "error";
                     model.addAttribute("succesMessage", succesMessage);
                 }
@@ -326,14 +235,16 @@ public class AdminController {
 
 
     @RequestMapping(value = "/admin/game/editors/{id}", method= RequestMethod.GET)
-    public String gameEditors(Model model, @PathVariable("id") Integer id) {
+    public String gameEditors(
+            Model model,
+            @PathVariable("id") Integer id
+    ) {
+        if (rightsService.isLoggedAdministrator()){
+            List<HrajUser> editors = userIsEditorDAO.getEditorsByGameId(id);
 
-        if (rights.isLoggedAdministrator()){
-            List<HrajUserEntity> editors = userIsEditorDAO.getEditorsByGameId(id);
-
-            List<HrajUserEntity> allUsers = userDAO.listUsers();
-            List<HrajUserEntity> notEditors = new ArrayList<HrajUserEntity>();
-            for (HrajUserEntity user : allUsers){
+            List<HrajUser> allUsers = userService.listUsers();
+            List<HrajUser> notEditors = new ArrayList<>();
+            for (HrajUser user : allUsers){
                 if(!editors.contains(user))
                     notEditors.add(user);
             }
@@ -350,35 +261,38 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/admin/game/editors/add/{gameId}", method= RequestMethod.POST)
-    public String gameEditorAdd(Model model,
-                                @RequestParam(value = "futureEditors", required = false) List<Integer> editorsIds,
-                                @PathVariable("gameId") Integer gameId,
-                                RedirectAttributes redirectAttributes){
+    public String gameEditorAdd(
+            @RequestParam(value = "futureEditors", required = false) List<Integer> editorsIds,
+            @PathVariable("gameId") Integer gameId,
+            RedirectAttributes redirectAttributes
+    ){
 
         redirectAttributes.addAttribute("id",gameId);
 
-        if(editorsIds == null)
+        if(editorsIds == null) {
             return "redirect:/admin/game/editors/{id}";
+        }
 
         for (Integer userId : editorsIds) {
-            UserIsEditorEntity userIsEditorEntity = new UserIsEditorEntity();
-            userIsEditorEntity.setUserId(userId);
-            userIsEditorEntity.setGameId(gameId);
-            userIsEditorDAO.addUserIsEditor(userIsEditorEntity);
+            UserIsEditor userIsEditor = new UserIsEditor();
+            userIsEditor.setUserId(userId);
+            userIsEditor.setGameId(gameId);
+            userIsEditorDAO.saveOrUpdate(userIsEditor);
         }
         return "redirect:/admin/game/editors/{id}";
     }
 
     @RequestMapping(value = "/admin/game/editors/remove/{gameId}/{userId}", method= RequestMethod.POST)
-    public String gameEditorRemove(Model model,
-                               @PathVariable("gameId") Integer gameId,
-                               @PathVariable("userId") Integer userId,
-                               RedirectAttributes redirectAttributes){
+    public String gameEditorRemove(
+            @PathVariable("gameId") Integer gameId,
+            @PathVariable("userId") Integer userId,
+            RedirectAttributes redirectAttributes
+    ){
 
-        UserIsEditorEntity userIsEditorEntity = new UserIsEditorEntity();
-        userIsEditorEntity.setUserId(userId);
-        userIsEditorEntity.setGameId(gameId);
-        userIsEditorDAO.deleteUserIsEditor(userIsEditorEntity);
+        UserIsEditor userIsEditor = new UserIsEditor();
+        userIsEditor.setUserId(userId);
+        userIsEditor.setGameId(gameId);
+        userIsEditorDAO.makeTransient(userIsEditor);
 
         redirectAttributes.addAttribute("id",gameId);
         return "redirect:/admin/game/editors/{id}";
@@ -386,36 +300,13 @@ public class AdminController {
 
 
     @RequestMapping(value = "/admin/rights/edit", method= RequestMethod.GET)
-    public String rightsEdit(Model model) {
-
-        if (rights.isLoggedAdministrator()){
-            List<Integer> allAdmins = administratorDAO.getAdministratorIds();
-            List<Integer> allEditors = authorizedEditorDAO.listAuthorizedEditors();
-
-            List<HrajUserEntity> allUsers = userDAO.listUsers();
-
-            List<HrajUserEntity> admins = new ArrayList<HrajUserEntity>();
-            List<HrajUserEntity> notAdmins = new ArrayList<HrajUserEntity>();
-
-            List<HrajUserEntity> authEditors = new ArrayList<HrajUserEntity>();
-            List<HrajUserEntity> notAuthEditors = new ArrayList<HrajUserEntity>();
-
-            for (HrajUserEntity user : allUsers){
-                if(allAdmins.contains(user.getId()))
-                    admins.add(user);
-                else
-                    notAdmins.add(user);
-
-                if(allEditors.contains(user.getId()))
-                    authEditors.add(user);
-                else
-                    notAuthEditors.add(user);
-            }
-
-            model.addAttribute("admins", admins);
-            model.addAttribute("futureAdmins", notAdmins);
-            model.addAttribute("authEditors", authEditors);
-            model.addAttribute("futureAuthorized", notAuthEditors);
+    public String rightsEdit(
+            Model model
+    ) {
+        if (rightsService.isLoggedAdministrator()){
+            model.addAttribute("admins", userService.getAdmins());
+            model.addAttribute("futureAdmins", userService.getUsers());
+            model.addAttribute("authEditors", userService.getAuthEditors());
 
             return "admin/rights/edit";
         }
@@ -424,61 +315,60 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/admin/rights/admins/add", method= RequestMethod.POST)
-    public String addAdminsRights(Model model,
-                                @RequestParam(value = "users", required = false) List<Integer> adminsIds){
-
-        if(adminsIds == null)
+    public String addAdminsRights(
+            @RequestParam(value = "users", required = false) List<Integer> adminsIds
+    ){
+        if(adminsIds == null) {
             return "redirect:/admin/rights/edit";
-
-        for (Integer userId : adminsIds) {
-            administratorDAO.setAdministrator(userId);
         }
+
+        userService.createAdministrators(adminsIds);
         return "redirect:/admin/rights/edit";
     }
 
     @RequestMapping(value = "/admin/rights/admins/remove/{userId}", method= RequestMethod.POST)
-    public String removeAdminsRights(Model model,
-                               @PathVariable("userId") Integer userId){
+    public String removeAdminsRights(
+            @PathVariable("userId") Integer userId
+    ){
+        if(userService.getAdmins().size() <= 1) {
+            return "/admin/rights/error";
+        }
 
-        if(administratorDAO.getAdministratorIds().size() <= 1)
-        return "/admin/rights/error";
-
-        administratorDAO.removeAdministratorRights(userId);
+        userService.removeAdministrator(userId);
         return "redirect:/admin/rights/edit";
     }
 
     @RequestMapping(value = "/admin/rights/autheditors/add", method= RequestMethod.POST)
-    public String addAuthEditorRights(Model model,
-                                @RequestParam(value = "users", required = false) List<Integer> editorIds){
-
-        if(editorIds == null)
+    public String addAuthEditorRights(
+            @RequestParam(value = "users", required = false) List<Integer> editorIds
+    ){
+        if(editorIds == null) {
             return "redirect:/admin/rights/edit";
-
-        for (Integer userId : editorIds) {
-            authorizedEditorDAO.setAuthorizedEntity(userId);
         }
+
+        userService.addAuthorizedEditors(editorIds);
         return "redirect:/admin/rights/edit";
     }
 
     @RequestMapping(value = "/admin/rights/autheditors/remove/{userId}", method= RequestMethod.POST)
-    public String removeAuthEditorRights(Model model,
-                               @PathVariable("userId") Integer userId){
-
-        authorizedEditorDAO.removeAuthorizedEntityRights(userId);
+    public String removeAuthEditorRights(
+            @PathVariable("userId") Integer userId
+    ){
+        userService.removeAuthorizedEditor(userId);
         return "redirect:/admin/rights/edit";
     }
 
-
-
     @RequestMapping(value = "/admin/rights/admins/add/confirm", method= RequestMethod.POST)
-    public String addAdminsRightsConfirm(Model model,
-                                @RequestParam(value = "futureAdmins", required = false) List<Integer> adminsIds){
-        if(adminsIds == null)
+    public String addAdminsRightsConfirm(
+            Model model,
+            @RequestParam(value = "futureAdmins", required = false) List<Integer> adminsIds){
+        if(adminsIds == null) {
             return "redirect:/admin/rights/edit";
+        }
 
-        List<HrajUserEntity> futureAdmins = new ArrayList<HrajUserEntity>();
+        List<HrajUser> futureAdmins = new ArrayList<>();
         for (Integer userId : adminsIds){
-            futureAdmins.add(userDAO.getUserById(userId));
+            futureAdmins.add(userService.getUserById(userId));
         }
         model.addAttribute("users", futureAdmins);
         model.addAttribute("title", "Přidat právo administrátora");
@@ -493,12 +383,13 @@ public class AdminController {
     @RequestMapping(value = "/admin/rights/autheditors/add/confirm", method= RequestMethod.POST)
     public String addAuthEditorRightsConfirm(Model model,
                                 @RequestParam(value = "futureAuthorized", required = false) List<Integer> editorIds){
-        if(editorIds == null)
+        if(editorIds == null) {
             return "redirect:/admin/rights/edit";
+        }
 
-        List<HrajUserEntity> futureAuthEditors = new ArrayList<HrajUserEntity>();
+        List<HrajUser> futureAuthEditors = new ArrayList<>();
         for (Integer userId : editorIds){
-            futureAuthEditors.add(userDAO.getUserById(userId));
+            futureAuthEditors.add(userService.getUserById(userId));
         }
         model.addAttribute("users", futureAuthEditors);
         model.addAttribute("title", "Přidat právo osvědčeného editora");
@@ -510,11 +401,12 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/admin/rights/admins/remove/confirm/{userId}", method= RequestMethod.POST)
-    public String removeAdminsRightsConfirm(Model model,
-                               @PathVariable("userId") Integer userId){
-
-        List<HrajUserEntity> userList = new ArrayList<HrajUserEntity>();
-        userList.add(userDAO.getUserById(userId));
+    public String removeAdminsRightsConfirm(
+            Model model,
+            @PathVariable("userId") Integer userId
+    ){
+        List<HrajUser> userList = new ArrayList<>();
+        userList.add(userService.getUserById(userId));
         model.addAttribute("users", userList);
         model.addAttribute("title", "Odebrat právo administrátora");
         model.addAttribute("description", "Skutečně má být této osobě odebráno právo administrátora?");
@@ -523,10 +415,12 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/admin/rights/autheditors/remove/confirm/{userId}", method= RequestMethod.POST)
-    public String removeAuthEditorRightsConfirm(Model model,@PathVariable("userId") Integer userId){
-
-        List<HrajUserEntity> userList = new ArrayList<HrajUserEntity>(1);
-        userList.add(userDAO.getUserById(userId));
+    public String removeAuthEditorRightsConfirm(
+            Model model,
+            @PathVariable("userId") Integer userId
+    ){
+        List<HrajUser> userList = new ArrayList<>(1);
+        userList.add(userService.getUserById(userId));
         model.addAttribute("users", userList);
         model.addAttribute("title", "Odebrat právo osvědčeného editora");
         model.addAttribute("description", "Skutečně má být této osobě odebráno právo osvědčeného editora?");
