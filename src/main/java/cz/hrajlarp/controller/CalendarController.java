@@ -1,30 +1,24 @@
 package cz.hrajlarp.controller;
 
-import cz.hrajlarp.entity.Game;
+import cz.hrajlarp.dto.CalendarDto;
+import cz.hrajlarp.entity.HrajUser;
+import cz.hrajlarp.service.CalendarService;
 import cz.hrajlarp.service.RightsService;
-import cz.hrajlarp.dao.GameDAO;
-import cz.hrajlarp.dao.UserAttendedGameDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  */
 @Controller
 public class CalendarController {
-
     @Autowired
-    private GameDAO gameDAO;
+    RightsService rightsService;
     @Autowired
-    private UserAttendedGameDAO userAttendedGameDAO;
-    @Autowired
-    private RightsService rightsService;
+    CalendarService calendarService;
 
     /**
      * Controller for view of calendar
@@ -32,33 +26,38 @@ public class CalendarController {
      * @return String of .JSP file name mapped for view of calendar
      */
     @RequestMapping(value = "/kalendar", method= RequestMethod.GET)
-    public String calendar(Model model) {
-        List <Game> futureGames = gameDAO.getFutureGames();
-        List <Game> formerGames = gameDAO.getFormerGames();
+    public String calendar(
+            Model model
+    ) {
+        CalendarDto calendar = calendarService.showCalendar();
 
-        List<Game> futureGameResult = new ArrayList<>();
-        List<Game> formerGamesResult = new ArrayList<>();
-        for(Game game: futureGames) {
-            if(game.getConfirmed()) {
-                futureGameResult.add(game);
-            }
-        }
-        for(Game game: formerGames) {
-            if(game.getConfirmed()) {
-                formerGamesResult.add(game);
-            }
-        }
+        model.addAttribute("futureGames", calendar.getFutureGames());
+        model.addAttribute("formerGames", calendar.getPastGames());
+        model.addAttribute("availableGames", calendar.getAvailableGames());
+        model.addAttribute("isLogged", calendar.isLogged());
+        model.addAttribute("isAdmin", calendar.isAdmin());
 
-        model.addAttribute("futureGames", futureGameResult);
-        model.addAttribute("formerGames", formerGamesResult);
-
-        if (rightsService.isLogged()){
-            List<Game> availableGames = userAttendedGameDAO.
-                    filterAvailableGames(futureGames, rightsService.getLoggedUser());
-
-            model.addAttribute("availableGames", availableGames);
-            model.addAttribute("isLogged", true);
-        }
         return "calendar";
+    }
+
+    @RequestMapping(value = "/admin/game/list", method= RequestMethod.GET)
+    public String gameList(
+            Model model
+    ) {
+        HrajUser user = rightsService.getLoggedUser();
+
+        if (rightsService.isEditor(user) || rightsService.isAdministrator(user)){
+            CalendarDto calendar = calendarService.showCalendarAdmin(user);
+
+            model.addAttribute("futureGames", calendar.getFutureGames());
+            model.addAttribute("formerGames", calendar.getPastGames());
+            model.addAttribute("unvalidatedGames", calendar.getUnconfirmedGames());
+            model.addAttribute("isLogged", calendar.isLogged());
+
+            return "/admin/game/list";
+        } else {
+            model.addAttribute("path", "/admin/game/list");
+            return "/admin/norights";
+        }
     }
 }

@@ -2,11 +2,10 @@ package cz.hrajlarp.service;
 
 import cz.hrajlarp.dao.UserAttendedGameDAO;
 import cz.hrajlarp.dao.UserDAO;
-import cz.hrajlarp.dao.UserIsEditorDAO;
 import cz.hrajlarp.entity.Game;
 import cz.hrajlarp.entity.HrajUser;
 import cz.hrajlarp.entity.UserAttendedGame;
-import cz.hrajlarp.utils.HrajRoles;
+import cz.hrajlarp.enums.HrajRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,8 +22,6 @@ public class UserService {
     MailService mailService;
     @Autowired
     UserDAO userDAO;
-    @Autowired
-    UserIsEditorDAO userIsEditorDAO;
     @Autowired
     GameService gameService;
 
@@ -74,10 +71,6 @@ public class UserService {
             user.setRole(HrajRoles.AUTHORIZED_EDITOR);
             userDAO.saveOrUpdate(user);
         }
-    }
-
-    public List<HrajUser> getEditorsForGame(Integer id) {
-        return userIsEditorDAO.getEditorsByGameId(id);
     }
 
     public void logoutUser(HrajUser user, Game game) {

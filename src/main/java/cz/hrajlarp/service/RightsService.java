@@ -1,10 +1,9 @@
 package cz.hrajlarp.service;
 
 import cz.hrajlarp.dao.UserDAO;
-import cz.hrajlarp.dao.UserIsEditorDAO;
 import cz.hrajlarp.entity.Game;
 import cz.hrajlarp.entity.HrajUser;
-import cz.hrajlarp.utils.HrajRoles;
+import cz.hrajlarp.enums.HrajRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,9 +20,6 @@ import org.springframework.stereotype.Service;
 @SuppressWarnings("SimplifiableIfStatement")
 @Service
 public class RightsService {
-    @Autowired
-    private UserIsEditorDAO userIsEditorDAO;
-
     @Autowired
     private UserDAO userDAO;
 
@@ -55,9 +51,10 @@ public class RightsService {
             return Role.AUTHORIZED_EDITOR;
         }
 
+        /*
         if(userIsEditorDAO.isEditor(user)) {
             return Role.EDITOR;
-        }
+        } */
 
         if(isLoggedUser(user)) {
             return Role.USER_LOGGED;
@@ -152,7 +149,7 @@ public class RightsService {
      * @return true, if user has permission to edit game
      */
     public boolean hasRightsToEditGame(HrajUser user, Game game){
-         return userIsEditorDAO.isEditorOfGame(user, game) || isAdministrator(user);
+         return game.getEditors().contains(user) || isAdministrator(user);
     }
 
 

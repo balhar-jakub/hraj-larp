@@ -16,9 +16,9 @@
     </div>
 
     <div>
-        <label for="anotation">Popis hry:*</label>
-        <form:errors path="anotation" />
-        <form:textarea id="anotation" path="anotation" />
+        <label for="annotation">Popis hry:*</label>
+        <form:errors path="annotation" />
+        <form:textarea id="annotation" path="annotation" />
     </div>
     <div>
         <label for="shortText">Typ hry:</label>
@@ -49,8 +49,8 @@
         <form:input type="text" id="time" path="time" value="${game.time}"/>
     </div>
     <div>
-        <label for="imageFile">Nahrajte obrázek:</label>
-        <input type="file" name="imageFile">
+        <label for="image">Nahrajte obrázek:</label>
+        <input type="file" name="image">
         <form:errors path="image" />
     </div>
     <div>

@@ -7,7 +7,7 @@ import java.sql.Timestamp;
  *
  */
 @SuppressWarnings("RedundantIfStatement")
-@javax.persistence.IdClass(UserGamePK.class)
+@javax.persistence.IdClass(UserAttendedGamePK.class)
 @javax.persistence.Table(name = "user_attended_game", schema = "public")
 @Entity
 public class UserAttendedGame {

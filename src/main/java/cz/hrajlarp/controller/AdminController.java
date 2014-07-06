@@ -1,17 +1,10 @@
 package cz.hrajlarp.controller;
 
-import cz.hrajlarp.dao.UserAttendedGameDAO;
-import cz.hrajlarp.dao.UserIsEditorDAO;
-import cz.hrajlarp.dto.PlayerDto;
 import cz.hrajlarp.entity.Game;
 import cz.hrajlarp.entity.HrajUser;
-import cz.hrajlarp.entity.UserAttendedGame;
-import cz.hrajlarp.entity.UserIsEditor;
 import cz.hrajlarp.service.GameService;
-import cz.hrajlarp.service.PlayerService;
 import cz.hrajlarp.service.RightsService;
 import cz.hrajlarp.service.UserService;
-import cz.hrajlarp.service.admin.GameAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,89 +24,7 @@ public class AdminController {
     @Autowired
     private UserService userService;
     @Autowired
-    private UserIsEditorDAO userIsEditorDAO;
-    @Autowired
-    private UserAttendedGameDAO userAttendedGameDAO;
-    @Autowired
     private RightsService rightsService;
-    @Autowired
-    private PlayerService playerService;
-    @Autowired
-    private GameAdminService gameAdminService;
-
-    @RequestMapping(value = "/admin/game/finished/{id}")
-    public String paymentFinished(
-            Model model,
-            @PathVariable("id") Integer id
-    ) {
-        HrajUser user = rightsService.getLoggedUser();
-        Game game = gameService.getGameById(id);
-
-        if (user.isAccountant()) {
-            game.setPaymentFinished(true);
-            gameService.editGame(game);
-
-            List<PlayerDto> players =
-                    playerService.getRegularPlayersOfGame(id);
-            List<PlayerDto> substitutes =
-                    playerService.getSubstitutesForGame(id);
-
-            model.addAttribute("gameId",id);
-            model.addAttribute("paymentFinished", game.getPaymentFinished());
-            model.addAttribute("gameName", game.getName());
-            model.addAttribute("players", players);
-            model.addAttribute("substitutes", substitutes);
-            model.addAttribute("isLogged", true);
-            return "/admin/game/players";
-        } else {
-            model.addAttribute("path", "/admin/game/players/" + String.valueOf(id));
-            return "/admin/norights";
-        }
-    }
-
-    @RequestMapping(value="/admin/user/payed/{gameId}/{userId}")
-    public String gamePayment(
-            Model model,
-            @PathVariable("gameId") Integer gameId,
-            @PathVariable("userId") Integer userId,
-            RedirectAttributes redirectAttributes
-    ) {
-        HrajUser user = rightsService.getLoggedUser();
-        Game game = gameService.getGameById(gameId);
-        if (rightsService.hasRightsToEditGame(user, game)){
-            UserAttendedGame payingPlayer = userAttendedGameDAO.getLogged(gameId, userId);
-            if(payingPlayer != null){
-                if(!payingPlayer.getPayed()){
-                    payingPlayer.setPayed(true);
-                } else {
-                    payingPlayer.setPayed(false);
-                }
-            }
-            userAttendedGameDAO.saveOrUpdate(payingPlayer);
-
-            redirectAttributes.addAttribute("id",gameId);
-            return "redirect:/admin/game/players/{id}";
-        } else {
-            model.addAttribute("path", "/admin/user/payed/" +
-                    String.valueOf(gameId) + "/" + String.valueOf(userId));
-            return "/admin/norights";
-        }
-    }
-
-    @RequestMapping(value = "/admin/game/list", method= RequestMethod.GET)
-    public String gameList(
-            Model model
-    ) {
-        HrajUser user = rightsService.getLoggedUser();
-
-        if (rightsService.isEditor(user) || rightsService.isAdministrator(user)){
-            gameAdminService.showCalendar(user, model);
-            return "/admin/game/list";
-        } else {
-            model.addAttribute("path", "/admin/game/list");
-            return "/admin/norights";
-        }
-    }
 
     @RequestMapping(value = "/admin/game/confirmation/{id}", method = RequestMethod.GET)
     public String deleteConfirmation(
@@ -240,17 +151,17 @@ public class AdminController {
             @PathVariable("id") Integer id
     ) {
         if (rightsService.isLoggedAdministrator()){
-            List<HrajUser> editors = userIsEditorDAO.getEditorsByGameId(id);
+            Game game = gameService.getGameById(id);
 
             List<HrajUser> allUsers = userService.listUsers();
             List<HrajUser> notEditors = new ArrayList<>();
             for (HrajUser user : allUsers){
-                if(!editors.contains(user))
+                if(!game.getEditors().contains(user))
                     notEditors.add(user);
             }
 
             model.addAttribute("gameId",id);
-            model.addAttribute("editors", editors);
+            model.addAttribute("editors", game.getEditors());
             model.addAttribute("notEditors", notEditors);
             model.addAttribute("isLogged", true);
             return "/admin/game/editors";
@@ -273,12 +184,13 @@ public class AdminController {
             return "redirect:/admin/game/editors/{id}";
         }
 
+        Game game = gameService.getGameById(gameId);
         for (Integer userId : editorsIds) {
-            UserIsEditor userIsEditor = new UserIsEditor();
-            userIsEditor.setUserId(userId);
-            userIsEditor.setGameId(gameId);
-            userIsEditorDAO.saveOrUpdate(userIsEditor);
+            HrajUser user = userService.getUserById(userId);
+            game.getEditors().add(user);
         }
+        gameService.editGame(game);
+
         return "redirect:/admin/game/editors/{id}";
     }
 
@@ -288,11 +200,10 @@ public class AdminController {
             @PathVariable("userId") Integer userId,
             RedirectAttributes redirectAttributes
     ){
+        Game game = gameService.getGameById(gameId);
+        HrajUser user = userService.getUserById(userId);
 
-        UserIsEditor userIsEditor = new UserIsEditor();
-        userIsEditor.setUserId(userId);
-        userIsEditor.setGameId(gameId);
-        userIsEditorDAO.makeTransient(userIsEditor);
+        game.getEditors().remove(user);
 
         redirectAttributes.addAttribute("id",gameId);
         return "redirect:/admin/game/editors/{id}";

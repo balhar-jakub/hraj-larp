@@ -2,6 +2,7 @@ package cz.hrajlarp.service;
 
 import cz.hrajlarp.dao.UserAttendedGameDAO;
 import cz.hrajlarp.dto.PlayerDto;
+import cz.hrajlarp.entity.Game;
 import cz.hrajlarp.entity.HrajUser;
 import cz.hrajlarp.entity.UserAttendedGame;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,12 @@ import java.util.List;
 public class PlayerService {
     @Autowired
     private UserAttendedGameDAO userAttendedGameDAO;
+    @Autowired
+    private GameService gameService;
+    @Autowired
+    private RightsService rightsService;
+    @Autowired
+    private DateService dateService;
 
     public List<PlayerDto> getRegularPlayersOfGame(int gameId) {
         List<UserAttendedGame> players = userAttendedGameDAO.getActualPlayersOnly(gameId);
@@ -65,5 +72,43 @@ public class PlayerService {
         player.setPayedText(userAttendedGame.getPayed() ? "Ano" : "");
 
         return player;
+    }
+
+    public String logOutFromGame(int gameId) {
+        if (rightsService.isLogged()) {
+            int userId = rightsService.getLoggedUser().getId();
+            UserAttendedGame userAttendedGame = userAttendedGameDAO.getSpecificOne(userId, gameId);
+
+            if(userAttendedGame != null) {
+                gameService.signOutFromGame(userAttendedGame);
+            }
+            return "redirect:/game/detail";
+        } else {
+            return "/error";
+        }
+    }
+
+    public String logIntoGame(int gameId) {
+        if (rightsService.isLogged()) {
+            HrajUser user = rightsService.getLoggedUser();
+
+            if (gameId > 0) {
+                if (!user.getActivated()) {
+                    return "/error";
+                }
+                Game game = gameService.getGameById(gameId);
+                if (game != null && dateService.isDateInFuture(game.getDate())) {
+                    try {
+                        gameService.signUserAsPlayer(game, user);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return "/error";
+                    }
+                }
+            }
+        } else {
+            return "/error";
+        }
+        return "redirect:/game/detail";
     }
 }

@@ -1,7 +1,6 @@
 package cz.hrajlarp.service;
 
 import cz.hrajlarp.dao.UserDAO;
-import cz.hrajlarp.dao.UserIsEditorDAO;
 import cz.hrajlarp.entity.Game;
 import cz.hrajlarp.entity.HrajUser;
 import cz.hrajlarp.entity.UserAttendedGame;
@@ -14,11 +13,11 @@ import java.util.List;
 
 public class MailService {
 	@Autowired
-    UserIsEditorDAO userIsEditorDAO;
-	@Autowired
 	UserDAO userDAO;
     @Autowired
     GameService gameService;
+    @Autowired
+    DateService dateService;
 	
 	private MailSender mailSender;
     private SimpleMailMessage templateMessage;
@@ -42,7 +41,7 @@ public class MailService {
             "Vážený uživateli " + u.getName() + " " + u.getLastName() + ",\n\n"
                 + "tímto Vám dáváme vědět, že Vaše úloha ve hře "
                 + g.getName() +", "
-                + "se změnila z náhrady na závaznou roli. Hra se koná " + gameService.getDateAsDMY(g) +"\n"
+                + "se změnila z náhrady na závaznou roli. Hra se koná " + dateService.getDateAsDMY(g.getDate()) +"\n"
                 + "Ověřte si prosím tuto skutečnost na stránce hrajlarp.cz\n\n"
                 + "S přáním krásného dne Váš tým HRAJ LARP");
         }
@@ -63,7 +62,7 @@ public class MailService {
                 "Vážený uživateli " + u.getName() + " " + u.getLastName() + ",\n\n"
                         + "tímto Vám dáváme vědět, že Vaše úloha ve hře "
                         + g.getName() +", "
-                        + "se změnila ze závazné role na náhradu. Hra se koná " + gameService.getDateAsDMY(g) +"\n"
+                        + "se změnila ze závazné role na náhradu. Hra se koná " + dateService.getDateAsDMY(g.getDate()) +"\n"
                         + "Ověřte si prosím tuto skutečnost na stránce hrajlarp.cz\n\n"
                         + "S přáním krásného dne Váš tým HRAJ LARP");
         System.out.println("Sending message:\n" + message.getText() + "\n");
@@ -87,7 +86,7 @@ public class MailService {
 	        message.setText(
 	            "Vážený uživateli " + user.getName() + " " + user.getLastName() + ",\n\n"
 	                + "potvrzujeme, že jste se úspěšně přihlásil do hry "
-	                + game.getName() +". Hra se koná " + gameService.getDateAsDMY(game) +"\n"
+	                + game.getName() +". Hra se koná " + dateService.getDateAsDMY(game.getDate()) +"\n"
 	                + "Ověřte si prosím tuto skutečnost na stránce hrajlarp.cz\n\n"
 	                + "S přáním krásného dne Váš tým HRAJ LARP");
         }
@@ -112,7 +111,7 @@ public class MailService {
 	        	                + "potvrzujeme, že jste se úspěšně přihlásil do hry "
 	        	                + g.getName() +" jako náhrada. Pokud se Vás status změní na závaznou roli,"
 	        	                + "informujeme Vás o tom e-mailem."
-	        	                + "Hra se koná " + gameService.getDateAsDMY(g) +"\n"
+	        	                + "Hra se koná " + dateService.getDateAsDMY(g.getDate()) +"\n"
 	        	                + "Ověřte si prosím tyto skutečnosti na stránce hrajlarp.cz\n\n"
 	        	                + "S přáním krásného dne Váš tým HRAJ LARP");
         }
@@ -132,7 +131,7 @@ public class MailService {
                 "Vážený uživateli " + u.getName() + " " + u.getLastName() + ",\n\n"
                         + "nezaplatil jste hru "
                         + g.getName()
-                        + "Hra se koná " + gameService.getDateAsDMY(g) +"\n");
+                        + "Hra se koná " + dateService.getDateAsDMY(g.getDate()) +"\n");
         System.out.println("Sending message:\n" + message.getText() + "\n");
         try{
             this.mailSender.send(message);
@@ -161,7 +160,7 @@ public class MailService {
     }
     
     public void sendMsgToEditors (HrajUser user, Game game) {
-    	List<HrajUser> editors = userIsEditorDAO.getEditorsByGameId(game.getId());
+    	List<HrajUser> editors = game.getEditors();
     	List<HrajUser> adminIds = userDAO.getAdmins();
     	adminIds.removeAll(editors);
     	editors.addAll(adminIds);
@@ -180,7 +179,7 @@ public class MailService {
         					+ "Uživatel: " + u.getName() + " " + u.getLastName() + ",\n"
         					+ "Login: " + u.getUserName() + ",\n\n"
         	                + "Stav tohoto uživatele se právě změnil z náhrady na řádného hráče hry "
-        	                + g.getName() +", která proběhne " + gameService.getDateAsDMY(g) +".\n");
+        	                + g.getName() +", která proběhne " + dateService.getDateAsDMY(g.getDate()) +".\n");
         System.out.println("Sending message:\n" + message.getText() + "\n"
         					+"TO: "+ r.getUserName()+"\n");
         try{
@@ -200,7 +199,7 @@ public class MailService {
 					+ "Uživatel: " + loggedOffUser.getName() + " " + loggedOffUser.getLastName() + "\n"
 					+ "Login: " + loggedOffUser.getUserName() + "\n\n"
 	                + "Tento hráč se právě odhlásil ze hry "
-	                + game.getName() +", která proběhne " + gameService.getDateAsDMY(game) +".\n");
+	                + game.getName() +", která proběhne " + dateService.getDateAsDMY(game.getDate()) +".\n");
     		if (payed)
     			sb.append("Hráč již zaplatil za účast ve hře.\n");
     		else

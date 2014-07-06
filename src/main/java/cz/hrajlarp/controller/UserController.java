@@ -5,7 +5,7 @@ import cz.hrajlarp.dao.UserDAO;
 import cz.hrajlarp.entity.HrajUser;
 import cz.hrajlarp.entity.UserAttendedGame;
 import cz.hrajlarp.service.MailService;
-import cz.hrajlarp.utils.HashString;
+import cz.hrajlarp.service.HashService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -58,7 +58,7 @@ public class UserController {
         if (result.hasErrors()) return "user/add";
 
         try {
-        	HashString hs = new HashString();
+        	HashService hs = new HashService();
             String hashPass = hs.digest(user.getPassword());
             user.setPassword(hashPass);
             user.setActivationLink(hs.digest(user.getEmail()));
@@ -113,7 +113,7 @@ public class UserController {
             if (user.getPassword() == null || user.getPassword().trim().equals("")) {
                 //user.setPassword(user.getOldPassword());
             } else {
-                String hashPass = new HashString().digest(user.getPassword());
+                String hashPass = new HashService().digest(user.getPassword());
                 user.setPassword(hashPass);
             }
         } catch (Exception e) {
@@ -122,7 +122,7 @@ public class UserController {
         
         if(!userDAO.findById(user.getId()).getEmail().equals(user.getEmail())){//mail address edited
         	try {
-            	HashString hs = new HashString();
+            	HashService hs = new HashService();
                 user.setActivationLink(hs.digest(user.getEmail()));
             } catch (Exception e) {
                 return "user/failed";

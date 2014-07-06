@@ -96,11 +96,6 @@
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-jms</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
         </dependency>
@@ -144,6 +139,11 @@
             <version>${hibernate.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+        <dependency>
             <groupId>hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <version>${hsqldb.version}</version>
@@ -157,6 +157,33 @@
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>9.1-901.jdbc4</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.dozer</groupId>
+            <artifactId>dozer</artifactId>
+            <version>5.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.7.5</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.5</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
         </dependency>
 
         <!-- Tomcat Dependencies -->
@@ -304,8 +331,8 @@
     </build>
     <properties>
         <jetty.version>6.1.4</jetty.version>
-        <hibernate.version>4.2.2.Final</hibernate.version>
-        <spring.version>3.2.1.RELEASE</spring.version>
+        <hibernate.version>4.3.1.Final</hibernate.version>
+        <spring.version>4.0.5.RELEASE</spring.version>
         <spring.security.version>3.1.3.RELEASE</spring.security.version>
         <hsqldb.version>1.8.0.7</hsqldb.version>
         <commons-dbcp.version>1.4</commons-dbcp.version>

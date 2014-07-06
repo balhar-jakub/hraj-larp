@@ -4,11 +4,10 @@ import java.sql.Timestamp;
 
 import javax.persistence.*;
 
-@IdClass(UserGamePK.class)
+@IdClass(UserAttendedGamePK.class)
 @Table(name = "prereg_notifications", schema = "public")
 @Entity
 public class PreRegNotification {
-
     private int userId;
 
     @Column(name = "user_id")

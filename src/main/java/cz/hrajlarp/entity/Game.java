@@ -10,25 +10,51 @@ import java.util.*;
 /**
  *
  */
-@SuppressWarnings("RedundantIfStatement")
 @Table(name = "game", schema = "public")
 @Entity
 public class Game {
-    private int id;
+    private Integer id;
+    private Timestamp date;
+    private Timestamp registrationStartedDate;
+
+    private String name;
+    private String anotation;
+    private String author;
+    private String imagePath;
+    private String shortText;
+    private String place;
+    private String info;
+    private String aboutGame;
+    private String web;
+    private String larpDb;
+    private String ordinaryPlayerText;
+    private String substitutesText;
+    private String registeredSubstitute;
+    private String action;
+
+    private int bothRole;
+    private int menRole;
+    private int womenRole;
+
+    private boolean confirmed;
+    private boolean mailProhibition;
+    private boolean paymentFinished;
+
+    private HrajUser addedBy;
+    private List<UserAttendedGame> players;
+    private List<HrajUser> editors;
 
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_key_gen")
     @SequenceGenerator(name = "id_key_gen", sequenceName = "hraj_game_id_seq", allocationSize = 1)
     @Column(name = "id")
     @Id
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
-
-    private String name;
 
     @Column(name = "name")
     @Basic
@@ -40,8 +66,6 @@ public class Game {
         this.name = name;
     }
 
-    private Timestamp date;
-
     @Column(name = "date")
     @Basic
     public Timestamp getDate() {
@@ -51,19 +75,6 @@ public class Game {
     public void setDate(Timestamp date) {
         this.date = date;
     }
-
-    private String time;
-
-    @Transient
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    private String anotation;
 
     @Column(name = "anotation")
     @Basic
@@ -75,8 +86,6 @@ public class Game {
         this.anotation = anotation;
     }
 
-    private String author;
-
     @Column(name = "author")
     @Basic
     public String getAuthor() {
@@ -86,8 +95,6 @@ public class Game {
     public void setAuthor(String author) {
         this.author = author;
     }
-
-    private boolean confirmed;
 
     @Column(name = "confirmed")
     @Basic
@@ -99,31 +106,15 @@ public class Game {
         this.confirmed = confirmed;
     }
 
-    private String image;
-
     @Column(name = "image")
     @Basic
-    public String getImage() {
-        return image;
+    public String getImagePath() {
+        return imagePath;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
-
-    private int addedBy;
-
-    @Column(name = "added_by")
-    @Basic
-    public int getAddedBy() {
-        return addedBy;
-    }
-
-    public void setAddedBy(int addedBy) {
-        this.addedBy = addedBy;
-    }
-
-    private int menRole;
 
     @Column(name = "men_role")
     @Basic
@@ -135,8 +126,6 @@ public class Game {
         this.menRole = menRole;
     }
 
-    private int womenRole;
-
     @Column(name = "women_role")
     @Basic
     public int getWomenRole() {
@@ -146,8 +135,6 @@ public class Game {
     public void setWomenRole(int womenRole) {
         this.womenRole = womenRole;
     }
-
-    private int bothRole;
 
     @Column(name = "both_role")
     @Basic
@@ -159,8 +146,6 @@ public class Game {
         this.bothRole = bothRole;
     }
 
-    private String shortText;
-
     @Column(name = "short_text")
     @Basic
     public String getShortText() {
@@ -170,8 +155,6 @@ public class Game {
     public void setShortText(String shortText) {
         this.shortText = shortText;
     }
-
-    private String place;
 
     @Column(name = "place")
     @Basic
@@ -183,8 +166,6 @@ public class Game {
         this.place = place;
     }
 
-    private String info;
-
     @Column(name = "info")
     @Basic
     public String getInfo() {
@@ -194,8 +175,6 @@ public class Game {
     public void setInfo(String info) {
         this.info = info;
     }
-
-    private String aboutGame;
 
     @Column(name = "about_game")
     @Basic
@@ -207,8 +186,6 @@ public class Game {
         this.aboutGame = aboutGame;
     }
 
-    private String web;
-
     @Column(name = "web")
     @Basic
     public String getWeb() {
@@ -218,8 +195,6 @@ public class Game {
     public void setWeb(String web) {
         this.web = web;
     }
-
-    private String larpDb;
 
     @Column(name = "larp_db")
     @Basic
@@ -231,8 +206,6 @@ public class Game {
         this.larpDb = larpDb;
     }
 
-    private Timestamp registrationStartedDate;
-
     @Column(name = "registration_started")
     @Basic
     public Timestamp getRegistrationStartedDate() {
@@ -242,20 +215,6 @@ public class Game {
     public void setRegistrationStartedDate(Timestamp registrationStartedDate) {
         this.registrationStartedDate = registrationStartedDate;
     }
-
-    private String registrationStartedTime;
-
-    @Transient
-    public String getRegistrationStartedTime() {
-        return registrationStartedTime;
-    }
-
-    public void setRegistrationStartedTime(String registrationStartedTime) {
-        this.registrationStartedTime = registrationStartedTime;
-    }
-
-
-    private String ordinaryPlayerText;
 
     @Column(name = "ordinary_player_text")
     @Basic
@@ -267,7 +226,6 @@ public class Game {
         this.ordinaryPlayerText = ordinaryPlayerText;
     }
 
-    private String substitutesText;
 
     @Column(name = "replacements_text")
     @Basic
@@ -279,8 +237,6 @@ public class Game {
         this.substitutesText = replacementsText;
     }
 
-    private String registeredSubstitute;
-
     @Column(name = "registered_substitute")
     @Basic
     public String getRegisteredSubstitute() {
@@ -290,8 +246,6 @@ public class Game {
     public void setRegisteredSubstitute(String registeredSubstitute) {
         this.registeredSubstitute = registeredSubstitute;
     }
-
-    private String action;
 
     @Column(name = "action")
     @Basic
@@ -303,19 +257,15 @@ public class Game {
         this.action = action;
     }
     
-    private Boolean mailProhibition;
-
     @Column(name = "mail_prohibition")
     @Basic
-    public Boolean getMailProhibition() {
+    public boolean getMailProhibition() {
         return mailProhibition;
     }
 
-    public void setMailProhibition(Boolean mailProhibition) {
+    public void setMailProhibition(boolean mailProhibition) {
         this.mailProhibition = mailProhibition;
     }
-
-    private boolean paymentFinished;
 
     @Column(name = "payment_finished")
     @Basic
@@ -327,106 +277,37 @@ public class Game {
         this.paymentFinished = paymentFinished;
     }
 
-    private Map<Object, UserAttendedGame> gameEntities;
+    @ManyToOne
+    @JoinColumn(name = "added_by", referencedColumnName = "id", nullable = false, insertable=true, updatable=false)
+    public HrajUser getAddedBy() {
+        return addedBy;
+    }
+
+    public void setAddedBy(HrajUser addedBy) {
+        this.addedBy = addedBy;
+    }
 
     @MapKey(name = "gameId")
     @OneToMany(mappedBy = "attendedGame")
-    public Map<Object, UserAttendedGame> getGameEntities() {
-        return gameEntities;
+    public List<UserAttendedGame> getPlayers() {
+        return players;
     }
 
-    public void setGameEntities(Map<Object, UserAttendedGame> gameEntities) {
-        this.gameEntities = gameEntities;
+    public void setPlayers(List<UserAttendedGame> players) {
+        this.players = players;
     }
 
 
-    private Map<Object, UserIsEditor> editedByUsers;
-
-    @MapKey(name = "gameId")
-    @OneToMany(mappedBy = "editGame")
-    @BatchSize(size = 2)
-    public Map<Object, UserIsEditor> getEditedByUsers() {
-        return editedByUsers;
+    @ManyToMany
+    @JoinTable(name="user_is_editor",
+            joinColumns = {@JoinColumn(name="game_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name="user_id", referencedColumnName = "id")}
+    )
+    public List<HrajUser> getEditors() {
+        return editors;
     }
 
-    public void setEditedByUsers(Map<Object, UserIsEditor> editedByUsers) {
-        this.editedByUsers = editedByUsers;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Game game = (Game) o;
-
-        if (addedBy != game.addedBy) return false;
-        if (bothRole != game.bothRole) return false;
-        if (confirmed != game.confirmed) return false;
-        if (id != game.id) return false;
-        if (menRole != game.menRole) return false;
-        if (womenRole != game.womenRole) return false;
-        if (aboutGame != null ? !aboutGame.equals(game.aboutGame) : game.aboutGame != null) return false;
-        if (action != null ? !action.equals(game.action) : game.action != null) return false;
-        if (anotation != null ? !anotation.equals(game.anotation) : game.anotation != null) return false;
-        if (author != null ? !author.equals(game.author) : game.author != null) return false;
-        if (date != null ? !date.equals(game.date) : game.date != null) return false;
-        if (editedByUsers != null ? !editedByUsers.equals(game.editedByUsers) : game.editedByUsers != null)
-            return false;
-        if (gameEntities != null ? !gameEntities.equals(game.gameEntities) : game.gameEntities != null) return false;
-        if (image != null ? !image.equals(game.image) : game.image != null) return false;
-        if (info != null ? !info.equals(game.info) : game.info != null) return false;
-        if (larpDb != null ? !larpDb.equals(game.larpDb) : game.larpDb != null) return false;
-        if (mailProhibition != null ? !mailProhibition.equals(game.mailProhibition) : game.mailProhibition != null)
-            return false;
-        if (name != null ? !name.equals(game.name) : game.name != null) return false;
-        if (ordinaryPlayerText != null ? !ordinaryPlayerText.equals(game.ordinaryPlayerText) : game.ordinaryPlayerText != null)
-            return false;
-        if (place != null ? !place.equals(game.place) : game.place != null) return false;
-        if (registeredSubstitute != null ? !registeredSubstitute.equals(game.registeredSubstitute) : game.registeredSubstitute != null)
-            return false;
-        if (registrationStartedDate != null ? !registrationStartedDate.equals(game.registrationStartedDate) : game.registrationStartedDate != null)
-            return false;
-        if (registrationStartedTime != null ? !registrationStartedTime.equals(game.registrationStartedTime) : game.registrationStartedTime != null)
-            return false;
-        if (shortText != null ? !shortText.equals(game.shortText) : game.shortText != null) return false;
-        if (substitutesText != null ? !substitutesText.equals(game.substitutesText) : game.substitutesText != null)
-            return false;
-        if (time != null ? !time.equals(game.time) : game.time != null) return false;
-        if (web != null ? !web.equals(game.web) : game.web != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (date != null ? date.hashCode() : 0);
-        result = 31 * result + (time != null ? time.hashCode() : 0);
-        result = 31 * result + (anotation != null ? anotation.hashCode() : 0);
-        result = 31 * result + (author != null ? author.hashCode() : 0);
-        result = 31 * result + (confirmed ? 1 : 0);
-        result = 31 * result + (image != null ? image.hashCode() : 0);
-        result = 31 * result + addedBy;
-        result = 31 * result + menRole;
-        result = 31 * result + womenRole;
-        result = 31 * result + bothRole;
-        result = 31 * result + (shortText != null ? shortText.hashCode() : 0);
-        result = 31 * result + (place != null ? place.hashCode() : 0);
-        result = 31 * result + (info != null ? info.hashCode() : 0);
-        result = 31 * result + (aboutGame != null ? aboutGame.hashCode() : 0);
-        result = 31 * result + (web != null ? web.hashCode() : 0);
-        result = 31 * result + (larpDb != null ? larpDb.hashCode() : 0);
-        result = 31 * result + (registrationStartedDate != null ? registrationStartedDate.hashCode() : 0);
-        result = 31 * result + (registrationStartedTime != null ? registrationStartedTime.hashCode() : 0);
-        result = 31 * result + (ordinaryPlayerText != null ? ordinaryPlayerText.hashCode() : 0);
-        result = 31 * result + (substitutesText != null ? substitutesText.hashCode() : 0);
-        result = 31 * result + (registeredSubstitute != null ? registeredSubstitute.hashCode() : 0);
-        result = 31 * result + (action != null ? action.hashCode() : 0);
-        result = 31 * result + (mailProhibition != null ? mailProhibition.hashCode() : 0);
-        result = 31 * result + (gameEntities != null ? gameEntities.hashCode() : 0);
-        result = 31 * result + (editedByUsers != null ? editedByUsers.hashCode() : 0);
-        return result;
+    public void setEditors(List<HrajUser> editors) {
+        this.editors = editors;
     }
 }

@@ -138,11 +138,8 @@ public class NotificationService {
             if(game.getPaymentFinished()) {
                 continue;
             }
-            Map<Object, UserIsEditor> gameEditors = game.getEditedByUsers();
-            Collection<UserIsEditor> editors = gameEditors.values();
-            for(UserIsEditor user: editors ){
-                HrajUser hrajUser = userDAO.findById(user.getUserId());
-                mailService.sendInfoAboutUnfinishedAccount(hrajUser.getEmail(), game);
+            for(HrajUser editor: game.getEditors()){
+                mailService.sendInfoAboutUnfinishedAccount(editor.getEmail(), game);
             }
         }
 

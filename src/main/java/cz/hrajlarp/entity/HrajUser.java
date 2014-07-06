@@ -1,6 +1,6 @@
 package cz.hrajlarp.entity;
 
-import cz.hrajlarp.utils.HrajRoles;
+import cz.hrajlarp.enums.HrajRoles;
 
 import javax.persistence.*;
 import java.util.Map;
@@ -209,18 +209,6 @@ public class HrajUser {
     }
 
 
-    private Map<Object, UserIsEditor> editingGames;
-
-    @MapKey(name = "userId")
-    @OneToMany(mappedBy = "userEdit")
-    public Map<Object, UserIsEditor> getEditingGames() {
-        return editingGames;
-    }
-
-    public void setEditingGames(Map<Object, UserIsEditor> editingGames) {
-        this.editingGames = editingGames;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -233,8 +221,6 @@ public class HrajUser {
         if (scheduler != hrajUser.scheduler) return false;
         if (activated != null ? !activated.equals(hrajUser.activated) : hrajUser.activated != null) return false;
         if (activationLink != null ? !activationLink.equals(hrajUser.activationLink) : hrajUser.activationLink != null)
-            return false;
-        if (editingGames != null ? !editingGames.equals(hrajUser.editingGames) : hrajUser.editingGames != null)
             return false;
         if (email != null ? !email.equals(hrajUser.email) : hrajUser.email != null) return false;
         if (gender != null ? !gender.equals(hrajUser.gender) : hrajUser.gender != null) return false;
@@ -271,7 +257,6 @@ public class HrajUser {
         result = 31 * result + (placeFinder ? 1 : 0);
         result = 31 * result + (scheduler ? 1 : 0);
         result = 31 * result + (userEntities != null ? userEntities.hashCode() : 0);
-        result = 31 * result + (editingGames != null ? editingGames.hashCode() : 0);
         return result;
     }
 }

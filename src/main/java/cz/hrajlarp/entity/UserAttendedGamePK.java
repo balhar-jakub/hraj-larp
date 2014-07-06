@@ -7,11 +7,11 @@ import java.io.Serializable;
 /**
  *
  */
-public class UserGamePK implements Serializable {
+public class UserAttendedGamePK implements Serializable {
 
-    public UserGamePK(){ }
+    public UserAttendedGamePK(){ }
 
-    public UserGamePK(int userId, int gameId) {
+    public UserAttendedGamePK(int userId, int gameId) {
         this.userId = userId;
         this.gameId = gameId;
     }
@@ -43,9 +43,9 @@ public class UserGamePK implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof UserGamePK)) return false;
+        if (!(o instanceof UserAttendedGamePK)) return false;
 
-        UserGamePK that = (UserGamePK) o;
+        UserAttendedGamePK that = (UserAttendedGamePK) o;
 
         if (gameId != that.gameId) return false;
         if (userId != that.userId) return false;

@@ -1,4 +1,4 @@
-package cz.hrajlarp.utils;
+package cz.hrajlarp.enums;
 
 /**
  * Created by IntelliJ IDEA.

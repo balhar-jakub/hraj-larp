@@ -2,11 +2,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri='/WEB-INF/tlds/template.tld' prefix='template' %>
 <div class="text">
-    <h1>${game.name} | ${game.dateAsDMY}</h1>
+    <h1>${game.name} | ${game.date}</h1>
 </div>
 
 <c:choose>
-  <c:when test="${game.festival}">
+  <c:when test="${not empty game.shortText}">
     <div class="page-termin festival">
   </c:when>
   <c:otherwise>
@@ -27,7 +27,7 @@
                 ${game.dateAsDayName}
             </div>
             <div class="cas">
-                <span>${game.dateTime}</span>
+                <span>${game.time}</span>
             </div>
         </div>
         <div class="siderow center">
@@ -109,20 +109,20 @@
                 <!-- Get amount of free places and all places-->
                 <tr>
                     <td>počet míst</td>
-                    <td>${game.menRole}</td>
-                    <td>${game.womenRole}</td>
-                    <td>${game.bothRole}</td>
+                    <td>${game.players.menRoles}</td>
+                    <td>${game.players.womenRoles}</td>
+                    <td>${game.players.bothRoles}</td>
                 </tr>
                 <tr>
                     <td>z toho volných</td>
-                    <td>${game.menFreeRoles}</td>
-                    <td>${game.womenFreeRoles}</td>
-                    <td>${game.bothFreeRoles}</td>
+                    <td>${game.players.menFreeRoles}</td>
+                    <td>${game.players.womenFreeRoles}</td>
+                    <td>${game.players.bothFreeRoles}</td>
                 </tr>
                 <tr>
                     <td>Náhradníci</td>
-                    <td>${game.menSubstitutes}</td>
-                    <td>${game.womenSubstitutes}</td>
+                    <td>${game.players.menSubstitutes}</td>
+                    <td>${game.players.womenSubstitutes}</td>
                     <td></td>
                 </tr>
                 </tbody>
@@ -151,14 +151,14 @@
         <p>${game.aboutGame}</p>
 
         <h2>Popis</h2>
-        <p>${game.anotation}</p>
+        <p>${game.annotation}</p>
 
         <h3>Autor</h3>
         <p>${game.author}</p>
 
         <h3>Typ hry:</h3>
         <c:choose>
-            <c:when test="${game.festival}">
+            <c:when test="${not empty game.shortText}">
                 <p>Hra uváděná v rámci festivalu HRAJ LARP.</p>
             </c:when>
             <c:otherwise>

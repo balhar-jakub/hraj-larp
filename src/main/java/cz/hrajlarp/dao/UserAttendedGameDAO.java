@@ -6,7 +6,7 @@ import cz.hrajlarp.api.IBuilder;
 import cz.hrajlarp.entity.Game;
 import cz.hrajlarp.entity.HrajUser;
 import cz.hrajlarp.entity.UserAttendedGame;
-import cz.hrajlarp.entity.UserGamePK;
+import cz.hrajlarp.entity.UserAttendedGamePK;
 import cz.hrajlarp.service.GameService;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -24,7 +24,7 @@ import java.util.List;
  */
 @SuppressWarnings({"SimplifiableIfStatement", "unchecked"})
 @Repository
-public class UserAttendedGameDAO extends GenericHibernateDAO<UserAttendedGame, UserGamePK> {
+public class UserAttendedGameDAO extends GenericHibernateDAO<UserAttendedGame, UserAttendedGamePK> {
     @Autowired
     GameService gameService;
 
@@ -215,7 +215,7 @@ public class UserAttendedGameDAO extends GenericHibernateDAO<UserAttendedGame, U
     }
 
     public UserAttendedGame getSpecificOne(int userId, int gameId) {
-        return findById(new UserGamePK(userId, gameId));
+        return findById(new UserAttendedGamePK(userId, gameId));
     }
 
     public boolean isAlreadySignedFor(int userId, int gameId) {

@@ -4,7 +4,7 @@ import cz.hrajlarp.api.GenericBuilder;
 import cz.hrajlarp.api.GenericHibernateDAO;
 import cz.hrajlarp.api.IBuilder;
 import cz.hrajlarp.entity.HrajUser;
-import cz.hrajlarp.utils.HrajRoles;
+import cz.hrajlarp.enums.HrajRoles;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
