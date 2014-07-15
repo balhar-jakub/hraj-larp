@@ -1,11 +1,7 @@
 package cz.hrajlarp.dto;
 
-import com.sun.istack.internal.NotNull;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.sql.Timestamp;
-import java.util.Date;
 
 /**
  * Created by jbalhar on 7/1/2014.

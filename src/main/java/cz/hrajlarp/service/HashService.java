@@ -1,7 +1,6 @@
 package cz.hrajlarp.service;
 
 import java.security.MessageDigest;
-import java.security.SecureRandom;
 
 public class HashService {
 

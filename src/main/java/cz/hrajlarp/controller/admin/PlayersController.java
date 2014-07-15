@@ -2,7 +2,6 @@ package cz.hrajlarp.controller.admin;
 
 import cz.hrajlarp.entity.Game;
 import cz.hrajlarp.entity.HrajUser;
-import cz.hrajlarp.entity.UserAttendedGame;
 import cz.hrajlarp.service.DateService;
 import cz.hrajlarp.service.GameService;
 import cz.hrajlarp.service.PlayerService;

@@ -7,7 +7,6 @@ import cz.hrajlarp.dto.GameDto;
 import cz.hrajlarp.entity.Game;
 import cz.hrajlarp.entity.HrajUser;
 import cz.hrajlarp.entity.PreRegNotification;
-import cz.hrajlarp.entity.UserAttendedGame;
 import cz.hrajlarp.service.DateService;
 import cz.hrajlarp.service.GameService;
 import cz.hrajlarp.service.RightsService;
@@ -32,8 +31,6 @@ import java.text.SimpleDateFormat;
 public class GameController {
     @Autowired
     private GameDAO gameDAO;
-    @Autowired
-    private UserAttendedGameDAO userAttendedGameDAO;
     @Autowired
     private PreRegNotificationDAO preRegNotificationDAO;
     @Autowired
@@ -130,12 +127,8 @@ public class GameController {
                 model.addAttribute("game", game);
                 model.addAttribute("date", dateService.getDateAsYMD(game.getDate()));
                 model.addAttribute("time", dateService.getTimeAsHM(game.getDate()));
-                model.addAttribute("registrationStartedDate",
-                        new SimpleDateFormat("yyyy-MM-dd").format(
-                                game.getRegistrationStartedDate()));
-                model.addAttribute("registrationStartedTime",
-                        new SimpleDateFormat("HH:mm").format(
-                                game.getRegistrationStartedDate()));
+                model.addAttribute("registrationStartedDate", dateService.getDateAsYMD(game.getRegistrationStartedDate()));
+                model.addAttribute("registrationStartedTime", dateService.getTimeAsHM(game.getRegistrationStartedDate()));
 
                 return "game/edit";
             } else {
@@ -166,19 +159,7 @@ public class GameController {
                 return "/error";
             }
 
-            Game gameOld = gameDAO.findById(id);
-            HrajUser user = rightsService.getLoggedUser();
-            if (!user.getActivated()) {
-                return "/error";
-            }
-            if (gameOld != null && rightsService.hasRightsToEditGame(user, gameOld)) {
-                if(result.hasErrors()) {
-                    return "/game/edit";
-                }
-            	gameService.editGameDto(gameOld, myGame, id, model);
-                model.addAttribute("gameId", id);
-                return "/game/edited";
-            }
+            return gameService.editGameDto(myGame, id, model, result);
         }
         return "/error";
     }
@@ -212,7 +193,7 @@ public class GameController {
             HrajUser user = rightsService.getLoggedUser();
             PreRegNotification regNotify = new PreRegNotification();
             if (gameId > 0) {
-	            Game game = gameDAO.findById(gameId);
+	            Game game = gameService.getGameById(gameId);
 	            regNotify.setGameId(gameId);
 	            regNotify.setUserId(user.getId());
 	            regNotify.setNotifyDate(dateService.getDayAgoDate(game.getRegistrationStartedDate()));

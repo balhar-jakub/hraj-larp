@@ -1,6 +1,5 @@
 package cz.hrajlarp.service;
 
-import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

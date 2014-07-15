@@ -5,9 +5,8 @@ import cz.hrajlarp.api.GenericHibernateDAO;
 import cz.hrajlarp.api.IBuilder;
 import cz.hrajlarp.entity.Game;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,71 +33,71 @@ public class GameDAO extends GenericHibernateDAO<Game, Integer>{
     /**
      * @return List of all games in future from current date
      */
-    public List<Game> getFutureGames(){
-        Session session = sessionFactory.getCurrentSession();
-        Criteria crit = session.createCriteria(Game.class);
-        crit.add(Restrictions.ge("date", new Date()));
-        crit.addOrder(Order.asc("date"));
-        return crit.list();
+    public List<Game> getGamesInFuture(){
+        Criteria gamesInFuture = getCriteria(Game.class);
+        gamesInFuture.add(Restrictions.ge("date", new Date()));
+        gamesInFuture.addOrder(Order.asc("date"));
+        return gamesInFuture.list();
     }
 
     /**
      * @return List of all games in past by current date
      */
-    public List<Game> getFormerGames(){
-        Session session = sessionFactory.getCurrentSession();
-        Criteria crit = session.createCriteria(Game.class);
-        crit.add(Restrictions.lt("date", new Date()));
-        crit.addOrder(Order.desc("date"));
-        return crit.list();
+    public List<Game> getGamesInPast(){
+        Criteria gamesInPast = getCriteria(Game.class);
+        gamesInPast.add(Restrictions.lt("date", new Date()));
+        gamesInPast.addOrder(Order.desc("date"));
+        return gamesInPast.list();
     }
 
-    public List<Game> GetGamesMonthInFuture(){
-        Session session = sessionFactory.getCurrentSession();
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MONTH, 1);
-        Timestamp date = new Timestamp(cal.getTimeInMillis());
-        Timestamp from = new Timestamp(new Date().getTime());
-        Query finalQuery = session.createQuery("from Game where date >= :fromDate and date <= :date and shortText=:shortText order by date");
-        finalQuery.setTimestamp("date", date);
-        finalQuery.setTimestamp("fromDate", from);
-        finalQuery.setString("shortText", FESTIVAL_GAME);
-        return finalQuery.list();
+    public List<Game> getFestivalGamesInUpcomingMonth(){
+        Calendar to = Calendar.getInstance();
+        to.add(Calendar.MONTH, 1);
+        Timestamp monthInFuture = new Timestamp(to.getTimeInMillis());
+        Timestamp now = new Timestamp(new Date().getTime());
+
+        return getFestivalGamesInTimeFrame(now, monthInFuture);
     }
 
-    public List<Game> GetGamesTwoWeeksInFuture(){
-        Session session = sessionFactory.getCurrentSession();
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.WEEK_OF_MONTH, 2);
-        Timestamp date = new Timestamp(cal.getTimeInMillis());
-        Timestamp from = new Timestamp(new Date().getTime());
-        Query finalQuery = session.createQuery("from Game where date >= :fromDate and date <= :date and shortText=:shortText order by date");
-        finalQuery.setTimestamp("fromDate", from);
-        finalQuery.setTimestamp("date", date);
-        finalQuery.setString("shortText", FESTIVAL_GAME);
-        return finalQuery.list();
+    public List<Game> getFestivalGamesInUpcomingTwoWeeks(){
+        Calendar to = Calendar.getInstance();
+        to.add(Calendar.WEEK_OF_MONTH, 2);
+        Timestamp twoWeeksInFuture = new Timestamp(to.getTimeInMillis());
+        Timestamp now = new Timestamp(new Date().getTime());
+
+        return getFestivalGamesInTimeFrame(now, twoWeeksInFuture);
     }
 
-    public List<Game> getTwoWeeksPast() {
-        Session session = sessionFactory.getCurrentSession();
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.WEEK_OF_MONTH, -2);
-        Timestamp date = new Timestamp(cal.getTimeInMillis());
-        Query finalQuery = session.createQuery("from Game where date <= :date and shortText=:shortText order by date");
-        finalQuery.setTimestamp("date", date);
-        finalQuery.setString("shortText", FESTIVAL_GAME);
-        return finalQuery.list();
+    public List<Game> getFestivalGamesOlderThanTwoWeeks() {
+        Calendar to = Calendar.getInstance();
+        to.add(Calendar.WEEK_OF_MONTH, -2);
+        Timestamp twoWeeksInPast = new Timestamp(to.getTimeInMillis());
+
+        Criteria gamesOlderThanTwoWeeks = getCriteria(Game.class);
+        gamesOlderThanTwoWeeks.add(Restrictions.le("date", twoWeeksInPast));
+        gamesOlderThanTwoWeeks.add(Restrictions.eq("shortText", FESTIVAL_GAME));
+        gamesOlderThanTwoWeeks.addOrder(Order.asc("date"));
+        return gamesOlderThanTwoWeeks.list();
     }
 
     public List<Game> getUnapprovedGames() {
-        Session session = sessionFactory.getCurrentSession();
-        Query query = session.createQuery("from Game where confirmed = false ");
-        return query.list();
+        Criteria unapprovedGames = getCriteria(Game.class);
+        unapprovedGames.add(Restrictions.eq("confirmed", false));
+        return unapprovedGames.list();
     }
 
     public List<String> getAllActions() {
-        Session session = sessionFactory.getCurrentSession();
-        Query query = session.createQuery("Select distinct action from Game");
-        return query.list();
+        Criteria criteria = getCriteria(String.class);
+        criteria.setProjection(Projections.distinct(Projections.property("action")));
+        return criteria.list();
+    }
+
+    private List<Game> getFestivalGamesInTimeFrame(Timestamp from, Timestamp to) {
+        Criteria festivalGamesInTimeFrame = getCriteria(Game.class);
+        festivalGamesInTimeFrame.add(Restrictions.ge("date", from));
+        festivalGamesInTimeFrame.add(Restrictions.le("date", to));
+        festivalGamesInTimeFrame.add(Restrictions.eq("shortText", FESTIVAL_GAME));
+        festivalGamesInTimeFrame.addOrder(Order.asc("date"));
+        return festivalGamesInTimeFrame.list();
     }
 }

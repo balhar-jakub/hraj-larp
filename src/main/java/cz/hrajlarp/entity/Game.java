@@ -1,10 +1,8 @@
 package cz.hrajlarp.entity;
 
-import org.hibernate.annotations.BatchSize;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.List;
 
 
 /**
@@ -18,7 +16,7 @@ public class Game {
     private Timestamp registrationStartedDate;
 
     private String name;
-    private String anotation;
+    private String annotation;
     private String author;
     private String imagePath;
     private String shortText;
@@ -41,6 +39,7 @@ public class Game {
     private boolean paymentFinished;
 
     private HrajUser addedBy;
+
     private List<UserAttendedGame> players;
     private List<HrajUser> editors;
 
@@ -78,12 +77,12 @@ public class Game {
 
     @Column(name = "anotation")
     @Basic
-    public String getAnotation() {
-        return anotation;
+    public String getAnnotation() {
+        return annotation;
     }
 
-    public void setAnotation(String anotation) {
-        this.anotation = anotation;
+    public void setAnnotation(String anotation) {
+        this.annotation = anotation;
     }
 
     @Column(name = "author")
@@ -287,8 +286,7 @@ public class Game {
         this.addedBy = addedBy;
     }
 
-    @MapKey(name = "gameId")
-    @OneToMany(mappedBy = "attendedGame")
+    @OneToMany(mappedBy = "game")
     public List<UserAttendedGame> getPlayers() {
         return players;
     }
@@ -296,7 +294,6 @@ public class Game {
     public void setPlayers(List<UserAttendedGame> players) {
         this.players = players;
     }
-
 
     @ManyToMany
     @JoinTable(name="user_is_editor",

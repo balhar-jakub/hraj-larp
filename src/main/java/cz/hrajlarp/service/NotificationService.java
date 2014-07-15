@@ -1,14 +1,22 @@
 package cz.hrajlarp.service;
 
-import cz.hrajlarp.dao.*;
-import cz.hrajlarp.entity.*;
+import cz.hrajlarp.dao.GameDAO;
+import cz.hrajlarp.dao.PreRegNotificationDAO;
+import cz.hrajlarp.dao.UserAttendedGameDAO;
+import cz.hrajlarp.dao.UserDAO;
+import cz.hrajlarp.entity.Game;
+import cz.hrajlarp.entity.HrajUser;
+import cz.hrajlarp.entity.PreRegNotification;
+import cz.hrajlarp.entity.UserAttendedGame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.Transient;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -65,7 +73,7 @@ public class NotificationService {
     public void sendNoGameNotification(){
         System.out.println("HRAJLARP - sendNoGameNotification.");
         // There is no game in date after today plus one month.
-        List<Game> games = gameDAO.GetGamesMonthInFuture();
+        List<Game> games = gameDAO.getFestivalGamesInUpcomingMonth();
         List<HrajUser> schedulers = userDAO.getSchedulers();
 
         boolean[] weeks = new boolean[4];
@@ -115,7 +123,7 @@ public class NotificationService {
     @Transient
     public void sendNoPlaceNotification(){
         System.out.println("HRAJLARP - sendNoGameNotification.");
-        List<Game> gamesWithoutPlace = gameDAO.GetGamesTwoWeeksInFuture();
+        List<Game> gamesWithoutPlace = gameDAO.getFestivalGamesInUpcomingTwoWeeks();
         List<HrajUser> placeFinders = userDAO.getPlaceFinders();
         for(Game game: gamesWithoutPlace){
             if(game.getPlace() != null && !game.getPlace().equals("")){
@@ -133,7 +141,7 @@ public class NotificationService {
     @Transient
     public void sendUnfinishedAccountNotification(){
         System.out.println("HRAJLARP - sendNoGameNotification.");
-        List<Game> gamesWithUnfinishedAccount = gameDAO.getTwoWeeksPast();
+        List<Game> gamesWithUnfinishedAccount = gameDAO.getFestivalGamesOlderThanTwoWeeks();
         for(Game game: gamesWithUnfinishedAccount){
             if(game.getPaymentFinished()) {
                 continue;

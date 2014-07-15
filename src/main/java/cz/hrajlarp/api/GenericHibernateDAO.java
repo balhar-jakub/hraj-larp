@@ -112,4 +112,8 @@ public abstract class GenericHibernateDAO<T, ID extends Serializable>
 	public void clear() {
 		sessionFactory.getCurrentSession().clear();
 	}
+
+    protected Criteria getCriteria(Class clazz){
+        return sessionFactory.getCurrentSession().createCriteria(clazz);
+    }
 }

@@ -27,6 +27,9 @@
     <!-- Enables the Spring MVC @Controller programming model -->
     <mvc:annotation-driven />
 
+    <context:property-placeholder location="classpath:mail.properties" />
+    <context:property-placeholder location="classpath:jdbc.properties" />
+
     <!-- Mapping of static files -->
     <mvc:resources mapping="/img/**" location="/assets/img/" />
     <mvc:resources mapping="/style/**" location="/assets/style/" />

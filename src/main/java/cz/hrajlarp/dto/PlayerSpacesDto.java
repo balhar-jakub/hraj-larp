@@ -1,7 +1,7 @@
 package cz.hrajlarp.dto;
 
 /**
- * Created by jbalhar on 7/6/2014.
+ *
  */
 public class PlayerSpacesDto {
     private int menRoles;

@@ -1,6 +1,5 @@
 package cz.hrajlarp.service;
 
-import cz.hrajlarp.entity.Game;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;

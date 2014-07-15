@@ -4,8 +4,8 @@ import cz.hrajlarp.dao.UserAttendedGameDAO;
 import cz.hrajlarp.dao.UserDAO;
 import cz.hrajlarp.entity.HrajUser;
 import cz.hrajlarp.entity.UserAttendedGame;
-import cz.hrajlarp.service.MailService;
 import cz.hrajlarp.service.HashService;
+import cz.hrajlarp.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -161,8 +161,8 @@ public class UserController {
         if (logged == null || (user != null && !user.equals(logged)))
             return "/error";   // attempt to view games attended by other user
 
-        List<UserAttendedGame> attendedFormer = userAttendedGameDAO.getAttendedFormer(logged);
-        List<UserAttendedGame> attendedFuture = userAttendedGameDAO.getAttendedFuture(logged);
+        List<UserAttendedGame> attendedFormer = userAttendedGameDAO.getAttendedInPast(logged);
+        List<UserAttendedGame> attendedFuture = userAttendedGameDAO.getAttendedInFuture(logged);
 
         model.addAttribute("futureGames", attendedFuture);
         model.addAttribute("formerGames", attendedFormer);
