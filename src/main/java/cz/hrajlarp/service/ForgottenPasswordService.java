@@ -34,4 +34,13 @@ public interface ForgottenPasswordService {
     public HrajUserEntity getAuthenticatedUserByLink(String authenticationLink);
 
     void updatePasswordForUserByLink(String mailLink);
+
+    /**
+     * It gets information from the link provided by user
+     * and must decide whether these information are correct.
+     *
+     * @param mailLink Key provided by user as a part of URL
+     * @return True if it is valid and belong to some user.
+     */
+    boolean isValidLink(String mailLink);
 }

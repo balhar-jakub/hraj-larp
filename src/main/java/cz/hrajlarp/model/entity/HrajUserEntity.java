@@ -14,8 +14,6 @@ import java.util.Set;
 @Entity
 public class HrajUserEntity {
     private Integer id;
-    private Set<UserRole> userRole;
-
 
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_key_gen")
     @SequenceGenerator(name = "id_key_gen", sequenceName = "hraj_user_id_seq", allocationSize = 1)
@@ -260,9 +258,5 @@ public class HrajUserEntity {
 
     public void setEditingGames(Map<Object, UserIsEditorEntity> editingGames) {
         this.editingGames = editingGames;
-    }
-
-    public Set<UserRole> getUserRole() {
-        return userRole;
     }
 }

@@ -29,7 +29,6 @@ public class AdministratorDAO extends GenericHibernateDAO<AdministratorEntity, I
         return new GenericBuilder<AdministratorEntity>(AdministratorEntity.class);
     }
 
-    @Transactional(readOnly=true)
     public boolean isAdministrator(HrajUserEntity user){
         Session session = sessionFactory.openSession();
         try {
@@ -39,7 +38,6 @@ public class AdministratorDAO extends GenericHibernateDAO<AdministratorEntity, I
         finally { session.close(); }
     }
 
-    @Transactional(readOnly=false)
     public void setAdministrator(int userId){
         AdministratorEntity entity = new AdministratorEntity();
         entity.setId(userId);
@@ -52,7 +50,6 @@ public class AdministratorDAO extends GenericHibernateDAO<AdministratorEntity, I
         finally { session.close(); }
     }
     
-    @Transactional(readOnly=true)
     public List<Integer> getAdministratorIds(){
         Session session = sessionFactory.openSession();
         try {
@@ -62,7 +59,6 @@ public class AdministratorDAO extends GenericHibernateDAO<AdministratorEntity, I
         finally { session.close(); }
     }
 
-    @Transactional(readOnly = false)
     public void removeAdministratorRights(int userId){
         AdministratorEntity entity = new AdministratorEntity();
         entity.setId(userId);

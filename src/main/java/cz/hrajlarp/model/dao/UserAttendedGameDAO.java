@@ -27,7 +27,6 @@ public class UserAttendedGameDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    @Transactional(readOnly=true)
     public void getAllObjects(){
         final Session session = sessionFactory.openSession();
         try {
@@ -51,7 +50,6 @@ public class UserAttendedGameDAO {
      * This method adds new UserAttendedGame record into database
      * @param record
      */
-    @Transactional(readOnly=false)
     public void addUserAttendedGame(UserAttendedGameEntity record){
         Session session = sessionFactory.openSession();
         try {
@@ -66,7 +64,6 @@ public class UserAttendedGameDAO {
      * Delete method for UserAttendedGame table.
      * @param record object for delete.
      */
-    @Transactional(readOnly=false)
     public void deleteUserAttendedGame(UserAttendedGameEntity record) {
         Session session = sessionFactory.openSession();
         try{
@@ -77,7 +74,6 @@ public class UserAttendedGameDAO {
         finally { session.close(); }
     }
 
-    @Transactional(readOnly = false)
     public boolean isLogged(int gameId, int userId){
         UserAttendedGameEntity uage = new UserAttendedGameEntity();
         uage.setGameId(gameId);
@@ -85,7 +81,6 @@ public class UserAttendedGameDAO {
         return isLogged(uage);
     }
 
-    @Transactional(readOnly = false)
     public boolean isSubstitute(int gameId, int userId){
         UserAttendedGameEntity uage = new UserAttendedGameEntity();
         uage.setGameId(gameId);
@@ -99,7 +94,6 @@ public class UserAttendedGameDAO {
      * @param uage
      * @return true if record in table exists
      */
-    @Transactional(readOnly=false)
     public boolean isLogged(UserAttendedGameEntity uage) {
         if(uage.getGameId() <= 0 || uage.getUserId() <= 0) return true;
 
@@ -131,7 +125,6 @@ public class UserAttendedGameDAO {
      * @param uage
      * @return true if user is substitute
      */
-    @Transactional(readOnly=false)
     public boolean isSubstitute(UserAttendedGameEntity uage) {
         if(uage.getGameId() <= 0 || uage.getUserId() <= 0) return true;
 
@@ -150,7 +143,6 @@ public class UserAttendedGameDAO {
      * @param uage
      * @return true if user is substitute
      */
-    @Transactional(readOnly=false)
     public boolean isRegular(UserAttendedGameEntity uage) {
         if(uage.getGameId() <= 0 || uage.getUserId() <= 0) return true;
 
@@ -169,7 +161,6 @@ public class UserAttendedGameDAO {
      * @param gameId game identifier
      * @return list of users
      */
-    @Transactional(readOnly = true)
     public List<UserAttendedGameEntity> getAllPlayersOfGame(int gameId){
 
         if(gameId <= 0) return null;
@@ -189,7 +180,6 @@ public class UserAttendedGameDAO {
      * @param gameId game identifier
      * @return list of users signed up for game as regular users (not substitutes)
      */
-    @Transactional(readOnly = true)
     public List getUsersByGameIdNoSubstitutes(int gameId){
 
         if(gameId <= 0) return null;
@@ -204,7 +194,6 @@ public class UserAttendedGameDAO {
         finally { session.close(); }
     }
 
-    @Transactional(readOnly = true)
     public List<UserAttendedGameEntity> getPlayers(int gameId, boolean substitute){
         if(gameId <= 0) return null;
 
@@ -226,7 +215,6 @@ public class UserAttendedGameDAO {
      * @param gameId game identifier
      * @return list of users signed up for game as substitutes (not regular users)
      */
-    @Transactional(readOnly = true)
     public List getSubstituteUsersByGameId(int gameId){
 
         if(gameId <= 0) return null;
@@ -257,7 +245,6 @@ public class UserAttendedGameDAO {
      * @param loggedUser user who wants to be logged on game
      * @return filtered list of games
      */
-    @Transactional(readOnly = true)
     public List<GameEntity> filterAvailableGames(List<GameEntity> games, HrajUserEntity loggedUser) {
 
         if(games == null || games.isEmpty()) return games;
@@ -343,7 +330,6 @@ public class UserAttendedGameDAO {
      * @param gender required player's gender
      * @return first substitute player
      */
-     @Transactional(readOnly = true)
      public UserAttendedGameEntity getFirstSubstitutedUAG(int gameId, int gender) {
 
          Session session = sessionFactory.openSession();
@@ -370,7 +356,6 @@ public class UserAttendedGameDAO {
      * Update method for table UserAttendedGame.
      * @param uage new record
      */
-    @Transactional(readOnly = false)
     public void editUserAttendedGame(UserAttendedGameEntity uage) {
         Session session = sessionFactory.openSession();
         try{
@@ -417,7 +402,6 @@ public class UserAttendedGameDAO {
      * @param id game id
      * @return list of all records where game id is id.
      */
-    @Transactional(readOnly = false)
     public List<UserAttendedGameEntity> getRecordsByGameId(Integer id) {
         if(id <= 0) return null;
 

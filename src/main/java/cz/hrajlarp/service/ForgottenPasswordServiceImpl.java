@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Created by jbalhar on 5/30/2014.
+ *
  */
 @Service
 public class ForgottenPasswordServiceImpl implements ForgottenPasswordService {
@@ -32,7 +32,17 @@ public class ForgottenPasswordServiceImpl implements ForgottenPasswordService {
     }
 
     @Override
+    public void updatePasswordForUserByLink(String mailLink) {
+
+    }
+
+    @Override
+    public boolean isValidLink(String mailLink) {
+        return false;
+    }
+
+    @Override
     public boolean generateNewLinkForUserAndSend(String email) {
-        return null;
+        return false;
     }
 }

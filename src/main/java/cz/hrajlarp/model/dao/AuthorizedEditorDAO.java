@@ -24,7 +24,6 @@ public class AuthorizedEditorDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    @Transactional(readOnly=true)
     public boolean isAuthorizedEditor(HrajUserEntity user){
         Session session = sessionFactory.openSession();
         try {
@@ -34,7 +33,6 @@ public class AuthorizedEditorDAO {
         finally { session.close(); }
     }
 
-    @Transactional(readOnly=false)
     public void setAuthorizedEntity(int userId){
         AuthorizedEditorEntity entity = new AuthorizedEditorEntity();
         entity.setId(userId);
@@ -47,7 +45,6 @@ public class AuthorizedEditorDAO {
         finally { session.close(); }
     }
 
-    @Transactional(readOnly=false)
     public void removeAuthorizedEntityRights(int userId){
         AuthorizedEditorEntity entity = new AuthorizedEditorEntity();
         entity.setId(userId);

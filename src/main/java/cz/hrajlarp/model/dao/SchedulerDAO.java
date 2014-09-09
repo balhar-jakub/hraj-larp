@@ -22,7 +22,6 @@ public class SchedulerDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    @Transactional(readOnly=false)
     public void saveOrUpdate(SchedulerEntity toSave){
         Session session = sessionFactory.openSession();
         session.saveOrUpdate(toSave);

@@ -17,7 +17,6 @@ import java.util.List;
  *
  */
 @Repository
-@Transactional
 public class AccountantDAO extends GenericHibernateDAO<AccountantEntity, Integer> {
     @Override
     public IBuilder getBuilder() {

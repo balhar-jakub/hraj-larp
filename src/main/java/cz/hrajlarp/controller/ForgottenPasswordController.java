@@ -66,7 +66,7 @@ public class ForgottenPasswordController {
         if(forgottenPasswordService.isValidLink(mailLink)) {
             return "";
         } else {
-
+            return "";
         }
     }
 }

@@ -18,12 +18,10 @@ public class PlaceFinderDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    @Transactional(readOnly=false)
     public void saveOrUpdate(PlaceFinderEntity toSave){
         sessionFactory.getCurrentSession().saveOrUpdate(toSave);
     }
 
-    @Transactional(readOnly=true)
     public PlaceFinderEntity getById(Integer id){
         PlaceFinderEntity result = null;
         Session session = sessionFactory.openSession();
@@ -39,7 +37,6 @@ public class PlaceFinderDAO {
         return result;
     }
 
-    @Transactional(readOnly=true)
     public List<PlaceFinderEntity> getAll(){
         List<PlaceFinderEntity> result = null;
         Session session = sessionFactory.openSession();

@@ -6,6 +6,8 @@ import cz.hrajlarp.model.dao.UserIsEditorDAO;
 import cz.hrajlarp.model.entity.GameEntity;
 import cz.hrajlarp.model.entity.HrajUserEntity;
 import cz.hrajlarp.model.entity.UserAttendedGameEntity;
+import cz.hrajlarp.service.SubstitutionService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
@@ -20,6 +22,8 @@ public class MailService {
 	AdministratorDAO administratorDAO;
 	@Autowired
 	UserDAO userDAO;
+    @Autowired
+    SubstitutionService substitutionService;
 	
 	private MailSender mailSender;
     private SimpleMailMessage templateMessage;
@@ -36,34 +40,14 @@ public class MailService {
 
         SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
         message.setTo(u.getEmail());
-        if(g.getReplacementsText() != null && !g.getReplacementsText().trim().equals("")){
-            message.setText(g.getReplacementsText());
+        if(StringUtils.isNotBlank(g.getReplacementsText())){
+            message.setText(substitutionService.replaceSubstitutes(g.getReplacementsText(), g, u));
         } else {
             message.setText(
-                    "Ahoj,\n" +
-                            "\n" +
-                            "uvolnilo se nám pro tebe místo na hře "+g.getName()+" v rámci festivalu HRAJ LARP, kterou uvedeme "+g.getDate
-                            "\n" +
-                            "Pokud ano, prosím o uhrazení účastnického poplatku 100 Kč na účet 2300302640/2010.\n" +
-                            "Účet je transparentní, že tvé peníze dorazily si můžeš ověřit přes odkaz https://www.fio.cz/scgi-bin/hermes/dz-transparent.cgi?ID_ucet=2300302640\n" +
-                            "Variabilní symbol najdeš na konci mailu nebo na našem webu v odkazu \"Mé přihlášky\".\n" +
-                            "Do zprávy pro příjemce napiš své jméno a název hry.\n" +
-                            "\n" +
-                            "Na hru je vhodné vzít si slušný společenský oděv. Nejsou nutné obleky a šaty, ale košile u pánů jsou na místě.\n" +
-                            "\n" +
-                            "V případě, že se zdržíš nebo místo nebudeš moci najít, ozvi se mi na telefon 604 737 834.\n" +
-                            "\n" +
-                            "\n" +
-                            "Těším se na tebe na hře\n" +
-                            "\n" +
-                            "Za HRAJ LARP\n" +
-                            "\n" +
-                            "Martin Dlabka"
-
-            "Ahoj " + u.getName() + " " + u.getLastName() + ",\n\n"
-                + "Na hře " + g.getName() +", " + "se uvolnilo místo. Hra se koná " + g.getDateAsDMY() +"\n"
-                + "Prosím potvrď nám, že s hrou počítáš.\n\n"
-                + "S přáním krásného dne tým HRAJ LARP");
+                    "Ahoj " + u.getName() + " " + u.getLastName() + ",\n\n"
+                            + "Na hře " + g.getName() + ", " + "se uvolnilo místo. Hra se koná " + g.getDateAsDMY() + "\n"
+                            + "Prosím potvrď nám, že s hrou počítáš.\n\n"
+                            + "S přáním krásného dne tým HRAJ LARP");
         }
         System.out.println("Sending message:\n" + message.getText() + "\n");
         try{
@@ -79,10 +63,10 @@ public class MailService {
         SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
         message.setTo(u.getEmail());
         message.setText(
-                "Ahoj "  + u.getName() + " " + u.getLastName() + ",\n\n"+
-                "na hře " + g.getName() + " jsme bohužel museli zmenšit počet rolí. Proto tě nyní evidujeme jako " +
-                "náhradníka a nikoliv jako řádného hráče. Dáme ti vědět jakmile se pro tebe uvolní místo. Omlouváme " +
-                "se za způsobené potíže\n\n" +
+                "Ahoj " + u.getName() + " " + u.getLastName() + ",\n\n" +
+                        "na hře " + g.getName() + " jsme bohužel museli zmenšit počet rolí. Proto tě nyní evidujeme jako " +
+                        "náhradníka a nikoliv jako řádného hráče. Dáme ti vědět jakmile se pro tebe uvolní místo. Omlouváme " +
+                        "se za způsobené potíže\n\n" +
                         "S pozdravem tým HRAJ LARP");
         System.out.println("Sending message:\n" + message.getText() + "\n");
         try{
@@ -93,12 +77,12 @@ public class MailService {
         }
     }
     
-    public void sendMsgSignedAsRegular(HrajUserEntity u, GameEntity g, UserAttendedGameEntity uag) {
+    public void sendMsgSignedAsRegular(HrajUserEntity u, GameEntity g) {
 
         SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
         message.setTo(u.getEmail());
-        if (g.getOrdinaryPlayerText()!=null && !g.getOrdinaryPlayerText().trim().equals("")){
-            message.setText(g.getOrdinaryPlayerText() + " Variabilní symbol: " + uag.getVariableSymbol());
+        if (StringUtils.isNotBlank(g.getOrdinaryPlayerText())){
+            message.setText(substitutionService.replaceSubstitutes(g.getOrdinaryPlayerText(), g, u));
         } else {
 	        message.setText(
 	            "Ahoj " + u.getName() + " " + u.getLastName() + ",\n\n"
@@ -120,8 +104,8 @@ public class MailService {
 
         SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
         message.setTo(u.getEmail());
-        if (g.getRegisteredSubstitute()!=null && !g.getRegisteredSubstitute().trim().equals("")){
-        	message.setText(g.getRegisteredSubstitute());
+        if (StringUtils.isNotBlank(g.getRegisteredSubstitute())){
+        	message.setText(substitutionService.replaceSubstitutes(g.getRegisteredSubstitute(), g, u));
         } else {
 	        message.setText(
 	        		 "Vážený uživateli " + u.getName() + " " + u.getLastName() + ",\n\n"

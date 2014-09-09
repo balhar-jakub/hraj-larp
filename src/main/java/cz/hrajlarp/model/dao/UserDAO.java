@@ -25,7 +25,6 @@ public class UserDAO {
      * @param userId user identifier
      * @return user with given id
      */
-    @Transactional(readOnly=true)
     public HrajUserEntity getUserById(int userId){
 
         if(userId <= 0) return null;
@@ -45,7 +44,6 @@ public class UserDAO {
      * @param login user name
      * @return user with given user name
      */
-    @Transactional(readOnly=true)
     public HrajUserEntity getUserByLogin(String login){
 
         if(login == null || login.isEmpty()) return null;
@@ -63,7 +61,6 @@ public class UserDAO {
     /**
      * Adds new user into DB.
      */
-    @Transactional
     public void addUser(HrajUserEntity user){
         Session session = sessionFactory.openSession();
         try{
@@ -77,7 +74,6 @@ public class UserDAO {
     /**
      * Updates user data in DB.
      */
-    @Transactional
     public void editUser(HrajUserEntity user){
         Session session = sessionFactory.openSession();
         try{
@@ -93,7 +89,6 @@ public class UserDAO {
      * @param userName tested user name
      * @return true if name is not present in the database yet
      */
-    @Transactional(readOnly=true)
     public boolean userNameIsUnique(String userName){
         if(userName == null || userName.isEmpty()) return false;
 
@@ -106,7 +101,6 @@ public class UserDAO {
         finally { session.close(); }
     }
     
-    @Transactional(readOnly=true)
     public HrajUserEntity getUserToActivate(String activationLink){
         if(activationLink == null || activationLink.isEmpty()) return null;
 

@@ -31,7 +31,6 @@ public class GameDAO {
      * @param gameId id number of the game
      * @return game with given id
      */
-    @Transactional(readOnly=true)
     public GameEntity getGameById(int gameId){
 
         if(gameId <= 0) return null;
@@ -74,7 +73,6 @@ public class GameDAO {
      * @param future true if listed only future games, false if former games
      * @return list of all games based on given criteria
      */
-    @Transactional(readOnly=true)
     private List<GameEntity> listGames(boolean criteria, boolean future){
 
         Session session = sessionFactory.openSession();
@@ -99,7 +97,6 @@ public class GameDAO {
         finally { session.close(); }
     }
 
-    @Transactional(readOnly=true)
     public List<GameEntity> GetGamesMonthInFuture(){
         Session session = sessionFactory.openSession();
         try{
@@ -118,7 +115,6 @@ public class GameDAO {
         }
     }
 
-    @Transactional(readOnly=true)
     public List<GameEntity> GetGamesTwoWeeksInFuture(){
         Session session = sessionFactory.openSession();
         try{
@@ -137,7 +133,6 @@ public class GameDAO {
         }
     }
 
-    @Transactional(readOnly=true)
     public List<GameEntity> getTwoWeeksPast() {
         Session session = sessionFactory.openSession();
         try{
@@ -158,7 +153,6 @@ public class GameDAO {
      * This method adds new game record into database
      * @param game
      */
-    @Transactional(readOnly=false)
     public void addGame(GameEntity game){
         Session session = sessionFactory.openSession();
         try{
@@ -173,7 +167,6 @@ public class GameDAO {
      * This method updates game record in database
      * @param game
      */
-    @Transactional(readOnly=false)
     public void editGame(GameEntity game){
         Session session = sessionFactory.openSession();
         try{
@@ -190,7 +183,6 @@ public class GameDAO {
      * @param userId
      * @return
      */
-    @Transactional(readOnly=true)
     public boolean userOwnsGame(int gameId, int userId) {
 
         if(userId <= 0) return false;
@@ -218,7 +210,6 @@ public class GameDAO {
      * Delete method for GameEntity table.
      * @param record object for delete.
      */
-    @Transactional(readOnly=false)
     public void deleteGame(GameEntity record) {
         Session session = sessionFactory.openSession();
         try{
@@ -229,7 +220,6 @@ public class GameDAO {
         finally { session.close(); }
     }
 
-    @Transactional(readOnly=true)
     public List<String> getAllActions() {
         Session session = sessionFactory.openSession();
         try{

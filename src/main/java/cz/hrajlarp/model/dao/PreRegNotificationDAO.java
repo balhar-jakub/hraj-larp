@@ -19,7 +19,6 @@ public class PreRegNotificationDAO {
     @Autowired
     private SessionFactory sessionFactory;
     
-    @Transactional(readOnly=true)
     public List<PreRegNotificationEntity> getAllPreRegNotifications(){
         Session session = sessionFactory.openSession();
         try {
@@ -29,7 +28,6 @@ public class PreRegNotificationDAO {
         finally { session.close(); }
     }
 
-    @Transactional(readOnly=true)
     public boolean isSubscribedForPreReg(HrajUserEntity user, GameEntity game){
         if(user == null || game == null) return false;
         Session session = sessionFactory.openSession();
@@ -45,7 +43,6 @@ public class PreRegNotificationDAO {
     /**
      * @param preRegNotification object to add into db.
      */
-    @Transactional(readOnly=false)
     public void addPreRegNotification(PreRegNotificationEntity preRegNotification){
         Session session = sessionFactory.openSession();
         try {
@@ -59,7 +56,6 @@ public class PreRegNotificationDAO {
     /**
      * @param preRegNotification object for delete from db.
      */
-    @Transactional(readOnly=false)
     public void deletePreRegNotification(PreRegNotificationEntity preRegNotification) {
         Session session = sessionFactory.openSession();
         try{

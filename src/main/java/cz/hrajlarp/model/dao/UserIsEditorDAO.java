@@ -30,7 +30,6 @@ public class UserIsEditorDAO {
          return getUserIsEditor(user, game) != null;
     }
 
-    @Transactional(readOnly=true)
     public boolean isEditor(HrajUserEntity user){
         if(user == null) return false;
 
@@ -43,7 +42,6 @@ public class UserIsEditorDAO {
         finally { session.close(); }
     }
 
-    @Transactional(readOnly=true)
     public Object getUserIsEditor(HrajUserEntity user, GameEntity game){
         if(user == null || game == null) return null;
 
@@ -61,7 +59,6 @@ public class UserIsEditorDAO {
      * This method adds new UserIsEditor record into database
      * @param record
      */
-    @Transactional(readOnly=false)
     public void addUserIsEditor(UserIsEditorEntity record){
         Session session = sessionFactory.openSession();
         try {
@@ -76,7 +73,6 @@ public class UserIsEditorDAO {
      * Delete method for UserIsEditor table.
      * @param record object for delete.
      */
-    @Transactional(readOnly=false)
     public void deleteUserIsEditor(UserIsEditorEntity record) {
         Session session = sessionFactory.openSession();
         try{
@@ -87,7 +83,6 @@ public class UserIsEditorDAO {
         finally { session.close(); }
     }
     
-    @Transactional(readOnly=true)
     public List<Integer> getEditorIds(GameEntity game){
         Session session = sessionFactory.openSession();
         try {
@@ -103,7 +98,6 @@ public class UserIsEditorDAO {
      * @param gameId
      * @return list of editors by given game
      */
-    @Transactional(readOnly = true)
     public List<HrajUserEntity> getEditorsByGameId(int gameId){
         Session session = sessionFactory.openSession();
         try {
