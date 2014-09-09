@@ -475,6 +475,7 @@ public class GameEntity {
 
     @Transient
     public String getDateAsDayName() {
+        // TODO set Locale to Czech
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE");    // day name
         return sdf.format(date);
     }

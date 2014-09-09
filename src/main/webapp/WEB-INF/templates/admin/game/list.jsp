@@ -30,7 +30,7 @@
                             <h3><a href="/game/edit?id=${game.id}" tabindex="-1">${game.name}</a></h3>
                             <div class="grid4">
                                 <div>
-                                    <p>${game.info}</p>
+                                    <p>${game.anotation}</p>
                                     <a href="/admin/game/players/${game.id}" class="biglink">Hráči</a>
                                     <a href="/admin/game/editors/${game.id}" class="biglink">Editoři</a>
                                     <input type="button" value="Smazat hru" onclick="location.href='/admin/game/confirmation/${game.id}'">
@@ -53,7 +53,7 @@
                         <h3><a href="/game/edit?id=${game.id}" tabindex="-1">${game.name}</a></h3>
                         <div class="grid4">
                             <div>
-                                <p>${game.info}</p>
+                                <p>${game.anotation}</p>
                                 <a href="/admin/game/players/${game.id}" class="biglink">Hráči</a>
                                 <a href="/admin/game/editors/${game.id}" class="biglink">Editoři</a>
                             </div>
@@ -74,7 +74,7 @@
                         <h3><a href="/game/edit?id=${game.id}" tabindex="-1">${game.name}</a></h3>
                         <div class="grid4">
                             <div>
-                                <p>${game.info}</p>
+                                <p>${game.anotation}</p>
                                 <a href="/admin/game/validate/${game.id}" class="biglink">Schválit</a>
                             </div>
                         </div>

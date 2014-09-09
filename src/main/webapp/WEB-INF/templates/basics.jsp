@@ -19,7 +19,7 @@
 
     <p>Larp je stejně široký pojem jako sport. Zahrnuje pod sebou velké množství rozdílných her. V rámci HRAJ LARP se
         nejčastěji setkáte s komorními larpy. Některé další druhy larpů
-        můžete objevit prostřednictvím <a href="odkazy/">Odkazů</a>.</p>
+        můžete objevit prostřednictvím <a href="/odkazy/">Odkazů</a>.</p>
 
     <h3>Komorní larp</h3>
 
@@ -39,7 +39,7 @@
 
     <h3>Jak se přihlásit na termín HRAJ LARP?</h3>
 
-    <p>V <a href="kalendar/">Kalendáři</a> najdete nabídku larpů společně s daty, kdy se bude který larp hrát, a s&nbsp;odkazy
+    <p>V <a href="/kalendar/">Kalendáři</a> najdete nabídku larpů společně s daty, kdy se bude který larp hrát, a s&nbsp;odkazy
         na podrobnější anotace. Stačí si vybrat téma, které vás zaujme, a po krátké registraci se na hru přihlásit.
         Zaplatíte účastnický poplatek a několik dnů před hrou vám přijde e-mail s&nbsp;podrobnějšími informacemi o daném
         larpu.</p>
@@ -51,10 +51,10 @@
         zaregistrovat jako náhradník, a kdyby se na larpu uvolnilo místo, dáme vám
         obratem vědět.</p>
 
-    <p>Jedná-li se o larp uváděný v rámci festivalu komorních larpů HRAJ LARP, přečtěte si také <a href="festival/">konkrétnější
+    <p>Jedná-li se o larp uváděný v rámci festivalu komorních larpů HRAJ LARP, přečtěte si také <a href="/festival/">konkrétnější
         pokyny</a> pro tyto hry.</p>
 
-    <p>Pokud nejste z&nbsp;Prahy nebo vás naše nabídka larpů neoslovila, můžete prozkoumat <a href="odkazy/">stránku s&nbsp;odkazy</a>.
+    <p>Pokud nejste z&nbsp;Prahy nebo vás naše nabídka larpů neoslovila, můžete prozkoumat <a href="/odkazy/">stránku s&nbsp;odkazy</a>.
         Najdete na ní další larpy, které se hrají v&nbsp;Praze, a skupiny, které se věnují organizování larpů po celé
         republice.</p>
 

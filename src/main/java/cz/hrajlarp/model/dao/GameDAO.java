@@ -88,6 +88,9 @@ public class GameDAO {
                 query.append(" where date < current_timestamp");
 
             query.append(" order by date");
+            if(!future){
+                query.append(" desc");
+            }
             System.out.println("executing: " + query.toString());
 
             Query finalQuery = session.createQuery(query.toString());

@@ -10,7 +10,7 @@
     </div>
 
     <div>
-        <label for="anotation">Popis hry:*</label>
+        <label for="anotation">Anotace:*</label>
         <form:errors path="anotation"/>
         <form:textarea path="anotation" id="anotation" cols="20" rows="3" />
     </div>
@@ -74,11 +74,6 @@
         <label for="bothRole">Obojetné role:</label>
         <form:errors path="bothRole"/>
         <form:input type="text" id="bothRole" path="bothRole" value="${game.bothRole}"/>
-    </div>
-    <div>
-        <label for="info">Upoutávka:</label>
-        <form:errors path="info"/>
-        <form:textarea path="info" id="info" cols="20" rows="3" />
     </div>
     <div>
         <label for="place">Místo:</label>

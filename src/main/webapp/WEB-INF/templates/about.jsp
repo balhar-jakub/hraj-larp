@@ -7,15 +7,14 @@
         na hrách potkávat i s&nbsp;těmi zkušenými.</p>
 
     <p>Iniciativa HRAJ LARP je široká a podporuje ji celá řada pražských hráčů a tvůrců larpů. Mimo jiné také několik
-        občanských sdružení, která se larpům věnují – Mad Fairy, Tempus
-        Ludi, Prague by Night a ASF.</p>
+        občanských sdružení, která se larpům věnují – Tempus Ludi, Mad Fairy, Prague by Night a ASF.</p>
 
     <a name="kontakt" id="kontakt"></a>
 
     <h2>Náš tým</h2>
 
     <p>Za festivalem komorních larpů HRAJ LARP stojí početný organizační tým: Kamil, Morgain, Balda, Lex, Limwen, Tomáš,
-        Klair, Činkapi, Mivka, Lucka, Nilwine, Pirosh, Alex, Tereza,
+        Klair, Činkapi, Mivka, Lucka, Nilwine, Tereza, Nellmegil, Oslík, Gavroche, Frael
         Radek a řada autorů komorních larpů, bez kterých by tolik her nebylo nikdy možné uvést.</p>
 
     <p>Většina organizátorů je z&nbsp;Prahy, ale snažíme se oslovit larpové tvůrce z&nbsp;celé republiky. Rádi bychom,
