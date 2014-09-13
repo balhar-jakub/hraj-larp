@@ -169,7 +169,7 @@ public class UserAttendedGameEntity {
         //To change body of created methods use File | Settings | File Templates.
     	if(getAttendedGame().getMailProhibition()) return;
         if(!isSubstitute()){
-            mailService.sendMsgSignedAsRegular(getUserAttended(), getAttendedGame(), this);
+            mailService.sendMsgSignedAsRegular(getUserAttended(), getAttendedGame());
         } else {
             mailService.sendMsgSignedAsReplacement(getUserAttended(), getAttendedGame());
         }
