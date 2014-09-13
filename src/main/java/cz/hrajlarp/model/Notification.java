@@ -36,7 +36,6 @@ public class Notification {
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
-    @Scheduled(fixedRate=60*60*1000)
     @Transient
     public void sendRegStartNotification() {
         System.out.println("HRAJLARP - sendRegStartNotification. " + dateFormat.format(new Date()));
@@ -52,7 +51,6 @@ public class Notification {
     }
 
     // Send if there is no game scheduled in month
-    @Scheduled(cron = "0 0 0 * * ?")
     @Transient
     public void sendNoGameNotification(){
         System.out.println("HRAJLARP - sendNoGameNotification. "  + dateFormat.format(new Date()));
@@ -104,7 +102,6 @@ public class Notification {
 
     // Send if there is no place at game two weeks before tha game
     // Every game that is due in less than two weeks must have place assigned
-    @Scheduled(cron = "0 0 0 * * ?")
     @Transient
     public void sendNoPlaceNotification(){
         System.out.println("HRAJLARP - sendNoGameNotification. " + dateFormat.format(new Date()));
@@ -122,7 +119,6 @@ public class Notification {
     }
 
     // Send if there is not accepted at the game detail in administration.
-    @Scheduled(cron = "0 0 0 * * ?")
     @Transient
     public void sendUnfinishedAccountNotification(){
         System.out.println("HRAJLARP - sendNoGameNotification. " + dateFormat.format(new Date()));
