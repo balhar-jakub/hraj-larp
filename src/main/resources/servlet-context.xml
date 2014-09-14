@@ -35,9 +35,9 @@
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver"/>
-        <property name="url" value="jdbc:postgresql://localhost/hrajlarp_dev"/>
-        <property name="username" value="hrajlarp"/>
-        <property name="password" value="NYbTkhEKiKoX"/>
+        <property name="url" value="jdbc:postgresql://localhost/hrajlarp"/>
+        <property name="username" value="postgres"/>
+        <property name="password" value="postgres"/>
 
         <property name="initialSize" value="2"/>
         <property name="maxActive" value="10"/>
