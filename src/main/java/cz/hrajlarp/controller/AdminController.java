@@ -6,6 +6,7 @@ import cz.hrajlarp.model.entity.*;
 import cz.hrajlarp.utils.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -50,6 +51,7 @@ public class AdminController {
     private AccountantDAO accountantDAO;
 
     @RequestMapping(value = "/admin/game/players/{id}", method= RequestMethod.GET)
+    @Transactional
     public String gamePlayers(Model model, @PathVariable("id") Integer id) {
         HrajUserEntity user = rights.getLoggedUser();
         GameEntity game = gameDAO.getGameById(id);
@@ -76,6 +78,7 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/admin/game/finished/{id}")
+    @Transactional
     public String paymentFinished(Model model, @PathVariable("id") Integer id) {
         HrajUserEntity user = rights.getLoggedUser();
         GameEntity game = gameDAO.getGameById(id);
@@ -105,6 +108,7 @@ public class AdminController {
     }
 
     @RequestMapping(value="/admin/user/payed/{gameId}/{userId}")
+    @Transactional
     public String gamePayment(Model model,
                               @PathVariable("gameId") Integer gameId,
                               @PathVariable("userId") Integer userId,
@@ -176,6 +180,7 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/admin/game/delete/{id}", method = RequestMethod.GET)
+    @Transactional
     public String deleteGame(Model model, @PathVariable("id") Integer id) {
         HrajUserEntity user = rights.getLoggedUser();
         GameEntity game = gameDAO.getGameById(id);
@@ -207,6 +212,7 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/admin/game/logout/{gameId}/{playerId}", method= RequestMethod.POST)
+    @Transactional
     public String logoutPlayer(Model model,
                                @PathVariable("gameId") Integer gameId,
                                @PathVariable("playerId") Integer playerId,
@@ -298,6 +304,7 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/admin/game/addAction", method= RequestMethod.POST)
+    @Transactional
     public String addAction(Model model,
                             @RequestParam("actionText") String newAction,
                             @RequestParam("gameText") List<Integer> gameId) {
@@ -326,6 +333,7 @@ public class AdminController {
 
 
     @RequestMapping(value = "/admin/game/editors/{id}", method= RequestMethod.GET)
+    @Transactional
     public String gameEditors(Model model, @PathVariable("id") Integer id) {
 
         if (rights.isLoggedAdministrator()){
