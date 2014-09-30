@@ -32,7 +32,7 @@ public class Bank {
                 String price = cells.get(1).text();
                 String vs = cells.get(4).text();
 
-                if(price.equals("100,00")) {
+                if(price.equals("150,00")) {
                     UserAttendedGameEntity payingPlayer = userAttendedGameDAO.getByVS(vs);
                     if(payingPlayer != null){
                         payingPlayer.setPayed(true);
