@@ -28,7 +28,7 @@
                             <h3><a href="/game/detail?gameId=${game.id}" tabindex="-1">${game.name}</a></h3>
                             <div class="grid4">
                                 <div>
-                                    <p>${game.info}</p>
+                                    <p>${game.anotation}</p>
                                     <a href="/game/detail?gameId=${game.id}" class="biglink">podrobnosti o termínu &amp; přihlášení</a>
                                 </div>
                             </div>
@@ -49,7 +49,7 @@
                         <h3><a href="/game/detail?gameId=${game.id}" tabindex="-1">${game.name}</a></h3>
                         <div class="grid4">
                             <div>
-                                <p>${game.info}</p>
+                                <p>${game.anotation}</p>
                                 <a href="/game/detail?gameId=${game.id}" class="biglink">podrobnosti o termínu &amp; přihlášení</a>
                             </div>
                         </div>
@@ -69,7 +69,7 @@
                         <h3><a href="/game/detail?gameId=${game.id}" tabindex="-1">${game.name}</a></h3>
                         <div class="grid4">
                             <div>
-                                <p>${game.info}</p>
+                                <p>${game.anotation}</p>
                                 <a href="/game/detail?gameId=${game.id}" class="biglink">podrobnosti o termínu &amp; přihlášení</a>
                             </div>
                         </div>
