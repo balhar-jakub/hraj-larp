@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by IntelliJ IDEA.
@@ -65,7 +66,7 @@ public class UserController {
         	HashString hs = new HashString();
             String hashPass = hs.digest(user.getPassword());
             user.setPassword(hashPass);
-            user.setActivationLink(hs.digest(user.getEmail()));
+            user.setActivationLink(hs.digest(user.getEmail() + UUID.randomUUID()));
         } catch (Exception e) {
             return "user/failed";
         }
@@ -129,7 +130,7 @@ public class UserController {
         if(!userDAO.getUserById(user.getId()).getEmail().equals(user.getEmail())){//mail address edited
         	try {
             	HashString hs = new HashString();
-                user.setActivationLink(hs.digest(user.getEmail()));
+                user.setActivationLink(hs.digest(user.getEmail() + UUID.randomUUID()));
             } catch (Exception e) {
                 return "user/failed";
             }
