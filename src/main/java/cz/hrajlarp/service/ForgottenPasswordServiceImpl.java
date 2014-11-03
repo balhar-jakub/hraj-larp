@@ -1,28 +1,24 @@
 package cz.hrajlarp.service;
 
 import cz.hrajlarp.model.dao.EmailAuthenticationDao;
+import cz.hrajlarp.model.dao.UserDAO;
 import cz.hrajlarp.model.entity.EmailAuthenticatitonEntity;
 import cz.hrajlarp.model.entity.HrajUserEntity;
+import cz.hrajlarp.utils.HashString;
+import cz.hrajlarp.utils.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- *
- */
+import java.util.UUID;
+
 @Service
 public class ForgottenPasswordServiceImpl implements ForgottenPasswordService {
     @Autowired
     private EmailAuthenticationDao emailAuthenticationDao;
-
-    @Override
-    public boolean authenticateUser(String authenticationLink) {
-        try {
-            emailAuthenticationDao.getByActivationLink(authenticationLink);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
+    @Autowired
+    private UserDAO userDao;
+    @Autowired
+    private MailService mailService;
 
     @Override
     public HrajUserEntity getAuthenticatedUserByLink(String authenticationLink) {
@@ -32,17 +28,35 @@ public class ForgottenPasswordServiceImpl implements ForgottenPasswordService {
     }
 
     @Override
-    public void updatePasswordForUserByLink(String mailLink) {
-
+    public boolean isValidLink(String authenticationLink) {
+        try {
+            emailAuthenticationDao.getByActivationLink(authenticationLink);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
-    public boolean isValidLink(String mailLink) {
-        return false;
+    public void updatePasswordForUserById(int actualUser, String password) {
+        HrajUserEntity user = userDao.getUserById(actualUser);
+        try {
+            user.setPassword(new HashString().digest(password));
+            userDao.editUser(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public boolean generateNewLinkForUserAndSend(String email) {
-        return false;
+        try {
+            String link = new HashString().digest(UUID.randomUUID().toString());
+            mailService.sendForgottenPassword(email, link);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

@@ -256,7 +256,24 @@ public class MailService {
             this.mailSender.send(message);
         }
         catch(MailException e) {
-            System.err.println(e.getMessage());            
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public void sendForgottenPassword (String email, String activationLink) {
+        SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
+        message.setTo(email);
+        message.setText(
+                "Toto je zpráva pro reset zapomenutého hesla.\n\n"
+                        + "Pro změnu hesla klikněte na link:\n"
+                        + "http://hrajlarp.cz/user/activation/" + activationLink + "\n\n"
+                        + "HRAJ LARP");
+        System.out.println("Sending message:\n" + message.getText() + "\n");
+        try{
+            this.mailSender.send(message);
+        }
+        catch(MailException e) {
+            System.err.println(e.getMessage());
         }
     }
 

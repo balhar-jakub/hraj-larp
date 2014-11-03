@@ -33,3 +33,5 @@
     <input type="submit" value="Přihlásit se">
     </div>
 </form>
+
+<p>Zapomněli jste heslo? Žádost o nové si můžete na mail nechat zaslat <a href="/user/forgotten/">zde</a></p>

@@ -1,6 +1,5 @@
 package cz.hrajlarp.controller;
 
-import cz.hrajlarp.dto.EmailAuthenticationDto;
 import cz.hrajlarp.service.ForgottenPasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.validation.Valid;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This password takes care of forgotten password.
@@ -22,13 +21,13 @@ public class ForgottenPasswordController {
     /**
      * This one is called from a form. If given email belongs to some user,
      * this correctly sends password. Otherwise it returns error.
-     * @param email
+     * @param userName
      */
     @RequestMapping(value="/user/forgotten/", method = RequestMethod.POST)
     public String sendEmailWithGeneratedLink(
-            @RequestBody @Valid EmailAuthenticationDto email
+            @RequestBody String userName
     ) {
-        if(forgottenPasswordService.generateNewLinkForUserAndSend(email.getEmail())) {
+        if(forgottenPasswordService.generateNewLinkForUserAndSend(userName)) {
             return "user/forgotten/send";
         } else {
             return "user/forgotten/";
@@ -47,26 +46,29 @@ public class ForgottenPasswordController {
     /**
      * It updates password for given user.
      *
-     * @param mailLink
      * @return
      */
-    @RequestMapping(value="/user/password/new/{mailLink}", method = RequestMethod.POST)
+    @RequestMapping(value="/user/password/new/", method = RequestMethod.POST)
     public String updatePassword(
-            @PathVariable String mailLink
+            @RequestBody String password,
+            HttpServletRequest request
     ) {
-        forgottenPasswordService.updatePasswordForUserByLink(mailLink);
+        forgottenPasswordService.updatePasswordForUserById(Integer.parseInt((String) request.getSession().getAttribute("actualUser")), password);
         // Ideal case is when in this moment we will login person in.
         return "user/forgotten/updated";
     }
 
     @RequestMapping(value="/user/password/new/{mailLink}", method = RequestMethod.GET)
     public String showUpdatePassword(
-            @PathVariable String mailLink
+            @PathVariable String mailLink,
+            HttpServletRequest request
     ) {
         if(forgottenPasswordService.isValidLink(mailLink)) {
-            return "";
+            // Set up to session found user
+            request.getSession().setAttribute("actualUser", forgottenPasswordService.getAuthenticatedUserByLink(mailLink).getId());
+            return "user/forgotten/set";
         } else {
-            return "";
+            return "user/forgotten/error";
         }
     }
 }
