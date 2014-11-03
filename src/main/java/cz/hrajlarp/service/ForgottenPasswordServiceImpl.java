@@ -8,6 +8,7 @@ import cz.hrajlarp.utils.HashString;
 import cz.hrajlarp.utils.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -33,6 +34,7 @@ public class ForgottenPasswordServiceImpl implements ForgottenPasswordService {
             emailAuthenticationDao.getByActivationLink(authenticationLink);
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -49,10 +51,18 @@ public class ForgottenPasswordServiceImpl implements ForgottenPasswordService {
     }
 
     @Override
-    public boolean generateNewLinkForUserAndSend(String email) {
+    @Transactional
+    public boolean generateNewLinkForUserAndSend(String userName) {
         try {
+            System.out.println("UserName" + userName);
+            HrajUserEntity user = userDao.getUserByLogin(userName);
             String link = new HashString().digest(UUID.randomUUID().toString());
-            mailService.sendForgottenPassword(email, link);
+            mailService.sendForgottenPassword(user.getEmail(), link);
+            EmailAuthenticatitonEntity toSave = new EmailAuthenticatitonEntity();
+            toSave.setAuth_token(link);
+            toSave.setUser(user);
+            toSave.setUser_id(user.getId());
+            emailAuthenticationDao.saveOrUpdate(toSave);
             return true;
         } catch (Exception e) {
             e.printStackTrace();

@@ -4,6 +4,6 @@
     nastavení nového hesla.
 </p>
 <form method="post" action="/user/forgotten/">
-    Email: <input type="text" name="email"/><br>
+    Uživatelské jméno: <input type="text" name="email"/><br>
     <input type="submit" value="Odeslat"/>
 </form>

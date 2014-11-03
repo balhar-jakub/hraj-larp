@@ -2,6 +2,6 @@
 <p>Zadejte nové heslo.</p>
 
 <form method="post" action="/user/password/new/">
-    <input type="password" name="pasword" />
+    <input type="password" name="password" />
     <input type="submit" value="Zmen" />
 </form>

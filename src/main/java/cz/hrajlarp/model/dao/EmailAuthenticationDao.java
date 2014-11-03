@@ -6,6 +6,7 @@ import cz.hrajlarp.api.IBuilder;
 import cz.hrajlarp.model.entity.EmailAuthenticatitonEntity;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,17 @@ public class EmailAuthenticationDao extends GenericHibernateDAO<EmailAuthenticat
     }
 
     public EmailAuthenticatitonEntity getByActivationLink(String authToken) {
-        Criteria criteria = getBuilder().build().getExecutableCriteria(sessionFactory.getCurrentSession());
-        criteria.add(Restrictions.eq("auth_token", authToken));
-        return (EmailAuthenticatitonEntity) criteria.uniqueResult();
+        Session session = sessionFactory.openSession();
+        try {
+            Criteria criteria = getBuilder().build().getExecutableCriteria(session);
+            criteria.add(Restrictions.eq("auth_token", authToken));
+            EmailAuthenticatitonEntity result = (EmailAuthenticatitonEntity) criteria.uniqueResult();
+            session.close();
+            return result;
+        } catch(Exception e){
+            e.printStackTrace();
+            session.close();
+            throw new RuntimeException(e);
+        }
     }
 }

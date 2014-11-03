@@ -27,10 +27,10 @@ public class ForgottenPasswordController {
     public String sendEmailWithGeneratedLink(
             @RequestBody String userName
     ) {
-        if(forgottenPasswordService.generateNewLinkForUserAndSend(userName)) {
+        if(forgottenPasswordService.generateNewLinkForUserAndSend(userName.replace("email=",""))) {
             return "user/forgotten/send";
         } else {
-            return "user/forgotten/";
+            return "user/forgotten/error";
         }
     }
 
@@ -53,7 +53,7 @@ public class ForgottenPasswordController {
             @RequestBody String password,
             HttpServletRequest request
     ) {
-        forgottenPasswordService.updatePasswordForUserById(Integer.parseInt((String) request.getSession().getAttribute("actualUser")), password);
+        forgottenPasswordService.updatePasswordForUserById((Integer) request.getSession().getAttribute("actualUser"), password.replace("password=",""));
         // Ideal case is when in this moment we will login person in.
         return "user/forgotten/updated";
     }
@@ -63,6 +63,7 @@ public class ForgottenPasswordController {
             @PathVariable String mailLink,
             HttpServletRequest request
     ) {
+        System.out.println("Mail Link" + mailLink);
         if(forgottenPasswordService.isValidLink(mailLink)) {
             // Set up to session found user
             request.getSession().setAttribute("actualUser", forgottenPasswordService.getAuthenticatedUserByLink(mailLink).getId());

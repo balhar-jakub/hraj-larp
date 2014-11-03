@@ -266,7 +266,7 @@ public class MailService {
         message.setText(
                 "Toto je zpráva pro reset zapomenutého hesla.\n\n"
                         + "Pro změnu hesla klikněte na link:\n"
-                        + "http://hrajlarp.cz/user/activation/" + activationLink + "\n\n"
+                        + "http://hrajlarp.cz/user/password/new/" + activationLink + "\n\n"
                         + "HRAJ LARP");
         System.out.println("Sending message:\n" + message.getText() + "\n");
         try{
