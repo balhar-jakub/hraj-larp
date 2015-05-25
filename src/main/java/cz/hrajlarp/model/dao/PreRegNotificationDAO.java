@@ -5,65 +5,47 @@ import java.util.List;
 import cz.hrajlarp.model.entity.GameEntity;
 import cz.hrajlarp.model.entity.HrajUserEntity;
 import cz.hrajlarp.model.entity.PreRegNotificationEntity;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 
-@Component
+@Repository
 public class PreRegNotificationDAO {
+    private EntityManager persistentStore;
 
-    @Autowired
-    private SessionFactory sessionFactory;
-    
+    @Autowired public PreRegNotificationDAO(EntityManager persistentStore) {
+        this.persistentStore = persistentStore;
+    }
+
     public List<PreRegNotificationEntity> getAllPreRegNotifications(){
-        Session session = sessionFactory.openSession();
-        try {
-            Query query = session.createQuery("from PreRegNotificationEntity");
-            return query.list();
-        }
-        finally { session.close(); }
+        Query allNotifications = persistentStore.createQuery("from PreRegNotificationEntity");
+        return allNotifications.getResultList();
     }
 
     public boolean isSubscribedForPreReg(HrajUserEntity user, GameEntity game){
-        if(user == null || game == null) return false;
-        Session session = sessionFactory.openSession();
-        try {
-            Query query = session.createQuery("FROM PreRegNotificationEntity WHERE userId = :userId AND gameId = :gameId");
-            query.setParameter("userId", user.getId());
-            query.setParameter("gameId", game.getId());
-            return !query.list().isEmpty();
-        }
-        finally { session.close(); }
+        assert user != null && game != null;
+
+        Query query = persistentStore.createQuery("FROM PreRegNotificationEntity WHERE userId = :userId AND gameId = :gameId");
+        query.setParameter("userId", user.getId());
+        query.setParameter("gameId", game.getId());
+        return !query.getResultList().isEmpty();
     }
     
     /**
      * @param preRegNotification object to add into db.
      */
     public void addPreRegNotification(PreRegNotificationEntity preRegNotification){
-        Session session = sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            session.save(preRegNotification);
-            session.getTransaction().commit();
-        }
-        finally { session.close(); }
+        persistentStore.persist(preRegNotification);
     }
 
     /**
      * @param preRegNotification object for delete from db.
      */
     public void deletePreRegNotification(PreRegNotificationEntity preRegNotification) {
-        Session session = sessionFactory.openSession();
-        try{
-            session.beginTransaction();
-            session.delete(preRegNotification);
-            session.getTransaction().commit();
-        }
-        finally { session.close(); }
+        persistentStore.remove(preRegNotification);
     }
     
 }

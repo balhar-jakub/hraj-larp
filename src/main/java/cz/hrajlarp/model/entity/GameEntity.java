@@ -5,7 +5,7 @@ import cz.hrajlarp.exceptions.TooManyPlayersException;
 import cz.hrajlarp.model.Gender;
 import cz.hrajlarp.model.dao.UserAttendedGameDAO;
 import cz.hrajlarp.utils.DateUtils;
-import cz.hrajlarp.utils.MailService;
+import cz.hrajlarp.service.MailService;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
@@ -495,7 +495,7 @@ public class GameEntity {
 
     @Transient
     public boolean isFestival() {
-        festival = shortText.equals("Festivalov√°");
+        festival = shortText.equals("Festivalov·");
         return festival;
     }
 
@@ -625,7 +625,7 @@ public class GameEntity {
      * It tests for conditions related to too many players logged on one game.
      * These conditions should never happen.
      *
-     * @throws cz.hrajlarp.exceptions.TooManyPlayersException
+     * @throws TooManyPlayersException
      */
     @Transient
     private void testRolesforTooMany() throws TooManyPlayersException {

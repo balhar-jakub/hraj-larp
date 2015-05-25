@@ -15,58 +15,58 @@ public class UserValidator implements Validator{
     public void validate(Object userToValidate, Errors errors) {
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name",
-                "required.name", "MusÃ­te zadat jmÃ©no.");
+                "required.name", "Musíte zadat jméno.");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName",
-                "required.lastName", "MusÃ­te zadat pÅ™Ã­jmenÃ­.");
+                "required.lastName", "Musíte zadat pøíjmení.");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "userName",
-                "required.userName", "MusÃ­te zadat uÅ¾ivatelskÃ© jmÃ©no.");
+                "required.userName", "Musíte zadat uivatelské jméno.");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password",
-                "required.password", "MusÃ­te zadat heslo.");
+                "required.password", "Musíte zadat heslo.");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email",
-                "required.email", "MusÃ­te zadat e-mailovou adresu.");
+                "required.email", "Musíte zadat e-mailovou adresu.");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phone",
-                "required.phone", "MusÃ­te zadat telefonnÃ­ ÄÃ­slo.");
+                "required.phone", "Musíte zadat telefonní èíslo.");
 
         HrajUserEntity user = (HrajUserEntity)userToValidate;
 
         if(!(user.getPassword().equals(user.getPasswordAgain()))){
             errors.rejectValue("password", "notmatch.password",
-                    "Heslo neodpovÃ­dÃ¡ kontrolnÃ­mu Ãºdaji");
+                    "Heslo neodpovídá kontrolnímu údaji");
         }
-        
+
         if(user.getGenderForm()==null){
             errors.rejectValue("genderForm", "genderForm.required",
-                    "MusÃ­te zadat MuÅ¾/Å½ena");
+                    "Musíte zadat Mu/ena");
         } else {
             if (user.getGenderForm().trim().equals("M"))
                 user.setGender(new Integer(0));
             else if (user.getGenderForm().trim().equals("F"))
                 user.setGender(new Integer(1));
             else errors.rejectValue("genderForm", "genderForm.required",
-                        "MusÃ­te zadat MuÅ¾/Å½ena");
+                        "Musíte zadat Mu/ena");
         }
 
     }
-    
+
     public void validateEditedProfile(Object userToValidate, Errors errors) {
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name",
-                "required.name", "MusÃ­te zadat jmÃ©no.");
+                "required.name", "Musíte zadat jméno.");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName",
-                "required.lastName", "MusÃ­te zadat pÅ™Ã­jmenÃ­.");
+                "required.lastName", "Musíte zadat pøíjmení.");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "userName",
-                "required.userName", "MusÃ­te zadat uÅ¾ivatelskÃ© jmÃ©no.");
+                "required.userName", "Musíte zadat uivatelské jméno.");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email",
-                "required.email", "MusÃ­te zadat e-mailovou adresu.");
+                "required.email", "Musíte zadat e-mailovou adresu.");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phone",
-                "required.phone", "MusÃ­te zadat telefonnÃ­ ÄÃ­slo.");
+                "required.phone", "Musíte zadat telefonní èíslo.");
 
         HrajUserEntity user = (HrajUserEntity)userToValidate;
 
         if (user.getPassword()!=null && !user.getPassword().trim().equals("")){
 	        if(!user.getPassword().equals(user.getPasswordAgain())){
 	            errors.rejectValue("password", "notmatch.password",
-	                    "Heslo neodpovÃ­dÃ¡ kontrolnÃ­mu Ãºdaji");
+	                    "Heslo neodpovídá kontrolnímu údaji");
 	        }
         }
         

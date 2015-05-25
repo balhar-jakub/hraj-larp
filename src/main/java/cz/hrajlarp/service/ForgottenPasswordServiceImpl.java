@@ -5,7 +5,6 @@ import cz.hrajlarp.model.dao.UserDAO;
 import cz.hrajlarp.model.entity.EmailAuthenticatitonEntity;
 import cz.hrajlarp.model.entity.HrajUserEntity;
 import cz.hrajlarp.utils.HashString;
-import cz.hrajlarp.utils.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,7 +61,7 @@ public class ForgottenPasswordServiceImpl implements ForgottenPasswordService {
             toSave.setAuth_token(link);
             toSave.setUser(user);
             toSave.setUser_id(user.getId());
-            emailAuthenticationDao.saveOrUpdate(toSave);
+            emailAuthenticationDao.persist(toSave);
             return true;
         } catch (Exception e) {
             e.printStackTrace();

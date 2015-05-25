@@ -4,6 +4,7 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.util.Hashtable;
 import java.util.Stack;
+
 public class InsertTag extends TagSupport {
     private String template;
     private Stack stack;

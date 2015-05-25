@@ -3,17 +3,14 @@ package cz.hrajlarp.model.dao;
 
 import java.util.List;
 
-import cz.hrajlarp.api.GenericBuilder;
-import cz.hrajlarp.api.GenericHibernateDAO;
-import cz.hrajlarp.api.IBuilder;
+
 import cz.hrajlarp.model.entity.AdministratorEntity;
 import cz.hrajlarp.model.entity.HrajUserEntity;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,51 +20,31 @@ import org.springframework.transaction.annotation.Transactional;
  * To change this template use File | Settings | File Templates.
  */
 @Component
-public class AdministratorDAO extends GenericHibernateDAO<AdministratorEntity, Integer> {
-    @Override
-    public IBuilder getBuilder() {
-        return new GenericBuilder<AdministratorEntity>(AdministratorEntity.class);
+public class AdministratorDAO {
+    private EntityManager persistentStore;
+
+    @Autowired public AdministratorDAO(EntityManager persistentStore) {
+        this.persistentStore = persistentStore;
     }
 
     public boolean isAdministrator(HrajUserEntity user){
-        Session session = sessionFactory.openSession();
-        try {
-            return session.get(
-                    AdministratorEntity.class, user.getId()) != null;
-        }
-        finally { session.close(); }
+        return persistentStore.find(AdministratorEntity.class, user.getId()) != null;
     }
 
     public void setAdministrator(int userId){
-        AdministratorEntity entity = new AdministratorEntity();
-        entity.setId(userId);
-        Session session = sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            session.save(entity);
-            session.getTransaction().commit();
-        }
-        finally { session.close(); }
+        AdministratorEntity newAdministrator = new AdministratorEntity();
+        newAdministrator.setId(userId);
+        persistentStore.persist(newAdministrator);
     }
     
     public List<Integer> getAdministratorIds(){
-        Session session = sessionFactory.openSession();
-        try {
-            Query query = session.createQuery("select ae.id from AdministratorEntity ae");
-            return query.list();
-        }
-        finally { session.close(); }
+        Query allAdministrators = persistentStore.createQuery("select ae.id from AdministratorEntity ae");
+        return allAdministrators.getResultList();
     }
 
     public void removeAdministratorRights(int userId){
         AdministratorEntity entity = new AdministratorEntity();
         entity.setId(userId);
-        Session session = sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            session.delete(entity);
-            session.getTransaction().commit();
-        }
-        finally { session.close(); }
+        persistentStore.remove(entity);
     }
 }

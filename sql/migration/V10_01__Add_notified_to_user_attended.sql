@@ -1,0 +1,1 @@
+alter table user_attended_game add column notified boolean default false;

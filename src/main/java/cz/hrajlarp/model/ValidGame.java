@@ -55,30 +55,30 @@ public class ValidGame {
      * @param errors
      */
     public void validate(Errors errors){
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "name.required", "Mus√≠te zadat jm√©no!");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "anotation", "anotation.required","Mus√≠te zadat popis hry!");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "author", "name.required","Mus√≠te zadat autora hry!");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "date", "name.required","Mus√≠te zadat datum akce!");
-        //ValidationUtils.rejectIfEmptyOrWhitespace(errors, "place", "name.required","Mus√≠te zadat m√≠sto kon√°n√≠ akce!");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name", "name.required", "MusÌte zadat jmÈno!");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "anotation", "anotation.required","MusÌte zadat popis hry!");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "author", "name.required","MusÌte zadat autora hry!");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "date", "name.required","MusÌte zadat datum akce!");
+        //ValidationUtils.rejectIfEmptyOrWhitespace(errors, "place", "name.required","MusÌte zadat mÌsto kon·nÌ akce!");
         validateInteger(this.menRole, "menRole", errors);
         validateInteger(this.womenRole, "womenRole", errors);
         validateInteger(this.bothRole, "bothRole", errors);
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        
+
         Date bDate = null;
         if(this.date != null && !this.date.isEmpty())
         try {
             bDate = new Date(df.parse(this.date).getTime());
         }
         catch (ParseException e){
-            errors.rejectValue("date", "date.wrongFormatException", "Mus√≠te zadat datum ve form√°tu YYYY-MM-DD");
+            errors.rejectValue("date", "date.wrongFormatException", "MusÌte zadat datum ve form·tu YYYY-MM-DD");
         }
 
         if (this.time != null && !this.time.isEmpty()){
             pattern = Pattern.compile(TIME_24H);
             matcher = pattern.matcher(this.time);
-            if(!matcher.matches()) errors.rejectValue("time", "time.wrongFormatException", "Mus√≠te zadat ƒças ve form√°tu HH:MM");
+            if(!matcher.matches()) errors.rejectValue("time", "time.wrongFormatException", "MusÌte zadat Ëas ve form·tu HH:MM");
         }
 
         if(this.registrationStartedDate != null && !this.registrationStartedDate.isEmpty())
@@ -88,7 +88,7 @@ public class ValidGame {
         catch (ParseException e){
             errors.rejectValue("registrationStartedDate",
                     "registrationStartedDate.wrongFormatException",
-                    "Mus√≠te zadat datum ve form√°tu YYYY-MM-DD");
+                    "MusÌte zadat datum ve form·tu YYYY-MM-DD");
         }
 
         if (this.registrationStartedTime != null && !this.registrationStartedTime.isEmpty()){
@@ -96,7 +96,7 @@ public class ValidGame {
             matcher = pattern.matcher(this.registrationStartedTime);
             if(!matcher.matches()) errors.rejectValue("registrationStartedTime",
                     "registrationStartedTime.wrongFormatException",
-                    "Mus√≠te zadat ƒças ve form√°tu HH:MM");
+                    "MusÌte zadat Ëas ve form·tu HH:MM");
         }
 
         if (this.registrationStartedTime == null || this.registrationStartedTime.isEmpty())
@@ -106,7 +106,7 @@ public class ValidGame {
         if(regStartedDate == null || regStartedDate.after(bDate))
             errors.rejectValue("registrationStartedDate",
                     "startRegDate must be before bDate",
-                    " Datum povolen√≠ registrace mus√≠ b√Ωt d≈ô√≠vƒõj≈°√≠ ne≈æ datum kon√°n√≠");
+                    " Datum povolenÌ registrace musÌ b˝t d¯ÌvÏjöÌ neû datum kon·nÌ");
     }
 
     public void validateDateIsFuture(Errors errors){
@@ -117,10 +117,10 @@ public class ValidGame {
             if (bDate.before(new Date()))
                 errors.rejectValue("date",
                         "bDate must be in future",
-                        "Nelze vytv√°≈ôet hru s datem v minulosti");
+                        "Nelze vytv·¯et hru s datem v minulosti");
         }
         catch (ParseException e){
-            errors.rejectValue("date", "date.wrongFormatException", "Mus√≠te zadat datum ve form√°tu YYYY-MM-DD");
+            errors.rejectValue("date", "date.wrongFormatException", "MusÌte zadat datum ve form·tu YYYY-MM-DD");
 
         }
     }
@@ -137,7 +137,7 @@ public class ValidGame {
                 Integer.parseInt(atr);
             }
             catch (NumberFormatException e) {
-                errors.rejectValue(atrName, atrName+".numberFormatException", "Mus√≠te zadat ƒç√≠slo");
+                errors.rejectValue(atrName, atrName+".numberFormatException", "MusÌte zadat ËÌslo");
             }
        }
     }

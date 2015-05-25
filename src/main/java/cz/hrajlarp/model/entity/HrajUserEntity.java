@@ -221,9 +221,9 @@ public class HrajUserEntity {
     public String getGenderTextual() {
         if(genderTextual == null) {
             if(getGender() == 0){
-                setGenderTextual("Mu≈æ");
+                setGenderTextual("Muû");
             } else {
-                setGenderTextual("≈Ωena");
+                setGenderTextual("éena");
             }
         }
         return genderTextual;

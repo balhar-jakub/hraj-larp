@@ -5,7 +5,7 @@ import cz.hrajlarp.model.dao.UserAttendedGameDAO;
 import cz.hrajlarp.model.entity.UserAttendedGameEntity;
 import cz.hrajlarp.model.dao.UserDAO;
 import cz.hrajlarp.utils.HashString;
-import cz.hrajlarp.utils.MailService;
+import cz.hrajlarp.service.MailService;
 import cz.hrajlarp.utils.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -58,7 +58,7 @@ public class UserController {
 
         if (!userDAO.userNameIsUnique(user.getUserName()))
             result.rejectValue("userName", "userName is not unique in database",
-                    "UÅ¾ivatelskÃ© jmÃ©no uÅ¾ je zabranÃ©, vyberte si prosÃ­m jinÃ©.");
+                    "Uivatelské jméno u je zabrané, vyberte si prosím jiné.");
 
         if (result.hasErrors()) return "user/add";
 
@@ -70,12 +70,12 @@ public class UserController {
         } catch (Exception e) {
             return "user/failed";
         }
-        
+
         user.setActivated(false);
         userDAO.addUser(user);
         mailService.sendActivation(user);
-        model.addAttribute("info", "Registrace probÄ›hla ÃºspÄ›Å¡nÄ›. Na zadanou e-mailovou adresu byl odeslÃ¡n ovÄ›Å™ovacÃ­ mail." +
-        		"Zkontrolujte si prosÃ­m VaÅ¡i schrÃ¡nku. MÅ¯Å¾ete se pÅ™ihlÃ¡sit ke svÃ©mu ÃºÄtu. UÅ¾ivatel s neovÄ›Å™enou adresou mÃ¡ omezenÃ© moÅ¾nosti.");
+        model.addAttribute("info", "Registrace probìhla úspìšnì. Na zadanou e-mailovou adresu byl odeslán ovìøovací mail." +
+        		"Zkontrolujte si prosím Vaši schránku. Mùete se pøihlásit ke svému úètu. Uivatel s neovìøenou adresou má omezené monosti.");
         return "user/login";
     }
 
@@ -126,7 +126,7 @@ public class UserController {
         } catch (Exception e) {
             return "user/failed";
         }
-        
+
         if(!userDAO.getUserById(user.getId()).getEmail().equals(user.getEmail())){//mail address edited
         	try {
             	HashString hs = new HashString();
@@ -142,9 +142,9 @@ public class UserController {
         	user.setActivated(oldUserData.getActivated());
         	user.setActivationLink(oldUserData.getActivationLink());
         }
-        
+
         userDAO.editUser(user);
-        
+
         return "user/success";
     }
 
@@ -184,7 +184,7 @@ public class UserController {
 
     @RequestMapping(value = "/user/loginfailed", method = RequestMethod.GET)
     public String failed(Model model) {
-        model.addAttribute("info", "ZadanÃ© jmÃ©no nebo heslo neexistuje. Zkuste to znovu.");
+        model.addAttribute("info", "Zadané jméno nebo heslo neexistuje. Zkuste to znovu.");
         return "user/login";
     }
     

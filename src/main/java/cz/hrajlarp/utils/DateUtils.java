@@ -15,17 +15,6 @@ import java.util.Date;
  */
 public class DateUtils {
 
-    public static boolean isFuture(Timestamp timestamp){
-        Date now = new Date();
-        Timestamp nowTimestamp= new Timestamp(now.getTime());
-        return nowTimestamp.before(timestamp);
-    }
-    
-    public static String getDateAsDMYHM(Date date){
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-        return sdf.format(date);
-    }
-    
     public static Date stringsToDate(String day, String time){
         SimpleDateFormat datetimeFormatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date date = null;

@@ -1,17 +1,15 @@
 package cz.hrajlarp.model.dao;
 
-import java.util.List;
-
 import cz.hrajlarp.model.entity.GameEntity;
 import cz.hrajlarp.model.entity.HrajUserEntity;
 import cz.hrajlarp.model.entity.UserGamePK;
 import cz.hrajlarp.model.entity.UserIsEditorEntity;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,93 +18,69 @@ import org.springframework.transaction.annotation.Transactional;
  * Time: 15:52
  * To change this template use File | Settings | File Templates.
  */
-@Component
+@Repository
 public class UserIsEditorDAO {
+    private EntityManager persistentStore;
 
     @Autowired
-    private SessionFactory sessionFactory;
-
-    public boolean isEditorOfGame(HrajUserEntity user, GameEntity game){
-         return getUserIsEditor(user, game) != null;
+    public UserIsEditorDAO(EntityManager persistentStore) {
+        this.persistentStore = persistentStore;
     }
 
-    public boolean isEditor(HrajUserEntity user){
-        if(user == null) return false;
-
-        Session session = sessionFactory.openSession();
-        try {
-            Query query = session.createQuery("from UserIsEditorEntity uie where uie.userId= :userId");
-            query.setParameter("userId", user.getId());
-            return !query.list().isEmpty();
-        }
-        finally { session.close(); }
+    public boolean isEditorOfGame(HrajUserEntity user, GameEntity game) {
+        return getUserIsEditor(user, game) != null;
     }
 
-    public Object getUserIsEditor(HrajUserEntity user, GameEntity game){
-        if(user == null || game == null) return null;
+    public boolean isEditor(HrajUserEntity user) {
+        assert user != null;
 
-        Session session = sessionFactory.openSession();
-        try {
-            return session.get(
-                    UserIsEditorEntity.class,
-                    new UserGamePK(user.getId(), game.getId())
-            );
-        }
-        finally { session.close(); }
+        Query query = persistentStore.createQuery("from UserIsEditorEntity uie where uie.userId= :userId");
+        query.setParameter("userId", user.getId());
+        return !query.getResultList().isEmpty();
+    }
+
+    public Object getUserIsEditor(HrajUserEntity user, GameEntity game) {
+        assert user != null && game != null;
+
+        return persistentStore.find(
+                UserIsEditorEntity.class,
+                new UserGamePK(user.getId(), game.getId())
+        );
     }
 
     /**
      * This method adds new UserIsEditor record into database
+     *
      * @param record
      */
-    public void addUserIsEditor(UserIsEditorEntity record){
-        Session session = sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            session.save(record);
-            session.getTransaction().commit();
-        }
-        finally { session.close(); }
+    public void addUserIsEditor(UserIsEditorEntity record) {
+        persistentStore.persist(record);
     }
 
     /**
      * Delete method for UserIsEditor table.
+     *
      * @param record object for delete.
      */
     public void deleteUserIsEditor(UserIsEditorEntity record) {
-        Session session = sessionFactory.openSession();
-        try{
-            session.beginTransaction();
-            session.delete(record);
-            session.getTransaction().commit();
-        }
-        finally { session.close(); }
-    }
-    
-    public List<Integer> getEditorIds(GameEntity game){
-        Session session = sessionFactory.openSession();
-        try {
-            Query query = session.createQuery("select ue.userId from UserIsEditorEntity ue where gameId= :gameId");
-            query.setParameter("gameId", game.getId());
-            return query.list();
-        }
-        finally { session.close(); }
+        persistentStore.remove(record);
     }
 
-    
+    public List<Integer> getEditorIds(GameEntity game) {
+        Query query = persistentStore.createQuery("select ue.userId from UserIsEditorEntity ue where gameId= :gameId");
+        query.setParameter("gameId", game.getId());
+        return query.getResultList();
+    }
+
+
     /**
      * @param gameId
      * @return list of editors by given game
      */
-    public List<HrajUserEntity> getEditorsByGameId(int gameId){
-        Session session = sessionFactory.openSession();
-        try {
-            Query query = session.createQuery("select user " +
-                    "from HrajUserEntity user, UserIsEditorEntity uie " +
-                    "where uie.gameId=:gameId and user.id = uie.userId");
-            query.setParameter("gameId", gameId);
-            return query.list();
-        }
-        finally { session.close(); }
+    public List<HrajUserEntity> getEditorsByGameId(int gameId) {
+        Query query = persistentStore.createQuery("select user from HrajUserEntity user, UserIsEditorEntity uie " +
+                "where uie.gameId=:gameId and user.id = uie.userId");
+        query.setParameter("gameId", gameId);
+        return query.getResultList();
     }
 }

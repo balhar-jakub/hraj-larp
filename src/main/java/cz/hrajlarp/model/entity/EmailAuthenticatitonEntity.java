@@ -45,7 +45,7 @@ public class EmailAuthenticatitonEntity {
     }
 
     @ManyToOne
-    @javax.persistence.JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, insertable=false, updatable=false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, insertable=false, updatable=false)
     public HrajUserEntity getUser() {
         return user;
     }

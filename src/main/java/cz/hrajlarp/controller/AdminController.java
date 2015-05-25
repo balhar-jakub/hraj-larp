@@ -3,7 +3,7 @@ package cz.hrajlarp.controller;
 import cz.hrajlarp.model.Rights;
 import cz.hrajlarp.model.dao.*;
 import cz.hrajlarp.model.entity.*;
-import cz.hrajlarp.utils.MailService;
+import cz.hrajlarp.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,15 +47,11 @@ public class AdminController {
     @Autowired
     private AuthorizedEditorDAO authorizedEditorDAO;
 
-    @Autowired
-    private AccountantDAO accountantDAO;
-
     @RequestMapping(value = "/admin/game/players/{id}", method= RequestMethod.GET)
     @Transactional
     public String gamePlayers(Model model, @PathVariable("id") Integer id) {
         HrajUserEntity user = rights.getLoggedUser();
         GameEntity game = gameDAO.getGameById(id);
-        AccountantEntity accountant = accountantDAO.findById(user.getId());
 
         if (rights.hasRightsToEditGame(user, game)){
             List<UserAttendedGameEntity> players =
@@ -64,8 +60,7 @@ public class AdminController {
                     userAttendedGameDAO.getPlayers(id, true);
 
             model.addAttribute("gameId",id);
-            model.addAttribute("paymentFinished",
-                    accountant==null || (game.getPaymentFinished() != null && game.getPaymentFinished()));
+            model.addAttribute("paymentFinished", game.getPaymentFinished() != null && game.getPaymentFinished());
             model.addAttribute("gameName", game.getName());
             model.addAttribute("players", players);
             model.addAttribute("substitutes", substitutes);
@@ -82,29 +77,23 @@ public class AdminController {
     public String paymentFinished(Model model, @PathVariable("id") Integer id) {
         HrajUserEntity user = rights.getLoggedUser();
         GameEntity game = gameDAO.getGameById(id);
-        AccountantEntity accountant = accountantDAO.findById(user.getId());
 
-        if (accountant != null) {
-            game.setPaymentFinished(true);
-            gameDAO.editGame(game);
+        game.setPaymentFinished(true);
+        gameDAO.editGame(game);
 
-            List<UserAttendedGameEntity> players =
-                    userAttendedGameDAO.getPlayers(id, false);
-            List<UserAttendedGameEntity> substitutes =
-                    userAttendedGameDAO.getPlayers(id, true);
+        List<UserAttendedGameEntity> players =
+                userAttendedGameDAO.getPlayers(id, false);
+        List<UserAttendedGameEntity> substitutes =
+                userAttendedGameDAO.getPlayers(id, true);
 
-            model.addAttribute("gameId",id);
-            model.addAttribute("paymentFinished",
-                    game.getPaymentFinished() != null && game.getPaymentFinished());
-            model.addAttribute("gameName", game.getName());
-            model.addAttribute("players", players);
-            model.addAttribute("substitutes", substitutes);
-            model.addAttribute("isLogged", true);
-            return "/admin/game/players";
-        } else {
-            model.addAttribute("path", "/admin/game/players/" + String.valueOf(id));
-            return "/admin/norights";
-        }
+        model.addAttribute("gameId",id);
+        model.addAttribute("paymentFinished",
+                game.getPaymentFinished() != null && game.getPaymentFinished());
+        model.addAttribute("gameName", game.getName());
+        model.addAttribute("players", players);
+        model.addAttribute("substitutes", substitutes);
+        model.addAttribute("isLogged", true);
+        return "/admin/game/players";
     }
 
     @RequestMapping(value="/admin/user/payed/{gameId}/{userId}")
@@ -187,11 +176,11 @@ public class AdminController {
 
         if (game!=null && rights.hasRightsToEditGame(user, game)){
             List<UserAttendedGameEntity> records = userAttendedGameDAO.getRecordsByGameId(id);
-            StringBuilder sb = new StringBuilder("DoÅ¡lo ke zruÅ¡enÃ­ hry " + game.getName() + ". Hra byla naplÃ¡novanÃ¡ na " 
-            		+ game.getDateAsDMY()+ "\n\nSeznam pÅ™ihlÃ¡Å¡enÃ½ch hrÃ¡ÄÅ¯:\n");
+            StringBuilder sb = new StringBuilder("Došlo ke zrušení hry " + game.getName() + ". Hra byla naplánovaná na "
+            		+ game.getDateAsDMY()+ "\n\nSeznam pøihlášenıch hráèù:\n");
             for(UserAttendedGameEntity uage : records){
             	HrajUserEntity u = userDAO.getUserById(uage.getUserId());
-            	sb.append("JMÃ‰NO: " + u.getName() +" "+ u.getLastName() + "\t LOGIN: "+u.getUserName()
+            	sb.append("JMÉNO: " + u.getName() +" "+ u.getLastName() + "\t LOGIN: "+u.getUserName()
             			+ "\t PLATIL: "+ uage.getPayedTextual() +"\n");
                 userAttendedGameDAO.deleteUserAttendedGame(uage);
             }
@@ -489,11 +478,11 @@ public class AdminController {
             futureAdmins.add(userDAO.getUserById(userId));
         }
         model.addAttribute("users", futureAdmins);
-        model.addAttribute("title", "PÅ™idat prÃ¡vo administrÃ¡tora");
-        model.addAttribute("description", "AdministrÃ¡tor mÃ¡ prÃ¡vo schvalovat hry, " +
-                "pÅ™idÃ¡vat a odebÃ­rat prÃ¡va dalÅ¡Ã­m administrÃ¡torÅ¯m, pÅ™idÃ¡vat a odebÃ­rat prÃ¡va osvÄ›dÄenÃ½m editorÅ¯m " +
-                "a pÅ™idÃ¡vat a odebÃ­rat prÃ¡va editorÅ¯m danÃ© hry. V jeho pravomoci je takÃ© odhlaÅ¡ovat hrÃ¡Äe ze hry " +
-                "a schvalovat platby ÃºÄastnÃ­kÅ¯ her. SkuteÄnÄ› si pÅ™ejete vÃ½Å¡e uvedenÃ½m osobÃ¡m pÅ™idat prÃ¡vo administrÃ¡tora?");
+        model.addAttribute("title", "Pøidat právo administrátora");
+        model.addAttribute("description", "Administrátor má právo schvalovat hry, " +
+                "pøidávat a odebírat práva dalším administrátorùm, pøidávat a odebírat práva osvìdèenım editorùm " +
+                "a pøidávat a odebírat práva editorùm dané hry. V jeho pravomoci je také odhlašovat hráèe ze hry " +
+                "a schvalovat platby úèastníkù her. Skuteènì si pøejete vıše uvedenım osobám pøidat právo administrátora?");
         model.addAttribute("confirmLink", "/admin/rights/admins/add");
         return "admin/rights/confirmation";
     }
@@ -509,10 +498,10 @@ public class AdminController {
             futureAuthEditors.add(userDAO.getUserById(userId));
         }
         model.addAttribute("users", futureAuthEditors);
-        model.addAttribute("title", "PÅ™idat prÃ¡vo osvÄ›dÄenÃ©ho editora");
-        model.addAttribute("description", "OsvÄ›dÄenÃ½ editor mÃ¡ prÃ¡vo vklÃ¡dat hry pÅ™Ã­mo " +
-                "do kalendÃ¡Å™e akcÃ­ bez nutnosti schvÃ¡lenÃ­ hry nÄ›kterÃ½m z administrÃ¡torÅ¯. " +
-                "SkuteÄnÄ› si pÅ™ejete vÃ½Å¡e uvedenÃ½m osobÃ¡m pÅ™idat prÃ¡vo osvÄ›dÄenÃ©ho editora?");
+        model.addAttribute("title", "Pøidat právo osvìdèeného editora");
+        model.addAttribute("description", "Osvìdèenı editor má právo vkládat hry pøímo " +
+                "do kalendáøe akcí bez nutnosti schválení hry nìkterım z administrátorù. " +
+                "Skuteènì si pøejete vıše uvedenım osobám pøidat právo osvìdèeného editora?");
         model.addAttribute("confirmLink", "/admin/rights/autheditors/add");
         return "admin/rights/confirmation";
     }
@@ -524,8 +513,8 @@ public class AdminController {
         List<HrajUserEntity> userList = new ArrayList<HrajUserEntity>();
         userList.add(userDAO.getUserById(userId));
         model.addAttribute("users", userList);
-        model.addAttribute("title", "Odebrat prÃ¡vo administrÃ¡tora");
-        model.addAttribute("description", "SkuteÄnÄ› mÃ¡ bÃ½t tÃ©to osobÄ› odebrÃ¡no prÃ¡vo administrÃ¡tora?");
+        model.addAttribute("title", "Odebrat právo administrátora");
+        model.addAttribute("description", "Skuteènì má bıt této osobì odebráno právo administrátora?");
         model.addAttribute("confirmLink", ("/admin/rights/admins/remove/" + userId));
         return "admin/rights/confirmation";
     }
@@ -536,8 +525,8 @@ public class AdminController {
         List<HrajUserEntity> userList = new ArrayList<HrajUserEntity>(1);
         userList.add(userDAO.getUserById(userId));
         model.addAttribute("users", userList);
-        model.addAttribute("title", "Odebrat prÃ¡vo osvÄ›dÄenÃ©ho editora");
-        model.addAttribute("description", "SkuteÄnÄ› mÃ¡ bÃ½t tÃ©to osobÄ› odebrÃ¡no prÃ¡vo osvÄ›dÄenÃ©ho editora?");
+        model.addAttribute("title", "Odebrat právo osvìdèeného editora");
+        model.addAttribute("description", "Skuteènì má bıt této osobì odebráno právo osvìdèeného editora?");
         model.addAttribute("confirmLink", ("/admin/rights/autheditors/remove/" + userId));
         return "admin/rights/confirmation";
     }

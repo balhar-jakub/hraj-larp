@@ -1,41 +1,38 @@
-package cz.hrajlarp.utils;
+package cz.hrajlarp.service;
 
 import cz.hrajlarp.model.dao.AdministratorDAO;
 import cz.hrajlarp.model.dao.UserDAO;
 import cz.hrajlarp.model.dao.UserIsEditorDAO;
 import cz.hrajlarp.model.entity.GameEntity;
 import cz.hrajlarp.model.entity.HrajUserEntity;
-import cz.hrajlarp.model.entity.UserAttendedGameEntity;
 import cz.hrajlarp.service.SubstitutionService;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class MailService {
-	@Autowired
-    UserIsEditorDAO userIsEditorDAO;
-	@Autowired
-	AdministratorDAO administratorDAO;
-	@Autowired
-	UserDAO userDAO;
-    @Autowired
-    SubstitutionService substitutionService;
-	
+	private UserIsEditorDAO userIsEditorDAO;
+	private AdministratorDAO administratorDAO;
+	private UserDAO userDAO;
+    private SubstitutionService substitutionService;
 	private MailSender mailSender;
     private SimpleMailMessage templateMessage;
 
-    public void setMailSender(MailSender mailSender) {
+    @Autowired public MailService(UserIsEditorDAO userIsEditorDAO, AdministratorDAO administratorDAO, UserDAO userDAO, SubstitutionService substitutionService, MailSender mailSender, SimpleMailMessage templateMessage) {
+        this.userIsEditorDAO = userIsEditorDAO;
+        this.administratorDAO = administratorDAO;
+        this.userDAO = userDAO;
+        this.substitutionService = substitutionService;
         this.mailSender = mailSender;
-    }
-
-    public void setTemplateMessage(SimpleMailMessage templateMessage) {
         this.templateMessage = templateMessage;
     }
-    
+
     public void sendMsgChangedToActor(HrajUserEntity u, GameEntity g) {
 
         SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
@@ -45,16 +42,16 @@ public class MailService {
         } else {
             message.setText(
                     "Ahoj " + u.getName() + " " + u.getLastName() + ",\n\n"
-                            + "Na hÅ™e " + g.getName() + ", " + "se uvolnilo mÃ­sto. Hra se konÃ¡ " + g.getDateAsDMY() + "\n"
-                            + "ProsÃ­m potvrÄ nÃ¡m, Å¾e s hrou poÄÃ­tÃ¡Å¡.\n\n"
-                            + "S pÅ™Ã¡nÃ­m krÃ¡snÃ©ho dne tÃ½m HRAJ LARP");
+                            + "Na høe " + g.getName() + ", " + "se uvolnilo místo. Hra se koná " + g.getDateAsDMY() + "\n"
+                            + "Prosím potvrï nám, e s hrou poèítáš.\n\n"
+                            + "S pøáním krásného dne tım HRAJ LARP");
         }
         System.out.println("Sending message:\n" + message.getText() + "\n");
         try{
             this.mailSender.send(message);
         }
         catch(MailException e) {
-            System.err.println(e.getMessage());            
+            System.err.println(e.getMessage());
         }
     }
 
@@ -64,10 +61,10 @@ public class MailService {
         message.setTo(u.getEmail());
         message.setText(
                 "Ahoj " + u.getName() + " " + u.getLastName() + ",\n\n" +
-                        "na hÅ™e " + g.getName() + " jsme bohuÅ¾el museli zmenÅ¡it poÄet rolÃ­. Proto tÄ› nynÃ­ evidujeme jako " +
-                        "nÃ¡hradnÃ­ka a nikoliv jako Å™Ã¡dnÃ©ho hrÃ¡Äe. DÃ¡me ti vÄ›dÄ›t jakmile se pro tebe uvolnÃ­ mÃ­sto. OmlouvÃ¡me " +
-                        "se za zpÅ¯sobenÃ© potÃ­Å¾e\n\n" +
-                        "S pozdravem tÃ½m HRAJ LARP");
+                        "na høe " + g.getName() + " jsme bohuel museli zmenšit poèet rolí. Proto tì nyní evidujeme jako " +
+                        "náhradníka a nikoliv jako øádného hráèe. Dáme ti vìdìt jakmile se pro tebe uvolní místo. Omlouváme " +
+                        "se za zpùsobené potíe\n\n" +
+                        "S pozdravem tım HRAJ LARP");
         System.out.println("Sending message:\n" + message.getText() + "\n");
         try{
             this.mailSender.send(message);
@@ -76,7 +73,7 @@ public class MailService {
             System.err.println(e.getMessage());
         }
     }
-    
+
     public void sendMsgSignedAsRegular(HrajUserEntity u, GameEntity g) {
 
         SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
@@ -86,53 +83,11 @@ public class MailService {
         } else {
 	        message.setText(
 	            "Ahoj " + u.getName() + " " + u.getLastName() + ",\n\n"
-	                + "potvrzujeme, Å¾e jsi se ÃºspÄ›Å¡nÄ› pÅ™ihlÃ¡sil do hry "
-	                + g.getName() +". Hra se konÃ¡ " + g.getDateAsDMY() +"\n"
+	                + "potvrzujeme, e jsi se úspìšnì pøihlásil do hry "
+	                + g.getName() +". Hra se koná " + g.getDateAsDMY() +"\n"
 	                + "\n"
-	                + "S pÅ™Ã¡nÃ­m krÃ¡snÃ©ho dne tÃ½m HRAJ LARP");
+	                + "S pøáním krásného dne tım HRAJ LARP");
         }
-        System.out.println("Sending message:\n" + message.getText() + "\n");
-        try{
-            this.mailSender.send(message);
-        }
-        catch(MailException e) {
-            System.err.println(e.getMessage());            
-        }
-    }
-    
-    public void sendMsgSignedAsReplacement (HrajUserEntity u, GameEntity g) {
-
-        SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
-        message.setTo(u.getEmail());
-        if (StringUtils.isNotBlank(g.getRegisteredSubstitute())){
-        	message.setText(substitutionService.replaceSubstitutes(g.getRegisteredSubstitute(), g, u));
-        } else {
-	        message.setText(
-	        		 "VÃ¡Å¾enÃ½ uÅ¾ivateli " + u.getName() + " " + u.getLastName() + ",\n\n"
-	        	                + "potvrzujeme, Å¾e jste se ÃºspÄ›Å¡nÄ› pÅ™ihlÃ¡sil do hry "
-	        	                + g.getName() +" jako nÃ¡hrada. Pokud se VÃ¡s status zmÄ›nÃ­ na zÃ¡vaznou roli,"
-	        	                + "informujeme VÃ¡s o tom e-mailem."
-	        	                + "Hra se konÃ¡ " + g.getDateAsDMY() +"\n"
-	        	                + "OvÄ›Å™te si prosÃ­m tyto skuteÄnosti na strÃ¡nce hrajlarp.cz\n\n"
-	        	                + "S pÅ™Ã¡nÃ­m krÃ¡snÃ©ho dne VÃ¡Å¡ tÃ½m HRAJ LARP");
-        }
-        System.out.println("Sending message:\n" + message.getText() + "\n");
-        try{
-            this.mailSender.send(message);
-        }
-        catch(MailException e) {
-            System.err.println(e.getMessage());            
-        }
-    }
-
-    public void sendMsgBeforeGame(HrajUserEntity u, GameEntity g) {
-        SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
-        message.setTo(u.getEmail());
-        message.setText(
-                "VÃ¡Å¾enÃ½ uÅ¾ivateli " + u.getName() + " " + u.getLastName() + ",\n\n"
-                        + "nezaplatil jste hru "
-                        + g.getName()
-                        + "Hra se konÃ¡ " + g.getDateAsDMY() +"\n");
         System.out.println("Sending message:\n" + message.getText() + "\n");
         try{
             this.mailSender.send(message);
@@ -141,73 +96,115 @@ public class MailService {
             System.err.println(e.getMessage());
         }
     }
-    
-    public void sendMsgDayToRegStart (HrajUserEntity u, GameEntity g) {
+
+    public void sendMsgSignedAsReplacement (HrajUserEntity u, GameEntity g) {
 
         SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
         message.setTo(u.getEmail());
-        message.setText(
-        		 "VÃ¡Å¾enÃ½ uÅ¾ivateli " + u.getName() + " " + u.getLastName() + ",\n\n"
-        	                + "informujeme VÃ¡s, Å¾e pÅ™ihlaÅ¡ovÃ¡nÃ­ do hry "
-        	                + g.getName() +" bude spuÅ¡tÄ›no jiÅ¾ za 24 hodin.\n"
-        	                + "S pÅ™Ã¡nÃ­m krÃ¡snÃ©ho dne VÃ¡Å¡ tÃ½m HRAJ LARP");
+        if (StringUtils.isNotBlank(g.getRegisteredSubstitute())){
+        	message.setText(substitutionService.replaceSubstitutes(g.getRegisteredSubstitute(), g, u));
+        } else {
+	        message.setText(
+	        		 "Váenı uivateli " + u.getName() + " " + u.getLastName() + ",\n\n"
+	        	                + "potvrzujeme, e jste se úspìšnì pøihlásil do hry "
+	        	                + g.getName() +" jako náhrada. Pokud se Vás status zmìní na závaznou roli,"
+	        	                + "informujeme Vás o tom e-mailem."
+	        	                + "Hra se koná " + g.getDateAsDMY() +"\n"
+	        	                + "Ovìøte si prosím tyto skuteènosti na stránce hrajlarp.cz\n\n"
+	        	                + "S pøáním krásného dne Váš tım HRAJ LARP");
+        }
         System.out.println("Sending message:\n" + message.getText() + "\n");
         try{
             this.mailSender.send(message);
         }
         catch(MailException e) {
-            System.err.println(e.getMessage());            
+            System.err.println(e.getMessage());
         }
     }
-    
+
+    public void sendMsgBeforeGame(HrajUserEntity u, GameEntity g) {
+        SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
+        message.setTo(u.getEmail());
+        message.setText(
+                "Váenı uivateli " + u.getName() + " " + u.getLastName() + ",\n\n"
+                        + "nezaplatil jste hru "
+                        + g.getName()
+                        + "Hra se koná " + g.getDateAsDMY() +"\n");
+        System.out.println("Sending message:\n" + message.getText() + "\n");
+        try{
+            this.mailSender.send(message);
+        }
+        catch(MailException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public void sendMsgDayToRegStart (HrajUserEntity u, GameEntity g) {
+
+        SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
+        message.setTo(u.getEmail());
+        message.setText(
+        		 "Váenı uivateli " + u.getName() + " " + u.getLastName() + ",\n\n"
+        	                + "informujeme Vás, e pøihlašování do hry "
+        	                + g.getName() +" bude spuštìno ji za 24 hodin.\n"
+        	                + "S pøáním krásného dne Váš tım HRAJ LARP");
+        System.out.println("Sending message:\n" + message.getText() + "\n");
+        try{
+            this.mailSender.send(message);
+        }
+        catch(MailException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
     public void sendMsgToEditors (HrajUserEntity u, GameEntity g) {
     	List<Integer> editorIds = userIsEditorDAO.getEditorIds(g);
     	List<Integer> adminIds = administratorDAO.getAdministratorIds();
     	adminIds.removeAll(editorIds);
     	editorIds.addAll(adminIds);
-    	
+
     	for(Integer num: editorIds){
     		HrajUserEntity reciever = userDAO.getUserById(num);
     		notifyEditor(reciever, u, g);
     	}
     }
-    
+
     public void notifyEditor (HrajUserEntity r, HrajUserEntity u, GameEntity g) {
 
         SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
         message.setTo(r.getEmail());
         message.setText(
-        		 "Info o zmÄ›nÄ› stavu uÅ¾ivatele:\n\n"
-        					+ "UÅ¾ivatel: " + u.getName() + " " + u.getLastName() + ",\n"
+        		 "Info o zmìnì stavu uivatele:\n\n"
+        					+ "Uivatel: " + u.getName() + " " + u.getLastName() + ",\n"
         					+ "Login: " + u.getUserName() + ",\n\n"
-        	                + "Stav tohoto uÅ¾ivatele se prÃ¡vÄ› zmÄ›nil z nÃ¡hrady na Å™Ã¡dnÃ©ho hrÃ¡Äe hry "
-        	                + g.getName() +", kterÃ¡ probÄ›hne " + g.getDateAsDMY() +".\n");
+        	                + "Stav tohoto uivatele se právì zmìnil z náhrady na øádného hráèe hry "
+        	                + g.getName() +", která probìhne " + g.getDateAsDMY() +".\n");
         System.out.println("Sending message:\n" + message.getText() + "\n"
         					+"TO: "+ r.getUserName()+"\n");
         try{
             this.mailSender.send(message);
         }
         catch(MailException e) {
-            System.err.println(e.getMessage());            
+            System.err.println(e.getMessage());
         }
     }
-    
+
     public void notifyAdminUserLoggedOff(HrajUserEntity loggedOffUser, GameEntity game, boolean payed){
     	SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
     	List<Integer> adminIds = administratorDAO.getAdministratorIds();
-    	
+
     	for(Integer adminId: adminIds){
     		HrajUserEntity reciever = userDAO.getUserById(adminId);
-    		StringBuilder sb = new StringBuilder("Info o zmÄ›nÄ› stavu uÅ¾ivatele:\n\n"
-					+ "UÅ¾ivatel: " + loggedOffUser.getName() + " " + loggedOffUser.getLastName() + "\n"
+    		StringBuilder sb = new StringBuilder("Info o zmìnì stavu uivatele:\n\n"
+					+ "Uivatel: " + loggedOffUser.getName() + " " + loggedOffUser.getLastName() + "\n"
 					+ "Login: " + loggedOffUser.getUserName() + "\n\n"
-	                + "Tento hrÃ¡Ä se prÃ¡vÄ› odhlÃ¡sil ze hry "
-	                + game.getName() +", kterÃ¡ probÄ›hne " + game.getDateAsDMY() +".\n");
+	                + "Tento hráè se právì odhlásil ze hry "
+	                + game.getName() +", která probìhne " + game.getDateAsDMY() +".\n");
     		if (payed)
-    			sb.append("HrÃ¡Ä jiÅ¾ zaplatil za ÃºÄast ve hÅ™e.\n");
+    			sb.append("Hráè ji zaplatil za úèast ve høe.\n");
     		else
-    			sb.append("HrÃ¡Ä nezaplatil za ÃºÄast ve hÅ™e.\n");
-    		
+    			sb.append("Hráè nezaplatil za úèast ve høe.\n");
+
     		message.setTo(reciever.getEmail());
     		String text = sb.toString();
             message.setText(text);
@@ -217,16 +214,16 @@ public class MailService {
                 this.mailSender.send(message);
             }
             catch(MailException e) {
-                System.err.println(e.getMessage());            
+                System.err.println(e.getMessage());
             }
-    		
+
     	}
     }
-    
+
     public void notifyAdminOnGameDeletion(String msg){
     	SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
     	List<Integer> adminIds = administratorDAO.getAdministratorIds();
-    	
+
     	for(Integer adminId: adminIds){
     		HrajUserEntity reciever = userDAO.getUserById(adminId);
     		message.setTo(reciever.getEmail());
@@ -237,18 +234,18 @@ public class MailService {
                 this.mailSender.send(message);
             }
             catch(MailException e) {
-                System.err.println(e.getMessage());            
+                System.err.println(e.getMessage());
             }
     	}
     }
-    
+
     public void sendActivation (HrajUserEntity u) {
 
         SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
         message.setTo(u.getEmail());
         message.setText(
-        		 "Toto je zprÃ¡va pro ovÄ›Å™enÃ­ e-mailovÃ© adresy, kterou jste zadal/a na hrajlarp.cz.\n\n"
-        				 + "Pro plnou aktivaci VaÅ¡eho ÃºÄtu klepnÄ›te na nÃ¡sledujÃ­cÃ­ link:\n"
+        		 "Toto je zpráva pro ovìøení e-mailové adresy, kterou jste zadal/a na hrajlarp.cz.\n\n"
+        				 + "Pro plnou aktivaci Vašeho úètu klepnìte na následující link:\n"
         				 + "http://hrajlarp.cz/user/activation/" + u.getActivationLink() + "\n\n"
         	             + "HRAJ LARP");
         System.out.println("Sending message:\n" + message.getText() + "\n");
@@ -264,51 +261,11 @@ public class MailService {
         SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
         message.setTo(email);
         message.setText(
-                "Toto je zprÃ¡va pro reset zapomenutÃ©ho hesla.\n\n"
-                        + "Pro zmÄ›nu hesla kliknÄ›te na link:\n"
+                "Toto je zpráva pro reset zapomenutého hesla.\n\n"
+                        + "Pro zmìnu hesla kliknìte na link:\n"
                         + "http://hrajlarp.cz/user/password/new/" + activationLink + "\n\n"
                         + "HRAJ LARP");
         System.out.println("Sending message:\n" + message.getText() + "\n");
-        try{
-            this.mailSender.send(message);
-        }
-        catch(MailException e) {
-            System.err.println(e.getMessage());
-        }
-    }
-
-    public void sendInfoAboutNoGame(String email, String mailText) {
-        SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
-        message.setTo(email);
-        message.setText(mailText);
-        try{
-            this.mailSender.send(message);
-        }
-        catch(MailException e) {
-            System.err.println(e.getMessage());
-        }
-    }
-
-    public void sendInfoAboutNoPlace(String email, GameEntity gameEntity) {
-        SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
-        message.setTo(email);
-        String messageText = String.format("V systÃ©mu u hry %s nenÃ­ zadanÃ© mÃ­sto, aÄkoliv je hra za mÃ©nÄ› neÅ¾ 14 dnÃ­. " +
-                "Je potÅ™eba mÃ­sto doplnit. Dokud nebude hra doplnÄ›na, bude odesÃ­lÃ¡n tento email kaÅ¾dÃ½ den.", gameEntity.getName());
-        message.setText(messageText);
-        try{
-            this.mailSender.send(message);
-        }
-        catch(MailException e) {
-            System.err.println(e.getMessage());
-        }
-    }
-
-    public void sendInfoAboutUnfinishedAccount(String email, GameEntity gameEntity) {
-        SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
-        message.setTo(email);
-        String messageText = String.format("V systÃ©mu u hry %s nenÃ­ zaÅ¡krtnutÃ© pÅ™edanÃ© ÃºÄetnictvÃ­, aÄkoliv hra byla pÅ™ed vÃ­ce neÅ¾ 14 dny. " +
-                "Je potÅ™eba pÅ™edat ÃºÄetnictvÃ­. Dokud nebude pÅ™edÃ¡no, bude odesÃ­lÃ¡n tento email kaÅ¾dÃ½ den.", gameEntity.getName());
-        message.setText(messageText);
         try{
             this.mailSender.send(message);
         }

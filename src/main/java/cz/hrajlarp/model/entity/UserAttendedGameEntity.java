@@ -1,6 +1,6 @@
 package cz.hrajlarp.model.entity;
 
-import cz.hrajlarp.utils.MailService;
+import cz.hrajlarp.service.MailService;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -12,8 +12,8 @@ import java.sql.Timestamp;
  * Time: 14:10
  * To change this template use File | Settings | File Templates.
  */
-@javax.persistence.IdClass(UserGamePK.class)
-@javax.persistence.Table(name = "user_attended_game", schema = "public")
+@IdClass(UserGamePK.class)
+@Table(name = "user_attended_game", schema = "public")
 @Entity
 public class UserAttendedGameEntity {
 
@@ -22,7 +22,7 @@ public class UserAttendedGameEntity {
     @Transient
     private String substituteText;
 
-    @javax.persistence.Column(name = "substitute")
+    @Column(name = "substitute")
     @Basic
     public boolean isSubstitute() {
         return substitute;
@@ -34,7 +34,7 @@ public class UserAttendedGameEntity {
 
     private int userId;
 
-    @javax.persistence.Column(name = "user_id")
+    @Column(name = "user_id")
     @Id
     public int getUserId() {
         return userId;
@@ -46,7 +46,7 @@ public class UserAttendedGameEntity {
 
     private int gameId;
 
-    @javax.persistence.Column(name = "game_id")
+    @Column(name = "game_id")
     @Id
     public int getGameId() {
         return gameId;
@@ -58,7 +58,7 @@ public class UserAttendedGameEntity {
 
     private Timestamp added;
 
-    @javax.persistence.Column(name = "added")
+    @Column(name = "added")
     @Basic
     public Timestamp getAdded() {
         return added;
@@ -133,7 +133,7 @@ public class UserAttendedGameEntity {
 
     @ManyToOne
     public
-    @javax.persistence.JoinColumn(name = "game_id", referencedColumnName = "id", nullable = false, insertable=false, updatable=false)
+    @JoinColumn(name = "game_id", referencedColumnName = "id", nullable = false, insertable=false, updatable=false)
     GameEntity getAttendedGame() {
         return attendedGame;
     }
@@ -146,7 +146,7 @@ public class UserAttendedGameEntity {
 
     @ManyToOne
     public
-    @javax.persistence.JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, insertable=false, updatable=false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, insertable=false, updatable=false)
     HrajUserEntity getUserAttended() {
         return userAttended;
     }
@@ -157,7 +157,7 @@ public class UserAttendedGameEntity {
 
     @Transient
     public String getSubstituteText() {
-        return (isSubstitute()) ? "N√°hradn√≠k": "Hr√°ƒç";
+        return (isSubstitute()) ? "N·hradnÌk": "Hr·Ë";
     }
 
     public void setSubstituteText(String substituteText) {
