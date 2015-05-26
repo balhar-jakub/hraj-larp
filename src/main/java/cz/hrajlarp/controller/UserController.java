@@ -56,7 +56,7 @@ public class UserController {
                            Model model) {
         new UserValidator().validate(user, result);
 
-        if (!userDAO.userNameIsUnique(user.getUserName()))
+        if (user.getUserName() != null && !userDAO.userNameIsUnique(user.getUserName()))
             result.rejectValue("userName", "userName is not unique in database",
                     "Uživatelské jméno už je zabrané, vyberte si prosím jiné.");
 

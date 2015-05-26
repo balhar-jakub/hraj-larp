@@ -22,6 +22,8 @@ public class UserValidator implements Validator{
                 "required.userName", "Musíte zadat uživatelské jméno.");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password",
                 "required.password", "Musíte zadat heslo.");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passwordAgain",
+                "required.passwordAgain", "Musíte zadat heslo znovu.");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email",
                 "required.email", "Musíte zadat e-mailovou adresu.");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phone",
@@ -29,7 +31,7 @@ public class UserValidator implements Validator{
 
         HrajUserEntity user = (HrajUserEntity)userToValidate;
 
-        if(!(user.getPassword().equals(user.getPasswordAgain()))){
+        if(user.getPassword() != null && !(user.getPassword().equals(user.getPasswordAgain()))){
             errors.rejectValue("password", "notmatch.password",
                     "Heslo neodpovídá kontrolnímu údaji");
         }

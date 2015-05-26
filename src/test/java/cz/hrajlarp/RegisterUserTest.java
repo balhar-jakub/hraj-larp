@@ -36,11 +36,92 @@ public class RegisterUserTest extends AcceptanceTest{
     }
 
     @Test
-    public void registerNewValidUser() throws Exception {
+    public void validUser() throws Exception {
         mockMvc.perform(post("/user/register").param("name", "Jakub").param("lastName", "Balhar").param("userName", "Balda")
                 .param("password", "heslo").param("passwordAgain", "heslo").param("email", "balhar.jakub@gmail.com")
                 .param("phone", "723354354").param("genderForm", "M"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("user/login"));
+    }
+
+    @Test
+    public void emptyNameReturnsBack() throws Exception {
+        mockMvc.perform(post("/user/register").param("lastName", "Balhar").param("userName", "Balda")
+                .param("password", "heslo").param("passwordAgain", "heslo").param("email", "balhar.jakub@gmail.com")
+                .param("phone", "723354354").param("genderForm", "M"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/add"));
+    }
+
+    @Test
+    public void emptyLastNameReturnsBack() throws Exception {
+        mockMvc.perform(post("/user/register").param("name", "Jakub").param("userName", "Balda")
+                .param("password", "heslo").param("passwordAgain", "heslo").param("email", "balhar.jakub@gmail.com")
+                .param("phone", "723354354").param("genderForm", "M"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/add"));
+    }
+
+    @Test
+    public void emptyUserNameReturnsBack() throws Exception {
+        mockMvc.perform(post("/user/register").param("name", "Jakub").param("lastName", "Balhar")
+                .param("password", "heslo").param("passwordAgain", "heslo").param("email", "balhar.jakub@gmail.com")
+                .param("phone", "723354354").param("genderForm", "M"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/add"));
+    }
+
+    @Test
+    public void emptyPasswordReturnsBack() throws Exception {
+        mockMvc.perform(post("/user/register").param("name", "Jakub").param("lastName", "Balhar").param("userName", "Balda")
+                .param("passwordAgain", "heslo").param("email", "balhar.jakub@gmail.com")
+                .param("phone", "723354354").param("genderForm", "M"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/add"));
+    }
+
+    @Test
+    public void emptyPasswordAgainReturnsBack() throws Exception {
+        mockMvc.perform(post("/user/register").param("name", "Jakub").param("lastName", "Balhar").param("userName", "Balda")
+                .param("password", "heslo").param("email", "balhar.jakub@gmail.com")
+                .param("phone", "723354354").param("genderForm", "M"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/add"));
+    }
+
+    @Test
+    public void nonMatchingPasswordAndPasswodAgain() throws Exception {
+        mockMvc.perform(post("/user/register").param("name", "Jakub").param("lastName", "Balhar").param("userName", "Balda")
+                .param("password", "heslo").param("passwordAgain", "jineHeslo").param("email", "balhar.jakub@gmail.com")
+                .param("phone", "723354354").param("genderForm", "M"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/add"));
+    }
+
+    @Test
+    public void emptyEmailReturnsBack() throws Exception {
+        mockMvc.perform(post("/user/register").param("name", "Jakub").param("lastName", "Balhar").param("userName", "Balda")
+                .param("password", "heslo").param("passwordAgain", "heslo")
+                .param("phone", "723354354").param("genderForm", "M"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/add"));
+    }
+
+    @Test
+    public void emptyPhoneReturnsBack() throws Exception {
+        mockMvc.perform(post("/user/register").param("name", "Jakub").param("lastName", "Balhar").param("userName", "Balda")
+                .param("password", "heslo").param("passwordAgain", "heslo").param("email", "balhar.jakub@gmail.com")
+                .param("genderForm", "M"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/add"));
+    }
+
+    @Test
+    public void emptyGenderReturnsBack() throws Exception {
+        mockMvc.perform(post("/user/register").param("name", "Jakub").param("lastName", "Balhar").param("userName", "Balda")
+                .param("password", "heslo").param("passwordAgain", "heslo").param("email", "balhar.jakub@gmail.com")
+                .param("phone", "723354354"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("user/add"));
     }
 }
