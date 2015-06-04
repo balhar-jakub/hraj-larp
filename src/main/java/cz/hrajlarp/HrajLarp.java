@@ -1,5 +1,8 @@
 package cz.hrajlarp;
 
+import cz.hrajlarp.service.calendar.Event;
+import cz.hrajlarp.storage.Adapter;
+import cz.hrajlarp.storage.JpaAdapter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +20,11 @@ public class HrajLarp {
     @Bean
     public SimpleMailMessage simpleMailMessage() {
         return new SimpleMailMessage();
+    }
+
+    @Bean
+    public Adapter jpaAdapter() {
+        return new JpaAdapter<>();
     }
 
     public static void main(String[] args) {
