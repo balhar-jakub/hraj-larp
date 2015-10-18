@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 import javax.persistence.*;
 
 @IdClass(UserGamePK.class)
-@Table(name = "prereg_notifications", schema = "public")
+@Table(name = "prereg_notifications")
 @Entity
 public class PreRegNotificationEntity {
 

@@ -10,7 +10,7 @@ import javax.persistence.*;
  * To change this template use File | Settings | File Templates.
  */
 @IdClass(UserGamePK.class)
-@Table(name = "user_is_editor", schema = "public")
+@Table(name = "user_is_editor")
 @Entity
 public class UserIsEditorEntity {
 

@@ -8,7 +8,7 @@ import javax.persistence.Table;
 /**
  *
  */
-@Table(name = "authorized_editor", catalog = "")
+@Table(name = "authorized_editor")
 @Entity
 public class AuthorizedEditorEntity {
     private Integer id;

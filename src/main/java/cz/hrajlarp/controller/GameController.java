@@ -3,10 +3,7 @@ package cz.hrajlarp.controller;
 import cz.hrajlarp.model.Rights;
 import cz.hrajlarp.model.ValidGame;
 import cz.hrajlarp.model.dao.*;
-import cz.hrajlarp.model.entity.GameEntity;
-import cz.hrajlarp.model.entity.HrajUserEntity;
-import cz.hrajlarp.model.entity.PreRegNotificationEntity;
-import cz.hrajlarp.model.entity.UserIsEditorEntity;
+import cz.hrajlarp.model.entity.*;
 import cz.hrajlarp.utils.DateUtils;
 import cz.hrajlarp.utils.FileUtils;
 import cz.hrajlarp.service.MailService;
@@ -24,7 +21,9 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 
 
 /**
@@ -316,6 +315,18 @@ public class GameController {
             	if (!user.getActivated()) return "/error";
                 GameEntity game = gameDAO.getGameById(gameId);
                 if (game != null && game.isInFuture()) {
+                    // If the user isn't actually logged to the game in the same time frame.
+                    Timestamp gameDateFrom = game.getDate();
+                    Timestamp gameDateTo = new Timestamp(game.getDate().getTime() + 4 * 60 * 60 * 1000);
+                    Collection<UserAttendedGameEntity> attendance = user.getUserEntities().values();
+                    for(UserAttendedGameEntity attended: attendance) {
+                        Timestamp attendedFrom = attended.getAttendedGame().getDate();
+                        Timestamp attendedTo = new Timestamp(attended.getAttendedGame().getDate().getTime() + 4 * 60 * 60 * 1000);
+                        if(isAtLeastPartiallyInSameTime(gameDateFrom, gameDateTo, attendedFrom, attendedTo)){
+                            return "/errorAlreadyLoggedInTheSameTime";
+                        }
+                    }
+
                     try {
                         game.loginAndMailPlayer(userAttendedGameDAO, mailService, user);
                     } catch (Exception e) {
@@ -328,6 +339,11 @@ public class GameController {
             return "/error";
         }
         return "redirect:/game/detail";
+    }
+
+    private boolean isAtLeastPartiallyInSameTime(Timestamp newlyAttendedFrom, Timestamp newlyAttendedTo, Timestamp game2From, Timestamp game2To) {
+        return (game2From.after(newlyAttendedFrom) && game2From.before(newlyAttendedTo)) ||
+                (game2To.before(newlyAttendedTo) && game2To.after(newlyAttendedFrom));
     }
 
     /**

@@ -13,7 +13,7 @@ import java.sql.Timestamp;
  * To change this template use File | Settings | File Templates.
  */
 @javax.persistence.IdClass(UserGamePK.class)
-@javax.persistence.Table(name = "user_attended_game", schema = "public")
+@javax.persistence.Table(name = "user_attended_game")
 @Entity
 public class UserAttendedGameEntity {
 

@@ -774,8 +774,7 @@ public class GameEntity {
 
             if (isAvailableToUser(userAttendedGameDAO, user)) {
                 uage.setSubstitute(false);
-            }
-            else {
+            } else {
                 uage.setSubstitute(true);
             }
             Long variableSymbol = userAttendedGameDAO.getNextVariableSymbol();
