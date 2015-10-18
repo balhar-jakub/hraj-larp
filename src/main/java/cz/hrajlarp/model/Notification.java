@@ -2,9 +2,8 @@ package cz.hrajlarp.model;
 
 import cz.hrajlarp.model.dao.*;
 import cz.hrajlarp.model.entity.*;
-import cz.hrajlarp.utils.MailService;
+import cz.hrajlarp.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.Transient;

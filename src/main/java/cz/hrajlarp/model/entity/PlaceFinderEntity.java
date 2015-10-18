@@ -8,7 +8,7 @@ import javax.persistence.Table;
 /**
  *
  */
-@Table(name = "places_finder", schema = "public", catalog = "")
+@Table(name = "places_finder", catalog = "")
 @Entity
 public class PlaceFinderEntity {
     private Integer id;

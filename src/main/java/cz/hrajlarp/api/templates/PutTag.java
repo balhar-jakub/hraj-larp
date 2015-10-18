@@ -1,4 +1,4 @@
-package cz.hrajlarp.templates;
+package cz.hrajlarp.api.templates;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -14,7 +14,7 @@ public class PutTag extends TagSupport {
     public int doStartTag() throws JspException {
         // obtain a reference to enclosing insert tag
         InsertTag parent = (InsertTag)getAncestor(
-                "cz.hrajlarp.templates.InsertTag");
+                "cz.hrajlarp.api.templates.InsertTag");
         // put tags must be enclosed in an insert tag
         if(parent == null)
             throw new JspException("PutTag.doStartTag(): " +

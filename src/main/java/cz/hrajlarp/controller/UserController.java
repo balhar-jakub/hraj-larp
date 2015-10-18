@@ -5,7 +5,7 @@ import cz.hrajlarp.model.dao.UserAttendedGameDAO;
 import cz.hrajlarp.model.entity.UserAttendedGameEntity;
 import cz.hrajlarp.model.dao.UserDAO;
 import cz.hrajlarp.utils.HashString;
-import cz.hrajlarp.utils.MailService;
+import cz.hrajlarp.service.MailService;
 import cz.hrajlarp.utils.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;

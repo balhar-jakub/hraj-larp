@@ -7,7 +7,7 @@
     <short-name>SimpleTemplateSystem</short-name>
     <tag>
         <name>insert</name>
-        <tag-class>cz.hrajlarp.templates.InsertTag</tag-class>
+        <tag-class>cz.hrajlarp.api.templates.InsertTag</tag-class>
         <body-content>JSP</body-content>
         <attribute>
             <name>template</name>
@@ -18,7 +18,7 @@
 
     <tag>
         <name>put</name>
-        <tag-class>cz.hrajlarp.templates.PutTag</tag-class>
+        <tag-class>cz.hrajlarp.api.templates.PutTag</tag-class>
         <body-content>JSP</body-content>
         <attribute>
             <name>name</name>
@@ -39,7 +39,7 @@
 
     <tag>
         <name>get</name>
-        <tag-class>cz.hrajlarp.templates.GetTag</tag-class>
+        <tag-class>cz.hrajlarp.api.templates.GetTag</tag-class>
         <body-content>JSP</body-content>
         <attribute>
             <name>name</name>

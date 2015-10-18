@@ -1,8 +1,9 @@
-package cz.hrajlarp.utils;
+package cz.hrajlarp.service;
 
 import cz.hrajlarp.model.entity.HrajUserEntity;
 import cz.hrajlarp.model.Rights;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  * Date: 15.4.13
  * Time: 11:50
  */
+@Service
 public class HrajInterceptor implements HandlerInterceptor {
     @Autowired
     private Rights rights;

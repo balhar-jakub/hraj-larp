@@ -14,7 +14,7 @@ public interface ForgottenPasswordService {
      * @param authenticationLink Link user used to authenticate
      * @return True if there is any user associated with this link.
      */
-    public boolean isValidLink(String authenticationLink);
+    boolean isValidLink(String authenticationLink);
 
     /**
      * This generates and saves new forgotten email link for given user. Email for user must be valid.
@@ -22,7 +22,7 @@ public interface ForgottenPasswordService {
      * @param email User who asked for password. If this email doesn't exist throws NonExistentUserException
      * @return Generated email.
      */
-    public boolean generateNewLinkForUserAndSend(String email);
+    boolean generateNewLinkForUserAndSend(String email);
 
     /**
      * It returns user authenticated by the link. Do not use this if you are not sure
@@ -31,7 +31,7 @@ public interface ForgottenPasswordService {
      * @param authenticationLink Link representing user.
      * @return User belonging to this link.
      */
-    public HrajUserEntity getAuthenticatedUserByLink(String authenticationLink);
+    HrajUserEntity getAuthenticatedUserByLink(String authenticationLink);
 
     void updatePasswordForUserById(int actualUser, String password);
 }

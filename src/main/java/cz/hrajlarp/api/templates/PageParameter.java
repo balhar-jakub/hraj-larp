@@ -1,4 +1,4 @@
-package cz.hrajlarp.templates;
+package cz.hrajlarp.api.templates;
 
 public class PageParameter {
     private String content, direct;

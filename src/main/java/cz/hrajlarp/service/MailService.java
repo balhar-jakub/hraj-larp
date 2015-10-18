@@ -1,41 +1,39 @@
-package cz.hrajlarp.utils;
+package cz.hrajlarp.service;
 
 import cz.hrajlarp.model.dao.AdministratorDAO;
 import cz.hrajlarp.model.dao.UserDAO;
 import cz.hrajlarp.model.dao.UserIsEditorDAO;
 import cz.hrajlarp.model.entity.GameEntity;
 import cz.hrajlarp.model.entity.HrajUserEntity;
-import cz.hrajlarp.model.entity.UserAttendedGameEntity;
-import cz.hrajlarp.service.SubstitutionService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class MailService {
-	@Autowired
-    UserIsEditorDAO userIsEditorDAO;
-	@Autowired
-	AdministratorDAO administratorDAO;
-	@Autowired
-	UserDAO userDAO;
-    @Autowired
-    SubstitutionService substitutionService;
-	
+	private UserIsEditorDAO userIsEditorDAO;
+    private AdministratorDAO administratorDAO;
+    private UserDAO userDAO;
+    private SubstitutionService substitutionService;
 	private MailSender mailSender;
     private SimpleMailMessage templateMessage;
 
-    public void setMailSender(MailSender mailSender) {
+    @Autowired
+    public MailService(UserIsEditorDAO userIsEditorDAO, AdministratorDAO administratorDAO, UserDAO userDAO,
+                       SubstitutionService substitutionService, MailSender mailSender, SimpleMailMessage templateMessage) {
+        this.userIsEditorDAO = userIsEditorDAO;
+        this.administratorDAO = administratorDAO;
+        this.userDAO = userDAO;
+        this.substitutionService = substitutionService;
         this.mailSender = mailSender;
-    }
-
-    public void setTemplateMessage(SimpleMailMessage templateMessage) {
         this.templateMessage = templateMessage;
     }
-    
+
     public void sendMsgChangedToActor(HrajUserEntity u, GameEntity g) {
 
         SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
@@ -132,7 +130,7 @@ public class MailService {
                 "Vážený uživateli " + u.getName() + " " + u.getLastName() + ",\n\n"
                         + "nezaplatil jste hru "
                         + g.getName()
-                        + "Hra se koná " + g.getDateAsDMY() +"\n");
+                        + "Hra se koná " + g.getDateAsDMY() + "\n");
         System.out.println("Sending message:\n" + message.getText() + "\n");
         try{
             this.mailSender.send(message);
@@ -177,13 +175,13 @@ public class MailService {
         SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
         message.setTo(r.getEmail());
         message.setText(
-        		 "Info o změně stavu uživatele:\n\n"
-        					+ "Uživatel: " + u.getName() + " " + u.getLastName() + ",\n"
-        					+ "Login: " + u.getUserName() + ",\n\n"
-        	                + "Stav tohoto uživatele se právě změnil z náhrady na řádného hráče hry "
-        	                + g.getName() +", která proběhne " + g.getDateAsDMY() +".\n");
+                "Info o změně stavu uživatele:\n\n"
+                        + "Uživatel: " + u.getName() + " " + u.getLastName() + ",\n"
+                        + "Login: " + u.getUserName() + ",\n\n"
+                        + "Stav tohoto uživatele se právě změnil z náhrady na řádného hráče hry "
+                        + g.getName() + ", která proběhne " + g.getDateAsDMY() + ".\n");
         System.out.println("Sending message:\n" + message.getText() + "\n"
-        					+"TO: "+ r.getUserName()+"\n");
+                + "TO: " + r.getUserName() + "\n");
         try{
             this.mailSender.send(message);
         }

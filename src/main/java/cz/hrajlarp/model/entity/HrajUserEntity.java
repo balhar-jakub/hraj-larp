@@ -10,7 +10,7 @@ import java.util.Set;
  * Date: 6.3.13
  * Time: 23:12
  */
-@Table(name = "hraj_user", schema = "public", catalog = "")
+@Table(name = "hraj_user", catalog = "")
 @Entity
 public class HrajUserEntity {
     private Integer id;

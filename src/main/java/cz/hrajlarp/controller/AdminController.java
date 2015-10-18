@@ -3,7 +3,7 @@ package cz.hrajlarp.controller;
 import cz.hrajlarp.model.Rights;
 import cz.hrajlarp.model.dao.*;
 import cz.hrajlarp.model.entity.*;
-import cz.hrajlarp.utils.MailService;
+import cz.hrajlarp.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;

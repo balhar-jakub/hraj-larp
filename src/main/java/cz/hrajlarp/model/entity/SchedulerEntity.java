@@ -11,7 +11,7 @@ import javax.persistence.Table;
  * Date: 22.8.13
  * Time: 22:04
  */
-@Table(name = "scheduler", schema = "public", catalog = "")
+@Table(name = "scheduler", catalog = "")
 @Entity
 public class SchedulerEntity {
     private Integer id;

@@ -43,7 +43,7 @@ public class UserIsEditorEntity {
     private GameEntity editGame;
 
     @ManyToOne
-    @JoinColumn(name = "game_id", referencedColumnName = "id", nullable = false, insertable=false, updatable=false)
+    @JoinColumn(name = "game_id", referencedColumnName = "`id`", nullable = false, insertable=false, updatable=false)
     public GameEntity getEditGame() {
         return editGame;
     }
@@ -56,7 +56,7 @@ public class UserIsEditorEntity {
     private HrajUserEntity userEdit;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, insertable=false, updatable=false)
+    @JoinColumn(name = "user_id", referencedColumnName = "`id`", nullable = false, insertable=false, updatable=false)
     public HrajUserEntity getUserEdit() {
         return userEdit;
     }

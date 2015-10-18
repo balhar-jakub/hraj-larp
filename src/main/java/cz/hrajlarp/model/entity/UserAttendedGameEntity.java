@@ -1,6 +1,6 @@
 package cz.hrajlarp.model.entity;
 
-import cz.hrajlarp.utils.MailService;
+import cz.hrajlarp.service.MailService;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -133,7 +133,7 @@ public class UserAttendedGameEntity {
 
     @ManyToOne
     public
-    @javax.persistence.JoinColumn(name = "game_id", referencedColumnName = "id", nullable = false, insertable=false, updatable=false)
+    @javax.persistence.JoinColumn(name = "game_id", referencedColumnName = "`id`", nullable = false, insertable=false, updatable=false)
     GameEntity getAttendedGame() {
         return attendedGame;
     }
@@ -146,7 +146,7 @@ public class UserAttendedGameEntity {
 
     @ManyToOne
     public
-    @javax.persistence.JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, insertable=false, updatable=false)
+    @javax.persistence.JoinColumn(name = "user_id", referencedColumnName = "`id`", nullable = false, insertable=false, updatable=false)
     HrajUserEntity getUserAttended() {
         return userAttended;
     }

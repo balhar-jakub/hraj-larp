@@ -5,7 +5,7 @@ import javax.persistence.*;
 /**
  *
  */
-@Table(name = "administrator", schema = "public", catalog = "")
+@Table(name = "administrator", catalog = "")
 @Entity
 public class AdministratorEntity {
     private Integer id;

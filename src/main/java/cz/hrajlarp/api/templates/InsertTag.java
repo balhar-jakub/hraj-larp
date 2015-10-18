@@ -1,4 +1,4 @@
-package cz.hrajlarp.templates;
+package cz.hrajlarp.api.templates;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;

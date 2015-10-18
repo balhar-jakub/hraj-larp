@@ -5,7 +5,7 @@ import cz.hrajlarp.exceptions.TooManyPlayersException;
 import cz.hrajlarp.model.Gender;
 import cz.hrajlarp.model.dao.UserAttendedGameDAO;
 import cz.hrajlarp.utils.DateUtils;
-import cz.hrajlarp.utils.MailService;
+import cz.hrajlarp.service.MailService;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
@@ -20,7 +20,7 @@ import java.util.*;
  * Date: 6.3.13
  * Time: 23:12
  */
-@Table(name = "game", schema = "public", catalog = "")
+@Table(name = "game", catalog = "")
 @Entity
 public class GameEntity {
     private Integer id;

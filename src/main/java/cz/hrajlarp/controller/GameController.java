@@ -9,7 +9,7 @@ import cz.hrajlarp.model.entity.PreRegNotificationEntity;
 import cz.hrajlarp.model.entity.UserIsEditorEntity;
 import cz.hrajlarp.utils.DateUtils;
 import cz.hrajlarp.utils.FileUtils;
-import cz.hrajlarp.utils.MailService;
+import cz.hrajlarp.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
