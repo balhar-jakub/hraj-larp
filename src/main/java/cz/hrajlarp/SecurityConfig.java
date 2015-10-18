@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+import javax.sql.DataSource;
+
 /**
  * Configuration for security related questions.
  */
@@ -15,12 +17,16 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
+    DataSource dataSource;
+
+    @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth
                 .jdbcAuthentication()
-                .usersByUsernameQuery("select user_name, password, '1' as enabled from hraj_user where user_name=?")
-                .authoritiesByUsernameQuery("select user_name, 'user' from hraj_user where user_name =?")
-                .passwordEncoder(new Md5PasswordEncoder());
+                    .dataSource(dataSource)
+                    .usersByUsernameQuery("select user_name, password, '1' as enabled from hraj_user where user_name=?")
+                    .authoritiesByUsernameQuery("select user_name, 'user' from hraj_user where user_name =?")
+                    .passwordEncoder(new Md5PasswordEncoder());
     }
 
     protected void configure(HttpSecurity http) throws Exception {
