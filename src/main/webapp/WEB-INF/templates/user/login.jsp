@@ -27,8 +27,8 @@
                name="password" value=""/>
     </div>
     <div>
-        <input type="checkbox" name="_spring_security_remember_me"
-               id="_spring_security_remember_me"/> Trvalé přihlášení
+        <input type="checkbox" name="remember-me"
+               id="remember-me"/> Trvalé přihlášení
     </div>
     <div>
         <input type="hidden"

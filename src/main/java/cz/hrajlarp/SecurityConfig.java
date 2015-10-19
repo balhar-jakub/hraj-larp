@@ -32,14 +32,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-                .anyRequest().authenticated()
+                .antMatchers("/**")
+                .permitAll()
                 .and()
             .formLogin()
                 .loginPage("/user/login")
+                .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/")
                 .failureUrl("/user/loginfailed")
                 .and()
             .logout()
-                .logoutSuccessUrl("/");
+                .logoutSuccessUrl("/")
+                .and()
+            .httpBasic();
     }
 }
