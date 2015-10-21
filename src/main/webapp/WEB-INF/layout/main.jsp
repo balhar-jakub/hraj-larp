@@ -33,21 +33,18 @@
 <!-- navigation begin -->
 <nav>
     <ul>
-        <div class="band white clearfix">
+        <div class="band newblue clearfix">
             <li>
                 <a href="/" class="logo"><span>Úvodní stránka</span>
-
-                    <div class="grid1 square logo1"><img src="/img/logo1.png" width="100%" alt="logo"></div>
-                    <div class="grid1 square logo2"><img src="/img/logo2.png" width="100%" alt="logo"></div>
+                    <div class="grid1 square1 logo1"><img src="/img/logo-oranz.svg" width="150" alt="logo"></div>
                 </a>
             </li>
-            <div class="grid2 square1 head1"></div>
+            <div class="grid3 square1 head1"></div>
             <div class="grid2 square1 head2">
                 <a href="http://facebook.com/hrajlarp" class="social" tabindex="-1"><i
                         class="icon-facebook-sign"></i></a>
                 <a href="http://plus.google.com/108076251206659481852/" class="social" tabindex="-1"><i
                         class="icon-google-plus-sign"></i></a>
-
 
                 <!-- |Get somehow info about login and insert it here. -->
                 <c:import url="/WEB-INF/templates/loginPanel.jsp"></c:import>
@@ -85,7 +82,7 @@
 
 <div class="band white clearfix">
 
-    <template:get name='content' />
+    <template:get name='content'/>
 </div>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
