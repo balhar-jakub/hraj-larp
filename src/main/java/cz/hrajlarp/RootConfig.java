@@ -29,7 +29,7 @@ import java.util.Properties;
 @EnableTransactionManagement
 @EnableWebMvc
 @EnableScheduling
-@PropertySource(value = {"file:${props.path}/jdbc.properties","file:${props.path}/mail.properties"})
+@PropertySource(value = {"file:${props.hraj.path}/jdbc.properties","file:${props.hraj.path}/mail.properties"})
 @Import(SecurityConfig.class)
 public class RootConfig extends WebMvcConfigurerAdapter {
     @Autowired
