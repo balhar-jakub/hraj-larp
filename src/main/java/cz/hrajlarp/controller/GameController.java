@@ -9,6 +9,7 @@ import cz.hrajlarp.utils.FileUtils;
 import cz.hrajlarp.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -33,6 +34,7 @@ import java.util.Collection;
  * Time: 22:09
  */
 @Controller
+@Transactional
 public class GameController {
 
     @Autowired
@@ -309,7 +311,7 @@ public class GameController {
             @ModelAttribute("gameId") int gameId
     ) {
         if (rights.isLogged()) {
-            HrajUserEntity user = rights.getLoggedUser();
+            HrajUserEntity user = userDAO.getUserById(rights.getLoggedUser().getId());
 
             if (gameId > 0) {
             	if (!user.getActivated()) return "/error";

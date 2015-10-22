@@ -20,7 +20,7 @@
     </div>
     <div>
         <a href="/user/attended">Mé přihlášky</a>
-        <a href="<c:url value="/j_spring_security_logout" />">Odhlášení</a>
+        <a href="<c:url value="/logout" />">Odhlášení</a>
     </div>
     <div>
         <a href="<c:url value="/user/edit" />">Editace údajů</a>

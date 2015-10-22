@@ -237,7 +237,7 @@ public class HrajUserEntity {
     private Map<Object, UserAttendedGameEntity> userEntities;
 
     @MapKey(name = "userId")
-    @OneToMany(mappedBy = "userAttended")
+    @OneToMany(mappedBy = "userAttended", fetch = FetchType.EAGER)
     public Map<Object, UserAttendedGameEntity> getUserEntities() {
         return userEntities;
     }
