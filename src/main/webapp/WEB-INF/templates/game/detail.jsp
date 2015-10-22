@@ -55,6 +55,9 @@
                     </c:otherwise>
                 </c:choose>
                 <form method="post" action="logOutGame">
+                    <input type="hidden"
+                           name="${_csrf.parameterName}"
+                           value="${_csrf.token}"/>
                     <input type="submit" value="Odhlásit ze hry.">
                     <input type="hidden" name="gameId" value="${game.id}">
                 </form>
@@ -64,6 +67,9 @@
 	            	<c:when test="${regStarted}">
 	            		<form method="post" action="logInGame">
 		                  <input type="hidden" name="gameId" value="${game.id}">
+                            <input type="hidden"
+                                   name="${_csrf.parameterName}"
+                                   value="${_csrf.token}"/>
 		                  <c:choose>
 		                      <c:when test="${isFull}">
 		                          <input type="submit" value="Přihlásit se jako náhradník.">
@@ -80,6 +86,9 @@
 		                     <c:when test="${showNotifRegStart}">
 		                     	<form method="post" action="regNotifyForm" >
 		                  			<input type="hidden" name="gameId" value="${game.id}">
+                                    <input type="hidden"
+                                           name="${_csrf.parameterName}"
+                                           value="${_csrf.token}"/>
 		                          	<input type="submit" style="width:100%;" value="Informovat den před začátkem přihlašování.">
 		                        </form>
 		                     </c:when>
