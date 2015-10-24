@@ -345,8 +345,10 @@ public class GameController {
     }
 
     private boolean isAtLeastPartiallyInSameTime(Timestamp newlyAttendedFrom, Timestamp newlyAttendedTo, Timestamp game2From, Timestamp game2To) {
-        return (game2From.after(newlyAttendedFrom) && game2From.before(newlyAttendedTo)) ||
-                (game2To.before(newlyAttendedTo) && game2To.after(newlyAttendedFrom));
+        return ((game2From.after(newlyAttendedFrom) && game2From.before(newlyAttendedTo)) ||
+                    game2From.equals(newlyAttendedFrom)) ||
+                ((game2To.before(newlyAttendedTo) && game2To.after(newlyAttendedFrom)) ||
+                        game2To.equals(newlyAttendedTo));
     }
 
     /**
