@@ -228,4 +228,16 @@ public class GameDAO {
         }
         finally { session.close(); }
     }
+
+    public List<GameEntity> getGamesWithAction(String actionName) {
+        Session session = sessionFactory.openSession();
+        try{
+            Query finalQuery = session.createQuery("from GameEntity where action = :action order by date");
+            finalQuery.setString("action", actionName);
+            return finalQuery.list();
+        }
+        finally {
+            session.close();
+        }
+    }
 }
