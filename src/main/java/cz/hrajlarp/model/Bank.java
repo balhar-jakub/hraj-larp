@@ -2,6 +2,7 @@ package cz.hrajlarp.model;
 
 import cz.hrajlarp.model.dao.UserAttendedGameDAO;
 import cz.hrajlarp.model.entity.UserAttendedGameEntity;
+import org.hibernate.annotations.SourceType;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,10 +22,11 @@ public class Bank {
     @Autowired
     UserAttendedGameDAO userAttendedGameDAO;
 
-    @Scheduled(cron="1 0 * * * *")
+    @Scheduled(fixedRate = 60000)
     @Transient
     public void loadData() {
         try {
+            System.out.println("BANK: Loading Data.");
             Document doc = Jsoup.connect("https://www.fio.cz/scgi-bin/hermes/dz-transparent.cgi?ID_ucet=2300302640").get();
             Elements linesToParse = doc.select("table.main tbody tr:not(.last)");
             for(Element element: linesToParse){
