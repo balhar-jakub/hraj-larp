@@ -281,6 +281,7 @@ public class GameController {
                 GameEntity game = myGame.getGameEntity();
                 game.setId(id);
                 game.setAddedBy(gameDAO.getGameById(id).getAddedBy());
+                game.setAction(gameOld.getAction());
                 if(game.differsInPlayers(gameOld)) {
                     game.rerollLoggedUsers(userAttendedGameDAO, mailService);
                 }
