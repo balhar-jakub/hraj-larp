@@ -40,12 +40,12 @@
         víkend se tedy dají zvládnout maximálně čtyři hry.
     </p>
 
-    <img src="/img/rp03.png"/>
+    <a href="/vikend/hry"><img src="/img/rp03.png"/></a>
 
 
     <p>Přihlašování na HRAJ LARP víkend začne v neděli 1. 11. 2015 ve 20:00. Pokud dosud nejste zaregistrovaní na našich
         stránkách, je třeba to udělat (ale trvá to opravdu jen chviličku). Přihlašování bude probíhat způsobem “kdo se
-        přihlásí dřív, hraje”. Bližší informace a podrobné anotace her tady najdete už brzy.
+        přihlásí dřív, hraje”. <a href="/vikend/hry">Bližší informace ke hře najdete vždy u detailu hry.</a>
     </p>
 
 

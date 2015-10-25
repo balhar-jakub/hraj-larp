@@ -19,10 +19,11 @@
         <h1>HRAJ LARP víkend</h1>
 
         <p>
-            pořádáme od 4. do 6. prosince.<br>
+            HRAJ LARP víkend pořádáme od 4. do 6. prosince.<br>
             Co to znamená?<br>
-            Celkem 11 komorních her různých autorů i stylů, možnost přespání pro mimopražské účastníky a setkání s
-            ostatními hráči na sobotní párty. Podrobný program najdete <a href="/vikend">tady.</a>
+            Celkem 12 komorních her různých autorů i stylů, možnost přespání pro mimopražské účastníky a setkání s
+            ostatními hráči na sobotní párty.
+            Přečtěte si, <a href="/vikend">jak bude HRAJ LARP víkend probíhat</a> a <a href="/vikend/hry">vyberte si z našeho nabitého programu.</a>
         </p>
 
         <a name="pokyny" id="pokyny"></a>
