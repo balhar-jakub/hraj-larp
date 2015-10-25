@@ -2,7 +2,10 @@ package cz.hrajlarp.controller;
 
 import cz.hrajlarp.model.dao.GameDAO;
 import cz.hrajlarp.model.dao.UserAttendedGameDAO;
+import cz.hrajlarp.model.dao.UserDAO;
 import cz.hrajlarp.model.entity.GameEntity;
+import cz.hrajlarp.model.entity.HrajUserEntity;
+import cz.hrajlarp.model.entity.UserAttendedGameEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by jbalhar on 21. 10. 2015.
@@ -21,6 +25,10 @@ public class WeekendController {
     private GameDAO games;
     @Autowired
     private UserAttendedGameDAO players;
+    @Autowired
+    private UserDAO users;
+
+    private String action = "HRAJ LARP víkend";
 
     @RequestMapping(value = "/vikend", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
     public String festivalInformation() {
@@ -32,7 +40,7 @@ public class WeekendController {
     public String listOfFestivalGames(
             Model model
     ) {
-        List<GameEntity> weekendGames = games.getGamesWithAction("HRAJ LARP víkend");
+        List<GameEntity> weekendGames = games.getGamesWithAction(action);
 
         List<GameEntity> fridayGames = new ArrayList<>();
         List<GameEntity> saturdayMorningGames = new ArrayList<>();
@@ -40,27 +48,27 @@ public class WeekendController {
         List<GameEntity> sundayGames = new ArrayList<>();
         List<GameEntity> sleepOver = new ArrayList<>();
 
-        for(GameEntity game: weekendGames){
+        for (GameEntity game : weekendGames) {
             try {
                 game.countPlayers(players);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            if(game.getName().equals("Přespání Pátek/Sobota")) {
+            if (game.getName().equals("Přespání Pátek/Sobota")) {
                 sleepOver.add(game);
                 continue;
-            } else if(game.getName().equals("Přespání Sobota/Neděle")) {
+            } else if (game.getName().equals("Přespání Sobota/Neděle")) {
                 sleepOver.add(game);
                 continue;
             }
 
-            if(game.getDateAsDM().equals("04.12")) {
+            if (game.getDateAsDM().equals("04.12")) {
                 fridayGames.add(game);
-            } else if(game.getDateAsDM().equals("06.12")) {
+            } else if (game.getDateAsDM().equals("06.12")) {
                 sundayGames.add(game);
-            } else if(game.getDateAsDM().equals("05.12")) {
-                if(game.getTimeAsHM().equals("09:00")) {
+            } else if (game.getDateAsDM().equals("05.12")) {
+                if (game.getTimeAsHM().equals("09:00")) {
                     saturdayMorningGames.add(game);
                 } else {
                     saturdayAfternoonGames.add(game);
@@ -81,6 +89,62 @@ public class WeekendController {
     public String listOfPlayers(
             Model model
     ) {
+        List<HrajUserEntity> attendingUsers = users.getEveryoneAttendingAction(action);
+        List<AttendersDto> participants = new ArrayList<>();
+
+        for(HrajUserEntity participant: attendingUsers) {
+            List<GameEntity> attendedGames = games.attendedOnActionByPlayer(participant.getId(), action);
+            List<PaymentDto> payments = new ArrayList<>();
+            for(GameEntity game: attendedGames) {
+                UserAttendedGameEntity uag = players.getLogged(game.getId(), participant.getId());
+                payments.add(new PaymentDto(game, uag.getAutomatic(), uag.getPayed()));
+            }
+            participants.add(new AttendersDto(participant, payments));
+        }
+
+        model.addAttribute("participants", participants);
         return "weekend/players";
+    }
+
+    public class AttendersDto {
+        private HrajUserEntity player;
+        private List<PaymentDto> attendedGames;
+
+        public AttendersDto(HrajUserEntity player, List<PaymentDto> attendedGames) {
+            this.player = player;
+            this.attendedGames = attendedGames;
+        }
+
+        public HrajUserEntity getPlayer() {
+            return player;
+        }
+
+        public List<PaymentDto> getAttendedGames() {
+            return attendedGames;
+        }
+    }
+
+    public class PaymentDto {
+        private GameEntity game;
+        private boolean automatic = false;
+        private boolean payed = false;
+
+        public PaymentDto(GameEntity game, boolean automatic, Boolean payed) {
+            this.game = game;
+            this.automatic = automatic;
+            this.payed = payed != null ? payed: false;
+        }
+
+        public GameEntity getGame() {
+            return game;
+        }
+
+        public boolean isAutomatic() {
+            return automatic;
+        }
+
+        public boolean isPayed() {
+            return payed;
+        }
     }
 }

@@ -1,7 +1,9 @@
 package cz.hrajlarp.model.dao;
 
 import cz.hrajlarp.model.entity.GameEntity;
+import cz.hrajlarp.model.entity.UserAttendedGameEntity;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -235,6 +237,23 @@ public class GameDAO {
             Query finalQuery = session.createQuery("from GameEntity where action = :action order by date");
             finalQuery.setString("action", actionName);
             return finalQuery.list();
+        }
+        finally {
+            session.close();
+        }
+    }
+
+    public List<GameEntity> attendedOnActionByPlayer(Integer playerId, String action) {
+        Session session = sessionFactory.openSession();
+        try{
+            SQLQuery query = session.createSQLQuery("SELECT *" +
+                    "  FROM game AS gm INNER JOIN user_attended_game AS uag ON uag.game_id = gm.id" +
+                    "  INNER JOIN hraj_user AS usr on usr.id = uag.user_id WHERE usr.id = :playerId AND gm.action = :action");
+            query.addEntity(GameEntity.class);
+            query.setInteger("playerId", playerId);
+            query.setString("action", action);
+
+            return query.list();
         }
         finally {
             session.close();

@@ -135,6 +135,34 @@ public class AdminController {
         }
     }
 
+    @RequestMapping(value="/admin/user/payed/weekend/{gameId}/{userId}")
+    @Transactional
+    public String gamePaymentWeekend(Model model,
+                              @PathVariable("gameId") Integer gameId,
+                              @PathVariable("userId") Integer userId,
+                              RedirectAttributes redirectAttributes) {
+        HrajUserEntity user = rights.getLoggedUser();
+        GameEntity game = gameDAO.getGameById(gameId);
+        if (rights.hasRightsToEditGame(user, game)){
+            UserAttendedGameEntity payingPlayer = userAttendedGameDAO.getLogged(gameId, userId);
+            if(payingPlayer != null){
+                if(payingPlayer.getPayed() == null || !payingPlayer.getPayed()){
+                    payingPlayer.setPayed(true);
+                } else {
+                    payingPlayer.setPayed(false);
+                }
+            }
+            userAttendedGameDAO.editUserAttendedGame(payingPlayer);
+
+            redirectAttributes.addAttribute("id",gameId);
+            return "redirect:/vikend/hraci";
+        } else {
+            model.addAttribute("path", "/admin/user/payed/" +
+                    String.valueOf(gameId) + "/" + String.valueOf(userId));
+            return "/admin/norights";
+        }
+    }
+
     @RequestMapping(value = "/admin/game/list", method= RequestMethod.GET)
     public String gameList(Model model) {
         HrajUserEntity user = rights.getLoggedUser();
