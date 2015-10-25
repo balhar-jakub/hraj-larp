@@ -14,7 +14,10 @@
             <c:forEach items="${attendance.attendedGames}" var="game">
             <tr>
                 <td colspan="3"><a href="/game/detail?gameId=${game.game.id}" tabindex="-1">${game.game.name}</a></td>
-                <td colspan="2">
+                <td>
+                    <button type="submit" class="printButton" formaction="/admin/game/logout/weekend/${game.game.id}/${attendance.player.id}">Odhlásit</button>
+                </td>
+                <td>
                     <c:if test="${not game.automatic}">
                         <c:choose>
                             <c:when test="${not empty game.payed and game.payed}">

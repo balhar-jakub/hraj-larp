@@ -293,6 +293,60 @@ public class AdminController {
         }
     }
 
+    @RequestMapping(value = "/admin/game/logout/weekend/{gameId}/{playerId}", method= RequestMethod.POST)
+    @Transactional
+    public String logoutPlayerWeekend(Model model,
+                               @PathVariable("gameId") Integer gameId,
+                               @PathVariable("playerId") Integer playerId,
+                               RedirectAttributes redirectAttributes) {
+        HrajUserEntity user = rights.getLoggedUser();
+        GameEntity game = gameDAO.getGameById(gameId);
+
+        if (rights.hasRightsToEditGame(user, game)){
+            HrajUserEntity oldUser = userDAO.getUserById(playerId);
+            UserAttendedGameEntity uage = new UserAttendedGameEntity();
+            uage.setGameId(gameId);
+            uage.setUserId(playerId);
+            if (userAttendedGameDAO.isLogged(uage)){   //user is logged in this game
+                boolean wasSubstitute = userAttendedGameDAO.isSubstitute(uage);
+                userAttendedGameDAO.deleteUserAttendedGame(uage);   //logout old user
+
+                try{
+                    game.countPlayers(userAttendedGameDAO);   //count new free roles count
+                }catch(Exception e){
+                    e.printStackTrace();
+                    /* TODO handle error and fix data in the database */
+                }
+
+                int gender = 2;                                   //default setting for none men or women free roles, only both roles are free
+                if (oldUser.getGender()==0) {                     //loggouted user is man
+                    if (game.getMenFreeRoles() > 0) gender = 0;   //there are free men roles
+                }
+                else {                                            //loggouted user is woman
+                    if (game.getWomenFreeRoles() > 0) gender = 1; //there are free women roles
+                }
+
+                /* if logged out user was not just a substitute, some of substitutes should replace him */
+                if(!wasSubstitute){
+                    uage = userAttendedGameDAO.getFirstSubstitutedUAG(game.getId(), gender);  //get first substitute according to gender
+                    if (uage != null) {
+                        HrajUserEntity newUser = userDAO.getUserById(uage.getUserId());
+                        uage.setUserId(newUser.getId());
+                        uage.setSubstitute(false);
+                        userAttendedGameDAO.editUserAttendedGame(uage);             //edit this substitute as ordinary player
+                        mailService.sendMsgChangedToActor(newUser, game);
+                    }
+                }
+            }
+
+            redirectAttributes.addAttribute("id",gameId);
+            return "redirect:/vikend/hraci";
+        } else {
+            model.addAttribute("path", "/admin/game/logout/" + String.valueOf(gameId) + "/" + playerId);
+            return "/admin/norights";
+        }
+    }
+
     @RequestMapping(value = "/admin/game/validate/{gameId}")
     public String validateGame(Model model,
                                @PathVariable("gameId") Integer gameId,
