@@ -13,7 +13,8 @@
             </tr>
             <c:forEach items="${attendance.attendedGames}" var="game">
             <tr>
-                <td colspan="3"><a href="/game/detail?gameId=${game.game.id}" tabindex="-1">${game.game.name}</a></td>
+                <td colspan><a href="/game/detail?gameId=${game.game.id}" tabindex="-1">${game.game.name}</a></td>
+                <td>${game.dateToShow}</td>
                 <td>
                     <button type="submit" class="printButton" formaction="/admin/game/logout/weekend/${game.game.id}/${attendance.player.id}">Odhlásit</button>
                 </td>
@@ -27,6 +28,11 @@
                                 <button type="submit" class="printButton" formaction="/admin/user/payed/weekend/${game.game.id}/${attendance.player.id}">Zaplatil</button>
                             </c:otherwise>
                         </c:choose>
+                    </c:if>
+                </td>
+                <td>
+                    <c:if test="${game.replacement}">
+                        Náhradník
                     </c:if>
                 </td>
             </tr>

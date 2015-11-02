@@ -97,7 +97,7 @@ public class WeekendController {
             List<PaymentDto> payments = new ArrayList<>();
             for(GameEntity game: attendedGames) {
                 UserAttendedGameEntity uag = players.getLogged(game.getId(), participant.getId());
-                payments.add(new PaymentDto(game, uag.getAutomatic(), uag.getPayed()));
+                payments.add(new PaymentDto(game, uag.getAutomatic(), uag.getPayed(), uag.isSubstitute()));
             }
             participants.add(new AttendersDto(participant, payments));
         }
@@ -128,11 +128,15 @@ public class WeekendController {
         private GameEntity game;
         private boolean automatic = false;
         private boolean payed = false;
+        private boolean replacement = false;
+        private String dateToShow;
 
-        public PaymentDto(GameEntity game, boolean automatic, Boolean payed) {
+        public PaymentDto(GameEntity game, boolean automatic, Boolean payed, boolean replacement) {
             this.game = game;
             this.automatic = automatic;
             this.payed = payed != null ? payed: false;
+            this.replacement = replacement;
+            this.dateToShow = game.getDateAsDM() + " " + game.getTimeAsHM();
         }
 
         public GameEntity getGame() {
@@ -145,6 +149,14 @@ public class WeekendController {
 
         public boolean isPayed() {
             return payed;
+        }
+
+        public boolean isReplacement() {
+            return replacement;
+        }
+
+        public String getDateToShow() {
+            return dateToShow;
         }
     }
 }
