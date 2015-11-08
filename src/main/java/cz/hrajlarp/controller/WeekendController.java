@@ -1,11 +1,13 @@
 package cz.hrajlarp.controller;
 
+import cz.hrajlarp.model.Rights;
 import cz.hrajlarp.model.dao.GameDAO;
 import cz.hrajlarp.model.dao.UserAttendedGameDAO;
 import cz.hrajlarp.model.dao.UserDAO;
 import cz.hrajlarp.model.entity.GameEntity;
 import cz.hrajlarp.model.entity.HrajUserEntity;
 import cz.hrajlarp.model.entity.UserAttendedGameEntity;
+import cz.hrajlarp.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +29,10 @@ public class WeekendController {
     private UserAttendedGameDAO players;
     @Autowired
     private UserDAO users;
+    @Autowired
+    private Rights rights;
+    @Autowired
+    private MailService mailService;
 
     private String action = "HRAJ LARP víkend";
 
@@ -104,6 +110,21 @@ public class WeekendController {
 
         model.addAttribute("participants", participants);
         return "weekend/players";
+    }
+
+    @RequestMapping(value = "/vikend/odhlaseni", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+    public String logoutPlayersWithoutPayment() {
+        HrajUserEntity loggedUser = rights.getLoggedUser();
+        if(loggedUser == null || loggedUser.getId() != 1) {
+            return "error";
+        }
+
+        List<UserAttendedGameDAO.GamePlayer> toLogout = players.actionWithoutPayment(action);
+        toLogout.stream()
+                .forEach(
+                        gamePlayer -> gamePlayer.getGame().logoutAndMailNewRegularPlayer(mailService, players, gamePlayer.getUser()));
+
+        return "/weekend/players";
     }
 
     public class AttendersDto {
