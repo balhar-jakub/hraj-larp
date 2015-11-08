@@ -115,7 +115,7 @@ public class WeekendController {
     @RequestMapping(value = "/vikend/odhlaseni", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
     public String logoutPlayersWithoutPayment() {
         HrajUserEntity loggedUser = rights.getLoggedUser();
-        if(loggedUser == null || loggedUser.getId() != 1) {
+        if(loggedUser == null || loggedUser.getId() != 14) {
             return "error";
         }
 
