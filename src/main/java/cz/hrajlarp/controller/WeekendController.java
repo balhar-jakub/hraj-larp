@@ -103,7 +103,7 @@ public class WeekendController {
             List<PaymentDto> payments = new ArrayList<>();
             for(GameEntity game: attendedGames) {
                 UserAttendedGameEntity uag = players.getLogged(game.getId(), participant.getId());
-                payments.add(new PaymentDto(game, uag.getAutomatic(), uag.getPayed(), uag.isSubstitute()));
+                payments.add(new PaymentDto(game, uag.getAutomatic(), uag.getPayed(), uag.isSubstitute(), uag.getVariableSymbol()));
             }
             participants.add(new AttendersDto(participant, payments));
         }
@@ -151,13 +151,15 @@ public class WeekendController {
         private boolean payed = false;
         private boolean replacement = false;
         private String dateToShow;
+        private String vs;
 
-        public PaymentDto(GameEntity game, boolean automatic, Boolean payed, boolean replacement) {
+        public PaymentDto(GameEntity game, boolean automatic, Boolean payed, boolean replacement, String vs) {
             this.game = game;
             this.automatic = automatic;
             this.payed = payed != null ? payed: false;
             this.replacement = replacement;
             this.dateToShow = game.getDateAsDM() + " " + game.getTimeAsHM();
+            this.vs = vs;
         }
 
         public GameEntity getGame() {
@@ -178,6 +180,10 @@ public class WeekendController {
 
         public String getDateToShow() {
             return dateToShow;
+        }
+
+        public String getVs() {
+            return vs;
         }
     }
 }

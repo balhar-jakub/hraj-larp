@@ -10,6 +10,7 @@
                 <td>${attendance.player.phone}</td>
                 <td>${attendance.player.email}</td>
                 <td>${attendance.player.genderTextual}</td>
+                <td></td>
             </tr>
             <c:forEach items="${attendance.attendedGames}" var="game">
             <tr>
@@ -34,6 +35,9 @@
                     <c:if test="${game.replacement}">
                         Náhradník
                     </c:if>
+                </td>
+                <td>
+                    ${game.vs}
                 </td>
             </tr>
             </c:forEach>
