@@ -35,7 +35,7 @@ public class Bank {
                 String vs = cells.get(6).text();
 
                 System.out.println("Looking for VS: " + vs + " with price " + price);
-                if(price.equals("150,00")) {
+                if(price.startsWith("150,00")) {
                     UserAttendedGameEntity payingPlayer = userAttendedGameDAO.getByVS(vs);
                     if(payingPlayer != null){
                         System.out.println("Player for VS: " + payingPlayer.getUserId());
