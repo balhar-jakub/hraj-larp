@@ -28,18 +28,22 @@ public class Bank {
         try {
             System.out.println("BANK: Loading Data.");
             Document doc = Jsoup.connect("https://www.fio.cz/scgi-bin/hermes/dz-transparent.cgi?ID_ucet=2300302640").get();
-            Elements linesToParse = doc.select("table.main tbody tr:not(.last)");
+            Elements linesToParse = doc.select("table#id8 tbody tr");
             for(Element element: linesToParse){
                 Elements cells = element.select("td");
                 String price = cells.get(1).text();
-                String vs = cells.get(4).text();
+                String vs = cells.get(6).text();
 
+                System.out.println("Looking for VS: " + vs + " with price " + price);
                 if(price.equals("150,00")) {
                     UserAttendedGameEntity payingPlayer = userAttendedGameDAO.getByVS(vs);
                     if(payingPlayer != null){
+                        System.out.println("Player for VS: " + payingPlayer.getUserId());
                         payingPlayer.setPayed(true);
                         payingPlayer.setAutomatic(true);
                         userAttendedGameDAO.editUserAttendedGame(payingPlayer);
+                    } else {
+                        System.out.println("No player with given VS found");
                     }
                 }
             }
