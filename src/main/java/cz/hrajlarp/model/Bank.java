@@ -34,16 +34,13 @@ public class Bank {
                 String price = cells.get(1).text();
                 String vs = cells.get(6).text();
 
-                System.out.println("Looking for VS: " + vs + " with price " + price);
                 if(price.startsWith("150,00")) {
                     UserAttendedGameEntity payingPlayer = userAttendedGameDAO.getByVS(vs);
                     if(payingPlayer != null){
-                        System.out.println("Player for VS: " + payingPlayer.getUserId());
                         payingPlayer.setPayed(true);
                         payingPlayer.setAutomatic(true);
                         userAttendedGameDAO.editUserAttendedGame(payingPlayer);
                     } else {
-                        System.out.println("No player with given VS found");
                     }
                 }
             }
