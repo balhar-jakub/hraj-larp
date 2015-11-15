@@ -464,7 +464,7 @@ public class UserAttendedGameDAO {
             List<UserAttendedGameEntity> entities = query.list();
             return entities.stream()
                     .filter(userAttendedGameEntity ->
-                        userAttendedGameEntity.getAttendedGame().getAction().equalsIgnoreCase(action))
+                        userAttendedGameEntity.getAttendedGameAction().equalsIgnoreCase(action))
                     .map(userAttendedGameEntity1 -> new GamePlayer(userAttendedGameEntity1, userAttendedGameEntity1.getAttendedGame(), userAttendedGameEntity1.getUserAttended()))
                     .collect(Collectors.toList());
         } finally {

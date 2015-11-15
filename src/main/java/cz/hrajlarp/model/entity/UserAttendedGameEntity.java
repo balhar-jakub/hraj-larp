@@ -196,4 +196,15 @@ public class UserAttendedGameEntity {
     public void setPayedTextual(String payedTextual){
         this.payedTextual = payedTextual;
     }
+
+    public String getAttendedGameAction() {
+        GameEntity game = getAttendedGame();
+        if(game == null) {
+            return "";
+        }
+        if(game.getAction() == null) {
+            return "";
+        }
+        return game.getAction();
+    }
 }
