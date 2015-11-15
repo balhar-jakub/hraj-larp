@@ -197,6 +197,7 @@ public class UserAttendedGameEntity {
         this.payedTextual = payedTextual;
     }
 
+    @Transient
     public String getAttendedGameAction() {
         GameEntity game = getAttendedGame();
         if(game == null) {
