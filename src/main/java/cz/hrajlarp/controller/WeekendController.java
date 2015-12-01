@@ -161,6 +161,7 @@ public class WeekendController {
         }
 
         model.addAttribute("participants", participants);
+        model.addAttribute("participantsAmount", participants.size());
         return "weekend/players";
     }
 

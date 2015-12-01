@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <div class="text">
+    <p>Pocet ucastniku ${participantsAmount}</p>
     <form method="post">
     <c:forEach items="${requestScope.participants}" var="attendance">
         <table width="100%">
