@@ -4,13 +4,16 @@ import cz.hrajlarp.model.Rights;
 import cz.hrajlarp.model.dao.GameDAO;
 import cz.hrajlarp.model.dao.UserAttendedGameDAO;
 import cz.hrajlarp.model.dao.UserDAO;
+import cz.hrajlarp.model.entity.AccountantEntity;
 import cz.hrajlarp.model.entity.GameEntity;
 import cz.hrajlarp.model.entity.HrajUserEntity;
 import cz.hrajlarp.model.entity.UserAttendedGameEntity;
 import cz.hrajlarp.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -91,6 +94,55 @@ public class WeekendController {
         return "weekend/games";
     }
 
+    @RequestMapping(value = "/vikend/recepce/hry", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+    public String listOfFestivalGamesReception (
+            Model model
+    ) {
+        List<GameEntity> weekendGames = games.getGamesWithAction(action);
+
+        List<GameEntity> fridayGames = new ArrayList<>();
+        List<GameEntity> saturdayMorningGames = new ArrayList<>();
+        List<GameEntity> saturdayAfternoonGames = new ArrayList<>();
+        List<GameEntity> sundayGames = new ArrayList<>();
+        List<GameEntity> sleepOver = new ArrayList<>();
+
+        for (GameEntity game : weekendGames) {
+            try {
+                game.countPlayers(players);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (game.getName().equals("Přespání Pátek/Sobota")) {
+                sleepOver.add(game);
+                continue;
+            } else if (game.getName().equals("Přespání Sobota/Neděle")) {
+                sleepOver.add(game);
+                continue;
+            }
+
+            if (game.getDateAsDM().equals("04.12")) {
+                fridayGames.add(game);
+            } else if (game.getDateAsDM().equals("06.12")) {
+                sundayGames.add(game);
+            } else if (game.getDateAsDM().equals("05.12")) {
+                if (game.getTimeAsHM().equals("09:00")) {
+                    saturdayMorningGames.add(game);
+                } else {
+                    saturdayAfternoonGames.add(game);
+                }
+            }
+        }
+
+        model.addAttribute("games1", fridayGames);
+        model.addAttribute("games2", saturdayMorningGames);
+        model.addAttribute("games3", saturdayAfternoonGames);
+        model.addAttribute("games4", sundayGames);
+        model.addAttribute("sleepOver", sleepOver);
+
+        return "weekend/reception/games";
+    }
+
     @RequestMapping(value = "/vikend/hraci", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
     public String listOfPlayers(
             Model model
@@ -125,6 +177,24 @@ public class WeekendController {
                         gamePlayer -> gamePlayer.getGame().logoutAndMailNewRegularPlayer(mailService, players, gamePlayer.getUser()));
 
         return "/weekend/players";
+    }
+
+    @RequestMapping(value = "/weekend/game/players/{id}", method= RequestMethod.GET)
+    @Transactional
+    public String gamePlayers(Model model, @PathVariable("id") Integer id) {
+        GameEntity game = games.getGameById(id);
+
+        List<UserAttendedGameEntity> playersOfGame =
+                players.getPlayers(id, false);
+        List<UserAttendedGameEntity> substitutes =
+                players.getPlayers(id, true);
+
+        model.addAttribute("gameId",id);
+        model.addAttribute("gameName", game.getName());
+        model.addAttribute("players", playersOfGame);
+        model.addAttribute("substitutes", substitutes);
+        model.addAttribute("isLogged", true);
+        return "/weekend/game/players";
     }
 
     public class AttendersDto {
