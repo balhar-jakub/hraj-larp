@@ -681,8 +681,9 @@ public class GameEntity {
             UserAttendedGameDAO userAttendedGameDAO,
             HrajUserEntity oldUser) {
         boolean wasSubstitute = userAttendedGameDAO.isSubstitute(getId(), oldUser.getId());
-        Boolean b =userAttendedGameDAO.getLogged(getId(), oldUser.getId()).getPayed();
-        boolean payed = (b==null)?false:b;
+        UserAttendedGameEntity player = userAttendedGameDAO.getLogged(getId(), oldUser.getId());
+        boolean payed = (player != null && player.getPayed() != null) ? player.getPayed(): false;
+        String vs = player.getVariableSymbol();
         
         logOutUserFromGame(userAttendedGameDAO, oldUser.getId());
         try {
@@ -694,14 +695,14 @@ public class GameEntity {
 
         /* if logged out user was not just a substitute, some of pSubstitutes should replace him */
         if (!wasSubstitute) {
-        	mailService.notifyAdminUserLoggedOff(oldUser, this, payed);
-            UserAttendedGameEntity player = userAttendedGameDAO.
+        	mailService.notifyAdminUserLoggedOff(oldUser, this, payed, vs);
+            UserAttendedGameEntity substitutePlayer = userAttendedGameDAO.
                     getFirstSubstitutedUAG(getId(), oldUser.getGender());  //get first substitute according to gender
-            if (player != null) {
-                player.setSubstitute(false);
-                userAttendedGameDAO.editUserAttendedGame(player);             //edit this substitute as ordinary player
+            if (substitutePlayer != null) {
+                substitutePlayer.setSubstitute(false);
+                userAttendedGameDAO.editUserAttendedGame(substitutePlayer);             //edit this substitute as ordinary player
 
-                player.notifyChangedByMail(mailService);
+                substitutePlayer.notifyChangedByMail(mailService);
             }
         }
     }

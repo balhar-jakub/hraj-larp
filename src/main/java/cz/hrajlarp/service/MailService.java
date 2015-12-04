@@ -190,7 +190,7 @@ public class MailService {
         }
     }
     
-    public void notifyAdminUserLoggedOff(HrajUserEntity loggedOffUser, GameEntity game, boolean payed){
+    public void notifyAdminUserLoggedOff(HrajUserEntity loggedOffUser, GameEntity game, boolean payed, String vs){
     	SimpleMailMessage message = new SimpleMailMessage(this.templateMessage);
     	List<Integer> adminIds = administratorDAO.getAdministratorIds();
     	
@@ -201,10 +201,12 @@ public class MailService {
 					+ "Login: " + loggedOffUser.getUserName() + "\n\n"
 	                + "Tento hráč se právě odhlásil ze hry "
 	                + game.getName() +", která proběhne " + game.getDateAsDMY() +".\n");
-    		if (payed)
-    			sb.append("Hráč již zaplatil za účast ve hře.\n");
-    		else
-    			sb.append("Hráč nezaplatil za účast ve hře.\n");
+    		if (payed) {
+                sb.append("Hráč již zaplatil za účast ve hře.\n");
+            } else {
+                sb.append("Hráč nezaplatil za účast ve hře.\n");
+            }
+            sb.append("Variabilni symbol: " + vs);
     		
     		message.setTo(reciever.getEmail());
     		String text = sb.toString();

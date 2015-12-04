@@ -13,6 +13,7 @@
         <td>Zaplaceno</td>
         <td></td>
         <td></td>
+        <td>Variabilni symbol</td>
     </tr>
     <c:forEach items="${requestScope.players}" var="player">
         <tr>
@@ -37,6 +38,7 @@
                     </c:choose>
                 </c:if>
             </td>
+            <td>${player.variableSymbol}</td>
         </tr>
     </c:forEach>
     <c:if test="${not empty requestScope.substitutes}">
@@ -64,6 +66,7 @@
                         </c:choose>
                     </c:if>
                 </td>
+                <td>${player.variableSymbol}</td>
             </tr>
         </c:forEach>
     </c:if>
