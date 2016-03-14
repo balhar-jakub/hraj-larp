@@ -15,7 +15,6 @@
 </c:choose>
 
     <div class="text left">
-        <p>${game.anotation}</p>
         <img src="${game.image}" alt="ilustrační obrázek">
     </div>
 

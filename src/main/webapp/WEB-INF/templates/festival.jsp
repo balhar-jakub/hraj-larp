@@ -45,6 +45,23 @@
                     href="https://www.fio.cz/scgi-bin/hermes/dz-transparent.cgi?ID_ucet=2300302640">online výpisu z
                 účtu</a>.
         </p>
+
+        <h2>Jak se přihlásit na hru</h2>
+
+        <p>
+            Přihlašování začíná vždy dvacátého v měsíci ve 20.00, a to na všechny hry, které budeme uvádět v měsíci
+            následujícím.
+        </p>
+        <p>
+            Do konce měsíce je potřeba za larpy, na které jste se přihlásili, zaplatit (příklad: za hry, které se konají
+            v dubnu, je třeba poslat peníze do konce března). Vždy k poslednímu dni došlé platby zkontrolujeme a hráče,
+            od kterých nemáme peníze na účtě, odhlásíme. Pokud víte, že vaše platba nestihne dojít včas nebo máte nějaký
+            jiný problém, napište nám e-mail.
+        </p>
+        <p>
+            Na volná místa se samozřejmě lze přihlásit i později. V takovém případě s vámi budeme platbu řešit
+            individuálně.
+        </p>
     </div>
     <c:if test="${futureGames}">
         <div class="text right grid1 square1">
