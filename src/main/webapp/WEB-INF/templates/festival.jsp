@@ -46,7 +46,7 @@
                 účtu</a>.
         </p>
 
-        <h2>Jak se přihlásit na hru</h2>
+        <h2>Jak se přihlásit na hru?</h2>
 
         <p>
             Přihlašování začíná vždy dvacátého v měsíci ve 20.00, a to na všechny hry, které budeme uvádět v měsíci
