@@ -14,6 +14,7 @@
         <td></td>
         <td></td>
         <td>Variabilni symbol</td>
+        <td>Datum přihlášení</td>
     </tr>
     <c:forEach items="${requestScope.players}" var="player">
         <tr>
@@ -39,6 +40,7 @@
                 </c:if>
             </td>
             <td>${player.variableSymbol}</td>
+            <td>${player.added}</td>
         </tr>
     </c:forEach>
     <c:if test="${not empty requestScope.substitutes}">
@@ -67,6 +69,7 @@
                     </c:if>
                 </td>
                 <td>${player.variableSymbol}</td>
+                <td>${player.added}</td>
             </tr>
         </c:forEach>
     </c:if>
