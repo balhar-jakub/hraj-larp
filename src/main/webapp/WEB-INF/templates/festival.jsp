@@ -31,16 +31,13 @@
             domluvíme,
             že vás fotograf nebude fotit nebo ho na hru vůbec nebudeme zvát.</p>
 
-        <p>Každou neděli ve 20.00 je spuštěno přihlašování na hry, které se budou konat v přespříštím týdnu. Vždy je tak
-            přihlašování spuštěno více jak sedm dní.</p>
-
         <p>Hry uváděné v rámci HRAJ LARP si můžete zahrát za <strong>jednotnou cenu 150 Kč</strong>.
 
         <p>Účastnický poplatek plaťte před hrou převodem na transparentní účet <strong>2300302640/2010</strong> vedený u
             Fio
             banky. Do popisu platby uvádějte prosím své jméno a název hry, na kterou se hlásíte. Jako variabilní symbol
             zadejte
-            číslo, které najdete na konci potvrzovacího emailu. Zda platba skutečně dorazila, si můžete sami ověřit na
+            číslo, které najdete v potvrzovacím mailu. Zda platba skutečně dorazila, si můžete sami ověřit na
             <a
                     href="https://www.fio.cz/scgi-bin/hermes/dz-transparent.cgi?ID_ucet=2300302640">online výpisu z
                 účtu</a>.
