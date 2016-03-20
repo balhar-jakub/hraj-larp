@@ -44,8 +44,20 @@
         Zaplatíte účastnický poplatek a několik dnů před hrou vám přijde e-mail s&nbsp;podrobnějšími informacemi o daném
         larpu.</p>
 
-    <p>Každou neděli ve 20.00 je spuštěno přihlašování na hry, které se budou konat v přespříštím týdnu. Vždy je tak
-        přihlašování spuštěno více jak sedm dní.</p>
+    <p>
+        Přihlašování začíná vždy dvacátého v měsíci ve 20.00, a to na všechny hry, které budeme uvádět v měsíci
+        následujícím.
+    </p>
+    <p>
+        Do konce měsíce je potřeba za larpy, na které jste se přihlásili, zaplatit (příklad: za hry, které se konají
+        v dubnu, je třeba poslat peníze do konce března). Vždy k poslednímu dni došlé platby zkontrolujeme a hráče,
+        od kterých nemáme peníze na účtě, odhlásíme. Pokud víte, že vaše platba nestihne dojít včas nebo máte nějaký
+        jiný problém, napište nám e-mail.
+    </p>
+    <p>
+        Na volná místa se samozřejmě lze přihlásit i později. V takovém případě s vámi budeme platbu řešit
+        individuálně.
+    </p>
 
     <p>Bude možné se přihlásit vždy na několik nejbližších her. Pokud již bude plno, nezoufejte - můžete se
         zaregistrovat jako náhradník, a kdyby se na larpu uvolnilo místo, dáme vám
