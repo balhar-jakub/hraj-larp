@@ -68,8 +68,8 @@
                         </c:choose>
                     </c:if>
                 </td>
-                <td>${player.variableSymbol}</td>
-                <td>${player.added}</td>
+                <td>${substitute.variableSymbol}</td>
+                <td>${substitute.added}</td>
             </tr>
         </c:forEach>
     </c:if>
