@@ -155,11 +155,11 @@
     </div>
 
     <div class="text left">
-        <h2>O hře</h2>
-        <p>${game.aboutGame}</p>
-
         <h2>Popis</h2>
         <p>${game.anotation}</p>
+
+        <h2>O hře</h2>
+        <p>${game.aboutGame}</p>
 
         <h3>Autor</h3>
         <p>${game.author}</p>
