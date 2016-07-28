@@ -33,13 +33,13 @@
 
         <p>Hry uváděné v rámci HRAJ LARP si můžete zahrát za <strong>jednotnou cenu 150 Kč</strong>.
 
-        <p>Účastnický poplatek plaťte před hrou převodem na transparentní účet <strong>2300302640/2010</strong> vedený u
+        <p>Účastnický poplatek plaťte před hrou převodem na transparentní účet <strong>2600445512/2010</strong> vedený u
             Fio
             banky. Do popisu platby uvádějte prosím své jméno a název hry, na kterou se hlásíte. Jako variabilní symbol
             zadejte
             číslo, které najdete v potvrzovacím mailu. Zda platba skutečně dorazila, si můžete sami ověřit na
             <a
-                    href="https://www.fio.cz/scgi-bin/hermes/dz-transparent.cgi?ID_ucet=2300302640">online výpisu z
+                    href="https://www.fio.cz/ib2/transparent?a=2600445512">online výpisu z
                 účtu</a>.
         </p>
 
