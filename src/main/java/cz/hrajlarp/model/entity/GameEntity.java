@@ -779,7 +779,7 @@ public class GameEntity {
                 uage.setSubstitute(true);
             }
             Long variableSymbol = userAttendedGameDAO.getNextVariableSymbol();
-            uage.setVariableSymbol(variableSymbol.toString());
+            uage.setVariableSymbol("84" + variableSymbol.toString());
             userAttendedGameDAO.addUserAttendedGame(uage);
             uage = userAttendedGameDAO.getLogged(getId(), user.getId());
             uage.notifyByMail(mailService);

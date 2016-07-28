@@ -27,7 +27,7 @@ public class Bank {
     public void loadData() {
         try {
             System.out.println("BANK: Loading Data.");
-            Document doc = Jsoup.connect("https://www.fio.cz/scgi-bin/hermes/dz-transparent.cgi?ID_ucet=2300302640").get();
+            Document doc = Jsoup.connect("https://www.fio.cz/ib2/transparent?a=2600445512").get();
             Elements linesToParse = doc.select("table#id8 tbody tr");
             for(Element element: linesToParse){
                 Elements cells = element.select("td");
