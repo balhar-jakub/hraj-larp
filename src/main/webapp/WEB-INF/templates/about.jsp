@@ -2,27 +2,17 @@
 <div class="text">
     <h2>O projektu HRAJ LARP</h2>
 
-    <p>Jsme pražská inicitativa hráčů a autorů larpů. Máme dva velké cíle: Přiblížit tuto originální zábavu co nejvíce
-        lidem a podporovat pravidelné pořádání larpů v&nbsp;Praze. Chceme k&nbsp;larpu přilákat nové hráče a zároveň se
-        na hrách potkávat i s&nbsp;těmi zkušenými.</p>
+    <p>HRAJ LARP vznikl v roce 2012 jako pražská iniciativa hráčů a autorů larpů. Od začátku jsme měli dva velké cíle: Přiblížit tuhle originální zábavu lidem, kteří o ní třeba ještě neslyšeli a podporovat pravidelné pořádání komorních larpů v Praze. Autorem původního nápadu je Kamil Buchtík, který projekt vymyslel, uvedl do života a prvních pět let vedl. Nebyl na to ovšem sám, pomáhala mu řada pražských hráčů a tvůrců larpů a také několik občanských sdružení, která se larpům věnují – Tempus Ludi, Mad Fairy, <a href="http://www.vampire.cz/prague-by-night/">Prague by Night</a> a ASF.</p>
 
-    <p>Iniciativa HRAJ LARP je široká a podporuje ji celá řada pražských hráčů a tvůrců larpů. Mimo jiné také několik
-        občanských sdružení, která se larpům věnují – Tempus Ludi, Mad Fairy, Prague by Night a ASF.</p>
+    <p>V červnu 2016 se původní tým spojil se sdružením <a href="http://www.vampire.cz/prague-by-night/">Prague by Night</a>, které organizaci dlouhodobého festivalu HRAJ LARP zajišťuje v současnosti. I když už máme stálou skupinu příznivců a pravidelných hráčů, moc rádi přivítáme každého nováčka, který si přijde larp vyzkoušet poprvé.</p>
 
     <a name="kontakt" id="kontakt"></a>
 
     <h2>Náš tým</h2>
 
-    <p>Za festivalem komorních larpů HRAJ LARP stojí početný organizační tým: Kamil, Morgain, Balda, Lex, Limwen, Tomáš,
-        Klair, Činkapi, Mivka, Lucka, Nilwine, Tereza, Nellmegil, Oslík, Gavroche, Frael
-        Radek a řada autorů komorních larpů, bez kterých by tolik her nebylo nikdy možné uvést.</p>
+    <p>Za festivalem komorních larpů HRAJ LARP stojí početný organizační tým: Limwen, Kamil, Lucka, Balda, Činkapi, Alianor, Catie, Ernedar, Nellmegil, Oslík a řada autorů komorních larpů, bez kterých by tolik her nebylo nikdy možné uvést.</p>
 
-    <p>Většina organizátorů je z&nbsp;Prahy, ale snažíme se oslovit larpové tvůrce z&nbsp;celé republiky. Rádi bychom,
-        aby se do projektu zapojil co nejširší okruh larpové komunity. Takže pokud máte hru, kterou byste v&nbsp;rámci
-        HRAJ LARP chtěli v&nbsp;Praze uvést, s&nbsp;radostí ji zařadíme do kalendáře a pomůžeme vám sehnat prostory a
-        hráče. Nebo pokud máte chuť se zapojit i organizačně či jakkoliv jinak náš projekt podpořit, prosím, dejte nám
-        vědět. Budeme moc rádi, když se o HRAJ LARP zmíníte někomu dalšímu – a především, když se přijdete sami podívat
-        a zahrát si některý z larpů.</p>
+    <p>Máte-li chuť se zapojit do organizace nebo náš projekt podpořit jakkoliv jinak, prosíme, dejte nám vědět. Budeme moc rádi, když se o HRAJ LARP zmíníte někomu dalšímu – a především, když se přijdete sami podívat a zahrát si některý z larpů</p>
 
     <h3>Kontakt</h3>
 

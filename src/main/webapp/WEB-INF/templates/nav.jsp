@@ -21,6 +21,7 @@
                 <div class="grid2 square1 head2">
                     <a href="http://facebook.com/hrajlarp" class="social" tabindex="-1"><i class="icon-facebook-sign"></i></a>
                     <a href="http://plus.google.com/108076251206659481852/" class="social" tabindex="-1"><i class="icon-google-plus-sign"></i></a>
+                    <a href="http://www.vampire.cz/prague-by-night/" class="social" tabindex="-1"><img src="/img/PbN_Logo_BlackOnWhite.png" /></a>
 
 
                     <%-- place panel with login informations here --%>
