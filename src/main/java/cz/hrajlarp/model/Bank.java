@@ -22,7 +22,7 @@ public class Bank {
     @Autowired
     UserAttendedGameDAO userAttendedGameDAO;
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 600000)
     @Transient
     public void loadData() {
         try {
