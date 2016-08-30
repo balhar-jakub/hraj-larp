@@ -22,15 +22,18 @@ public class Bank {
     @Autowired
     UserAttendedGameDAO userAttendedGameDAO;
 
-    @Scheduled(fixedRate = 600000)
+    @Scheduled(fixedRate = 60000)
     @Transient
     public void loadData() {
         try {
             System.out.println("BANK: Loading Data.");
             Document doc = Jsoup.connect("https://www.fio.cz/ib2/transparent?a=2600445512").get();
-            Elements linesToParse = doc.select("table#id8 tbody tr");
+            Elements linesToParse = doc.select("table.table tbody tr");
             for(Element element: linesToParse){
                 Elements cells = element.select("td");
+                if(cells.size() < 7) {
+                    continue;
+                }
                 String price = cells.get(1).text();
                 String vs = cells.get(6).text();
 
