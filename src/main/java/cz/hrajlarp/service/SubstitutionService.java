@@ -60,7 +60,9 @@ public class SubstitutionService {
         if(text.contains(VARIABLE_SYMBOL)) {
             text = text.replaceAll(VARIABLE_SYMBOL_R, userAttendanceEntity.getVariableSymbol());
         } else {
-            text += "\n Variabilni symbol je: " + userAttendanceEntity.getVariableSymbol();
+            if(game.isFestival()) {
+                text += "\n Variabilni symbol je: " + userAttendanceEntity.getVariableSymbol();
+            }
         }
         if(text.contains(GAME_ADDRESS)) {
             text = text.replaceAll(GAME_ADDRESS_R, game.getPlace());
