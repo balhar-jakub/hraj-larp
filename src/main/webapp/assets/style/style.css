@@ -1723,6 +1723,11 @@ input:-moz-placeholder {
 	.social .icon-google-plus-sign {
 		color:#96cce9;
 	}
+    .social .icon-prague-by-night-sign {
+      background-image: url('../img/logo-pbn.jpg');
+      width: 36px;
+      height: 36px;
+    }
 	.bottom a {
 		padding-left:.7em;
 	}
