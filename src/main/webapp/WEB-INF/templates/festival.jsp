@@ -40,7 +40,7 @@
             číslo, které najdete v potvrzovacím mailu. Zda platba skutečně dorazila, si můžete sami ověřit na
             <a
                     href="https://www.fio.cz/ib2/transparent?a=2600445512">online výpisu z
-                účtu</a>.
+                účtu</a>. Upozorňujeme, že pokud se ze hry odhlásíte méně než  48 hodin před jejím začátkem, nemůžeme vám zaplacený vstupní poplatek vrátit.
         </p>
 
         <h2>Jak se přihlásit na hru?</h2>
