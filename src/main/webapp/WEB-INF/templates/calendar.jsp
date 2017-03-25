@@ -22,7 +22,7 @@
         <div class="tab-pane active" id="tab1">
             <div class="text page-kalendar">
                 <div class="termin clearfix">
-                    <h3><a href="http://www.vampire.cz/prague-by-larp/" tabindex="-1" target="_blank">Prague By Larp</a>
+                    <h3><a href="http://www.vampire.cz/prague-by-larp/" tabindex="-1" target="_blank">Prague By Larp (21.4. - 23.4.2017)</a>
                     </h3>
                     <div class="grid4">
                         <div>
