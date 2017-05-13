@@ -9,7 +9,7 @@
 <html class="no-js" lang="en"> <!--<![endif]-->
 <head>
     <meta charset="utf-8">
-    <link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700&subset=latin,latin-ext' rel='stylesheet'
+    <link href='https://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700&subset=latin,latin-ext' rel='stylesheet'
           type='text/css'>
     <title><template:get name='title'/></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
