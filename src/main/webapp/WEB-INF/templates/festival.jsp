@@ -4,10 +4,8 @@
     <div class="grid4">
         <h1>Náš festival</h1>
 
-        <p>Pilířem HRAJ LARP je festival komorních larpů, který v sezóně 2015/2016 proběhne již popáté. Každý týden
-            bude v
-            rámci
-            festivalu uveden jeden komorní larp.</p>
+        <p>Pilířem HRAJ LARP je festival komorních larpů, který v probíhá pravidelně každou sezónu (září až červen) již
+            od roku 2012. Každý týden bude v rámci festivalu uveden jeden komorní larp.</p>
 
         <p>Kromě už zkušených hráčů bychom rádi motivovali zejména nováčky, aby odhodili strach a přišli si larp zahrát.
             Na
@@ -15,16 +13,6 @@
             bude na místě zajišťovat hladký průběh akce. Doufáme, že festival poskytne skvělou, a hlavně pravidelnou
             zábavu
             několika desítkám hráčů.</p>
-
-        <h1>HRAJ LARP víkend</h1>
-
-        <p>
-            HRAJ LARP víkend pořádáme od 4. do 6. prosince.<br>
-            Co to znamená?<br>
-            Celkem 12 komorních her různých autorů i stylů, možnost přespání pro mimopražské účastníky a setkání s
-            ostatními hráči na sobotní párty.
-            Přečtěte si, <a href="/vikend">jak bude HRAJ LARP víkend probíhat</a> a <a href="/vikend/hry">vyberte si z našeho nabitého programu.</a>
-        </p>
 
         <a name="pokyny" id="pokyny"></a>
 
