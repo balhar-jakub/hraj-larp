@@ -4,10 +4,8 @@
     <div class="grid4">
         <h1>Náš festival</h1>
 
-        <p>Pilířem HRAJ LARP je festival komorních larpů, který v sezóně 2015/2016 proběhne již popáté. Každý týden
-            bude v
-            rámci
-            festivalu uveden jeden komorní larp.</p>
+        <p>Pilířem HRAJ LARP je festival komorních larpů, který od roku 2012 probíhá každou sezónu od podzimu do léta.
+            Každý týden je v rámci festivalu uveden jeden komorní larp.</p>
 
         <p>Kromě už zkušených hráčů bychom rádi motivovali zejména nováčky, aby odhodili strach a přišli si larp zahrát.
             Na
