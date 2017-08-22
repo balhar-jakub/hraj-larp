@@ -21,6 +21,25 @@
     <div class="tab-content">
         <div class="tab-pane active" id="tab1">
             <div class="text page-kalendar">
+                <div class="termin clearfix">
+                    <h3><a href="http://zizcon.cz/" tabindex="-1" target="_blank">ŽižCon 2017 (14.9.2017 – 17.9.2017)</a>
+                    </h3>
+                    <div class="grid4">
+                        <div>
+                            <p>Zveme Vás na každoroční zářijový festival rolových a deskových her, který se koná v netradičních prostorách jediného kostela Československé církve husitské na Žižkově. Komorní charakter a filosofie „udělej si sám“ jej odlišuje od jiných akcí tohoto druhu, což jí dává unikátní atmosféru. Návštěvníky čeká bohatý program plný rozličných aktivit a přednášek. ŽižCon je zážitek pro všechny milovníky netradičních akcí, deskových her a pro každého kdo si rád rozšíří obzory. Výtěžek festivalu jde na podporu Komunitního centra na Žižkově a jeho charitativních aktivit jako například vedení nízkoprahového klubu pro děti a mladistvé, nebo pomoc lidem bez domova. Věříme, že tento fakt dává festivalu další rozměr, který komerční akce obdobné typu nemívají, tak přijďte hrát za dobrou věc!</p>
+
+                            <p>Na aktivity se můžete přihlašovat až po úspěšné rezervaci vstupenky a zaplacení její ceny. Více viz <a href="http://zizcon.cz/registration">http://zizcon.cz/registration</a>. Následně obdržíte přihlašovací údaje do systému a můžete se zapsat na vybrané hry. V případě překročení limitu účastníků budete evidováni jako náhradníci. Celkový program si můžete prohlédnout zde <a href="http://zizcon.cz/program/table">http://zizcon.cz/program/table</a>.</p>
+
+                            <p>Akci můžete sledovat také na <a href="https://www.facebook.com/events/481150225562105/?fref=ts">Facebooku</a> (https://www.facebook.com/events/481150225562105/?fref=ts)</p>
+                        </div>
+                    </div>
+                    <div class="grid2 square1">
+                        <a href="http://zizcon.cz/" tabindex="-1" target="_blank">
+                            <img src="/img/zizcon2017.jpg" alt="Žižcon"/>
+                        </a>
+                    </div>
+                </div>
+
                 <c:if test="${not empty requestScope.futureGames}">
                     <c:forEach items="${requestScope.futureGames}" var="game">
                         <div class="clearfix den"><h2 class="datum"><span>${game.dateAsDM}</span>${game.dateAsDayName}
