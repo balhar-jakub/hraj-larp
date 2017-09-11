@@ -153,4 +153,17 @@ public class UserDAO {
             session.close();
         }
     }
+
+    public boolean emailIsUnique(String email) {
+        if (email == null || email.isEmpty()) return false;
+
+        Session session = sessionFactory.openSession();
+        try {
+            Query query = session.createQuery("from HrajUserEntity where email= :email ");
+            query.setParameter("email", email);
+            return (query.uniqueResult() == null);
+        } finally {
+            session.close();
+        }
+    }
 }

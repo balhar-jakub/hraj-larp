@@ -60,6 +60,10 @@ public class UserController {
             result.rejectValue("userName", "userName is not unique in database",
                     "Uživatelské jméno už je zabrané, vyberte si prosím jiné.");
 
+        if (!userDAO.emailIsUnique(user.getEmail()))
+            result.rejectValue("email", "email is not unique in database",
+                    "Email je už použitý, vyberte si prosím jiný.");
+
         if (result.hasErrors()) return "user/add";
 
         try {
