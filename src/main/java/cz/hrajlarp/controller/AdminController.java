@@ -169,7 +169,7 @@ public class AdminController {
 
         if (rights.isEditor(user) || rights.isAdministrator(user)){
             List <GameEntity> futureGames = gameDAO.getFutureGames();
-            List <GameEntity> formerGames = gameDAO.getFormerGames();
+            List <GameEntity> formerGames = gameDAO.getFormerGames(null);
             List <GameEntity> invalidGames = gameDAO.getInvalidGames();
             if(!rights.isAdministrator(user)){
                 invalidGames = new ArrayList<GameEntity>();
