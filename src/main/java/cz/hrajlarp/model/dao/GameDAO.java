@@ -51,21 +51,21 @@ public class GameDAO {
      * @return List of all games (former and future too)
      */
     public List<GameEntity> getALLGames(){
-        return listGames(false, false);
+        return listGames(false, false, null);
     }
 
     /**
      * @return List of all games in future from current date
      */
     public List<GameEntity> getFutureGames(){
-        return listGames(true, true);
+        return listGames(true, true, null);
     }
 
     /**
      * @return List of all games in past by current date
      */
-    public List<GameEntity> getFormerGames(){
-        return listGames(true, false);
+    public List<GameEntity> getFormerGames(Integer limit){
+        return listGames(true, false, limit);
     }
 
 
@@ -73,9 +73,10 @@ public class GameDAO {
      * Method gets all games in database which fits given criteria
      * @param criteria true if some criteria is considered
      * @param future true if listed only future games, false if former games
+     * @param limit It is possible to limit amount of obtained games.
      * @return list of all games based on given criteria
      */
-    private List<GameEntity> listGames(boolean criteria, boolean future){
+    private List<GameEntity> listGames(boolean criteria, boolean future, Integer limit){
 
         Session session = sessionFactory.openSession();
         try{
@@ -90,6 +91,9 @@ public class GameDAO {
             query.append(" order by date");
             if(!future){
                 query.append(" desc");
+            }
+            if(limit != null) {
+                query.append(" limit " + limit);
             }
             System.out.println("executing: " + query.toString());
 

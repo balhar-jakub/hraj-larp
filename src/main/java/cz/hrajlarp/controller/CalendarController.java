@@ -43,7 +43,8 @@ public class CalendarController {
     @RequestMapping(value = "/kalendar", method= RequestMethod.GET)
     public String calendar(Model model) {
         List <GameEntity> futureGames = gameDAO.getFutureGames();
-        List <GameEntity> formerGames = gameDAO.getFormerGames();
+        List <GameEntity> formerGames = gameDAO.getFormerGames(50);
+        System.out.println("Former games: " + formerGames.size());
 
         List<GameEntity> futureGameResult = new ArrayList<GameEntity>();
         List<GameEntity> formerGamesResult = new ArrayList<GameEntity>();
