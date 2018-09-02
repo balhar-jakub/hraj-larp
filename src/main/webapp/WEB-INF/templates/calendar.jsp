@@ -65,6 +65,7 @@
                     </div>
                 </c:forEach>
             </c:if>
+            <a href="/kalendar/vsechny">Všechny hry, včetně všech minulých.</a>
         </div>
 
         <div class="tab-pane" id="tab3">

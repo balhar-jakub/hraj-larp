@@ -37,23 +37,39 @@ public class CalendarController {
 
     /**
      * Controller for view of calendar
+     *
      * @param model model
      * @return String of .JSP file name mapped for view of calendar
      */
-    @RequestMapping(value = "/kalendar", method= RequestMethod.GET)
+    @RequestMapping(value = "/kalendar", method = RequestMethod.GET)
     public String calendar(Model model) {
-        List <GameEntity> futureGames = gameDAO.getFutureGames();
-        List <GameEntity> formerGames = gameDAO.getFormerGames(50);
+        return prepareModel(model, 20);
+    }
+
+    /**
+     * Controller for view of calendar
+     *
+     * @param model model
+     * @return String of .JSP file name mapped for view of calendar
+     */
+    @RequestMapping(value = "/kalendar/vsechny", method = RequestMethod.GET)
+    public String calendarAll(Model model) {
+        return prepareModel(model, null);
+    }
+
+    private String prepareModel(Model model, Integer limit) {
+        List<GameEntity> futureGames = gameDAO.getFutureGames();
+        List<GameEntity> formerGames = gameDAO.getFormerGames(limit);
 
         List<GameEntity> futureGameResult = new ArrayList<GameEntity>();
         List<GameEntity> formerGamesResult = new ArrayList<GameEntity>();
-        for(GameEntity game: futureGames) {
-            if(game.getConfirmed()) {
+        for (GameEntity game : futureGames) {
+            if (game.getConfirmed()) {
                 futureGameResult.add(game);
             }
         }
-        for(GameEntity game: formerGames) {
-            if(game.getConfirmed()) {
+        for (GameEntity game : formerGames) {
+            if (game.getConfirmed()) {
                 formerGamesResult.add(game);
             }
         }
@@ -61,7 +77,7 @@ public class CalendarController {
         model.addAttribute("futureGames", futureGameResult);
         model.addAttribute("formerGames", formerGamesResult);
 
-        if (rights.isLogged()){
+        if (rights.isLogged()) {
             List<GameEntity> availableGames = userAttendedGameDAO.
                     filterAvailableGames(futureGames, rights.getLoggedUser());
 
