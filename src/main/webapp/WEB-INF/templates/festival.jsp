@@ -4,8 +4,8 @@
     <div class="grid4">
         <h1>Náš festival</h1>
 
-        <p>Pilířem HRAJ LARP je festival komorních larpů, který v probíhá pravidelně každou sezónu (září až červen) již
-            od roku 2012. Každý týden bude v rámci festivalu uveden jeden komorní larp.</p>
+        <p>Pilířem HRAJ LARP je festival komorních larpů, který od roku 2012 probíhá každou sezónu od podzimu do léta.
+            Každý druhý měsíc jsou v rámci festivalu uvedeny čtyři komorní larpy.</p>
 
         <p>Kromě už zkušených hráčů bychom rádi motivovali zejména nováčky, aby odhodili strach a přišli si larp zahrát.
             Na
@@ -29,20 +29,29 @@
             domluvíme,
             že vás fotograf nebude fotit nebo ho na hru vůbec nebudeme zvát.</p>
 
-        <p>Každou neděli ve 20.00 je spuštěno přihlašování na hry, které se budou konat v přespříštím týdnu. Vždy je tak
-            přihlašování spuštěno více jak sedm dní.</p>
-
         <p>Hry uváděné v rámci HRAJ LARP si můžete zahrát za <strong>jednotnou cenu 150 Kč</strong>.
 
-        <p>Účastnický poplatek plaťte před hrou převodem na transparentní účet <strong>2300302640/2010</strong> vedený u
+        <p>Účastnický poplatek plaťte před hrou převodem na transparentní účet <strong>2600445512/2010</strong> vedený u
             Fio
             banky. Do popisu platby uvádějte prosím své jméno a název hry, na kterou se hlásíte. Jako variabilní symbol
             zadejte
-            číslo, které najdete na konci potvrzovacího emailu. Zda platba skutečně dorazila, si můžete sami ověřit na
-            <a
-                    href="https://www.fio.cz/scgi-bin/hermes/dz-transparent.cgi?ID_ucet=2300302640">online výpisu z
-                účtu</a>.
+            číslo, které najdete v potvrzovacím mailu. Zda platba skutečně dorazila, si můžete sami ověřit na
+            <a href="https://www.fio.cz/ib2/transparent?a=2600445512">online výpisu z
+                účtu</a>. Upozorňujeme, že pokud se ze hry odhlásíte méně než 48 hodin před jejím začátkem, nemůžeme vám
+            zaplacený vstupní poplatek vrátit.
         </p>
+
+        <h2>Jak se přihlásit na hru?</h2>
+
+        <p>Hry uvádíme každý sudý měsíc. Přihlašování začíná vždy prvního předchozího měsíce ve 20.00, a to na všechny
+            hry, které budeme uvádět v měsíci následujícím.</p>
+
+        <p>Za larpy, na které jste se přihlásili, je třeba zaplatit do desátého (příklad: za hry, které se konají v
+            říjnu, je třeba poslat peníze do 10. září). Po tomto termínu došlé platby zkontrolujeme a hráče, od kterých
+            nemáme peníze na účtu, odhlásíme. Pokud víte, že vaše platba nestihne dojít včas nebo máte nějaký jiný
+            problém, napište nám e-mail.
+            Na volná místa se samozřejmě lze přihlásit i později. V takovém případě s vámi budeme platbu řešit
+            individuálně.</p>
     </div>
     <c:if test="${futureGames}">
         <div class="text right grid1 square1">

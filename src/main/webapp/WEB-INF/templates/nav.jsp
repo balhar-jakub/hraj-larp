@@ -21,7 +21,9 @@
                 <div class="grid2 square1 head2">
                     <a href="http://facebook.com/hrajlarp" class="social" tabindex="-1"><i class="icon-facebook-sign"></i></a>
                     <a href="http://plus.google.com/108076251206659481852/" class="social" tabindex="-1"><i class="icon-google-plus-sign"></i></a>
-
+                    <a href="http://www.praguebynight.eu/" class="social" tabindex="-1">
+                        <img src="/img/logo-pbn.jpg" style="margin-top: -6px;border-radius: 5px;" width="37" height="37">
+                    </a>
 
                     <%-- place panel with login informations here --%>
     				<c:import url="/WEB-INF/templates/loginPanel.jsp" />

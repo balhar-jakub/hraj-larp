@@ -39,17 +39,19 @@
 
     <h3>Jak se přihlásit na termín HRAJ LARP?</h3>
 
-    <p>V <a href="/kalendar/">Kalendáři</a> najdete nabídku larpů společně s daty, kdy se bude který larp hrát, a s&nbsp;odkazy
-        na podrobnější anotace. Stačí si vybrat téma, které vás zaujme, a po krátké registraci se na hru přihlásit.
-        Zaplatíte účastnický poplatek a několik dnů před hrou vám přijde e-mail s&nbsp;podrobnějšími informacemi o daném
-        larpu.</p>
+    <p>V <a href="/kalendar/">Kalendáři</a> najdete nabídku larpů společně s daty, kdy se bude který larp hrát, a s
+        odkazy na podrobnější anotace. Stačí si vybrat téma, které vás zaujme, a po krátké registraci se na hru
+        přihlásit. Zaplatíte účastnický poplatek a několik dnů před hrou vám přijde e-mail s podrobnějšími informacemi o
+        daném larpu.</p>
 
-    <p>Každou neděli ve 20.00 je spuštěno přihlašování na hry, které se budou konat v přespříštím týdnu. Vždy je tak
-        přihlašování spuštěno více jak sedm dní.</p>
+    <p>Pravidelně uvádíme čtyři hry každý sudý měsíc. Přihlašování začíná vždy prvního předchozího měsíce ve 20.00, a to
+        na všechny hry, které budeme uvádět v měsíci následujícím.</p>
 
-    <p>Bude možné se přihlásit vždy na několik nejbližších her. Pokud již bude plno, nezoufejte - můžete se
-        zaregistrovat jako náhradník, a kdyby se na larpu uvolnilo místo, dáme vám
-        obratem vědět.</p>
+    <p>Za larpy, na které jste se přihlásili, je třeba zaplatit do desátého (příklad: za hry, které se konají v říjnu,
+        je třeba poslat peníze do 10. září). Po tomto termínu došlé platby zkontrolujeme a hráče, od kterých nemáme
+        peníze na účtu, odhlásíme. Pokud víte, že vaše platba nestihne dojít včas nebo máte nějaký jiný problém, napište
+        nám e-mail. Na volná místa se samozřejmě lze přihlásit i později. V takovém případě s vámi budeme platbu řešit
+        individuálně.</p>
 
     <p>Jedná-li se o larp uváděný v rámci festivalu komorních larpů HRAJ LARP, přečtěte si také <a href="/festival/">konkrétnější
         pokyny</a> pro tyto hry.</p>

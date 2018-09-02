@@ -45,6 +45,9 @@
                         class="icon-facebook-sign"></i></a>
                 <a href="http://plus.google.com/108076251206659481852/" class="social" tabindex="-1"><i
                         class="icon-google-plus-sign"></i></a>
+                <a href="http://www.praguebynight.eu/" class="social" tabindex="-1">
+                        <img src="/img/logo-pbn.jpg" style="margin-top: -6px;border-radius: 5px;" width="37" height="37">
+                </a>
 
                 <!-- |Get somehow info about login and insert it here. -->
                 <c:import url="/WEB-INF/templates/loginPanel.jsp"></c:import>
