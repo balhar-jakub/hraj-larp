@@ -92,12 +92,12 @@ public class GameDAO {
             if(!future){
                 query.append(" desc");
             }
-            if(limit != null) {
-                query.append(" limit " + limit);
-            }
             System.out.println("executing: " + query.toString());
 
             Query finalQuery = session.createQuery(query.toString());
+            if(limit != null) {
+                finalQuery.setMaxResults(limit);
+            }
             return finalQuery.list();
         }
         finally { session.close(); }
