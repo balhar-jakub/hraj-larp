@@ -1,0 +1,19 @@
+service hrajlarp stop
+rm -rf /home/hrajlarp/staging
+mkdir /home/hrajlarp/staging
+cp -R /home/hrajlarp/www/ROOT/assets/img/upload/* /home/hrajlarp/files/
+cd /home/hrajlarp/www
+zip -R /home/hrajlarp/staging/old ROOT
+cd /home/hrajlarp/staging
+pg_dump -U hrajlarp hrajlarp > hrajlarp.sql
+rm -rf /home/hrajlarp/www/ROOT
+mkdir /home/hrajlarp/www/ROOT
+cd /home/hrajlarp/hraj-larp
+git pull
+mvn package -DskipTests
+cp -R /home/hrajlarp/hraj-larp/target/HrajLarp-1.0/* /home/hrajlarp/www/ROOT
+cd /home/hrajlarp
+cp -R /home/hrajlarp/files/* /home/hrajlarp/www/ROOT/assets/img/upload/
+chown -R hrajlarp /home/hrajlarp
+chown -R tomcat7 /home/hrajlarp/www
+service hrajlarp start
